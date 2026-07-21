@@ -12,6 +12,7 @@ import { registerReservedCapabilities } from "./roles/reserved-capabilities";
 import { registerCrmModule } from "@/modules/crm";
 import { registerVehiclesModule } from "@/modules/vehicles";
 import { registerKnowledgeModule } from "@/modules/knowledge";
+import { registerInspectionsModule } from "@/modules/inspections";
 
 let bootstrapped = false;
 
@@ -128,4 +129,7 @@ export function bootstrapPhase1() {
 
   // Product modules (Phase 3).
   registerKnowledgeModule();
+
+  // Product modules (Phase 4).
+  registerInspectionsModule();
 }

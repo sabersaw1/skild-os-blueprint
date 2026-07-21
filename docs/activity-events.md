@@ -37,6 +37,13 @@ downstream automation.
 | `knowledge.document.archived` | `{ knowledgeId }` |
 | `knowledge.link.created` | `{ knowledgeId, linkId, targetType, targetId }` |
 | `knowledge.pricing_rule.updated` | `{ knowledgeId, versionNumber }` |
+| `inspection.template.created` | `{ templateId, name }` |
+| `inspection.template.updated` | `{ templateId, fields[] }` |
+| `inspection.created` | `{ inspectionId, vehicleId, customerId, templateId? }` |
+| `inspection.updated` | `{ inspectionId, fields[] }` |
+| `inspection.finding.created` | `{ findingId, inspectionId, severity }` |
+| `inspection.finding.updated` | `{ findingId, inspectionId, fields[] }` |
+| `inspection.photo.queued` | `{ photoId, inspectionId, findingId?, logicalKey }` |
 
 Shell/system events (`shell.navigation.*`, `settings.value.updated`,
 `identity.session.started`) remain as defined in Phase 1.
