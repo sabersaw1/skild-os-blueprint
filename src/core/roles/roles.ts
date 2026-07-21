@@ -62,19 +62,10 @@ export function hasAll(roleId: string, capabilityIds: string[] = []): boolean {
   return capabilityIds.every((c) => hasCapability(roleId, c));
 }
 
-// React hooks — resolve against the current identity's role and re-render
-// when identity or role changes. Prefer these in UI components over
-// hand-rolling capability lookups (Phase 4.1 hardening).
+// React hooks for capability checks live in ./hooks.ts to avoid a circular
+// import between roles.ts and the auth/identity module. Import them from
+// "@/core/roles/hooks" (or "@/core/roles").
 
-export function useHasCapability(capabilityId: string): boolean {
-  const identity = useIdentity();
-  return hasCapability(identity.roleId, capabilityId);
-}
-
-export function useHasAllCapabilities(capabilityIds: string[] = []): boolean {
-  const identity = useIdentity();
-  return hasAll(identity.roleId, capabilityIds);
-}
 
 
 // Baseline capabilities the shell itself owns.
