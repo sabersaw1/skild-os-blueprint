@@ -33,6 +33,7 @@ function EditInspection() {
   const repo = useInspectionsRepository();
   const { data: inspection, loading } = useInspection(inspectionId);
   const { data: templates } = useInspectionTemplates();
+  const canWrite = useHasCapability("inspections.write");
 
   const [status, setStatus] = useState<InspectionStatus>("draft");
   const [notes, setNotes] = useState("");
