@@ -76,25 +76,29 @@ function InspectionDetail() {
           )}
         </div>
         <div className="flex gap-2">
-          <Button
-            variant="outline"
-            onClick={() =>
-              navigate({
-                to: "/inspections/$inspectionId/edit",
-                params: { inspectionId },
-              })
-            }
-          >
-            <Pencil className="mr-1 h-4 w-4" /> Edit
-          </Button>
-          <Button
-            variant="outline"
-            onClick={async () => {
-              await repo.queuePhoto({ inspectionId });
-            }}
-          >
-            <Camera className="mr-1 h-4 w-4" /> Queue photo
-          </Button>
+          {canWrite && (
+            <Button
+              variant="outline"
+              onClick={() =>
+                navigate({
+                  to: "/inspections/$inspectionId/edit",
+                  params: { inspectionId },
+                })
+              }
+            >
+              <Pencil className="mr-1 h-4 w-4" /> Edit
+            </Button>
+          )}
+          {canPhoto && (
+            <Button
+              variant="outline"
+              onClick={async () => {
+                await repo.queuePhoto({ inspectionId });
+              }}
+            >
+              <Camera className="mr-1 h-4 w-4" /> Queue photo
+            </Button>
+          )}
         </div>
       </header>
 
