@@ -1,21 +1,25 @@
 # Routes
 
-TanStack Start uses **file-based routing**. Every `.tsx` file in this directory
-defines a route. Do **not** create `src/pages/`, `src/routes/_app/index.tsx`, or
-`app/layout.tsx` — those are Next.js / Remix conventions. The only root layout
-is `src/routes/__root.tsx`.
+TanStack Router file-based routing. The plugin regenerates `src/routeTree.gen.ts` on every build/dev — never edit it by hand.
 
-## Conventions
+## Naming rules (recap)
 
-| File | URL |
-| --- | --- |
-| `index.tsx` | `/` |
-| `about.tsx` | `/about` |
-| `users/index.tsx` | `/users` |
-| `users/$id.tsx` | `/users/:id` (dynamic — bare `$`, no curly braces) |
-| `posts/{-$category}.tsx` | `/posts/:category?` (optional segment) |
-| `files/$.tsx` | `/files/*` (splat — read via `_splat` param, never `*`) |
-| `_layout.tsx` | layout route (renders children via `<Outlet />`) |
-| `__root.tsx` | app shell — wraps every page; preserve `<Outlet />` |
+- Dots in filenames become slashes in the route path.
+- `index.tsx` is the leaf.
+- `$name` is a dynamic segment; `$.tsx` is a splat.
+- Underscore-prefixed segments are pathless layouts.
 
-`routeTree.gen.ts` is auto-generated. Don't edit it by hand.
+## Phase 1 routes
+
+| File                            | URL                    | Purpose                          |
+| ------------------------------- | ---------------------- | -------------------------------- |
+| `__root.tsx`                    | (layout)               | Global head + AppShell wrapper.  |
+| `index.tsx`                     | `/`                    | Command Center.                  |
+| `activity.tsx`                  | `/activity`            | Activity feed.                   |
+| `settings.tsx`                  | `/settings` (layout)   | Settings hub with `<Outlet />`.  |
+| `settings.index.tsx`            | `/settings`            | Redirects to `/settings/profile`.|
+| `settings.profile.tsx`          | `/settings/profile`    | Local profile placeholder.       |
+| `settings.appearance.tsx`       | `/settings/appearance` | Theme / density.                 |
+| `settings.modules.tsx`          | `/settings/modules`    | Registered modules + capabilities.|
+
+Every route file declares a `head()` with a route-specific title.
