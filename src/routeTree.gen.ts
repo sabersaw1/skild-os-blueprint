@@ -9,17 +9,39 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as VehiclesRouteImport } from './routes/vehicles'
 import { Route as SettingsRouteImport } from './routes/settings'
+import { Route as CustomersRouteImport } from './routes/customers'
 import { Route as ActivityRouteImport } from './routes/activity'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as VehiclesIndexRouteImport } from './routes/vehicles.index'
 import { Route as SettingsIndexRouteImport } from './routes/settings.index'
+import { Route as CustomersIndexRouteImport } from './routes/customers.index'
+import { Route as VehiclesNewRouteImport } from './routes/vehicles.new'
+import { Route as VehiclesVehicleIdRouteImport } from './routes/vehicles.$vehicleId'
 import { Route as SettingsProfileRouteImport } from './routes/settings.profile'
 import { Route as SettingsModulesRouteImport } from './routes/settings.modules'
 import { Route as SettingsAppearanceRouteImport } from './routes/settings.appearance'
+import { Route as CustomersNewRouteImport } from './routes/customers.new'
+import { Route as CustomersCustomerIdRouteImport } from './routes/customers.$customerId'
+import { Route as VehiclesVehicleIdIndexRouteImport } from './routes/vehicles.$vehicleId.index'
+import { Route as CustomersCustomerIdIndexRouteImport } from './routes/customers.$customerId.index'
+import { Route as VehiclesVehicleIdEditRouteImport } from './routes/vehicles.$vehicleId.edit'
+import { Route as CustomersCustomerIdEditRouteImport } from './routes/customers.$customerId.edit'
 
+const VehiclesRoute = VehiclesRouteImport.update({
+  id: '/vehicles',
+  path: '/vehicles',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SettingsRoute = SettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CustomersRoute = CustomersRouteImport.update({
+  id: '/customers',
+  path: '/customers',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ActivityRoute = ActivityRouteImport.update({
@@ -32,10 +54,30 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const VehiclesIndexRoute = VehiclesIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => VehiclesRoute,
+} as any)
 const SettingsIndexRoute = SettingsIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => SettingsRoute,
+} as any)
+const CustomersIndexRoute = CustomersIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => CustomersRoute,
+} as any)
+const VehiclesNewRoute = VehiclesNewRouteImport.update({
+  id: '/new',
+  path: '/new',
+  getParentRoute: () => VehiclesRoute,
+} as any)
+const VehiclesVehicleIdRoute = VehiclesVehicleIdRouteImport.update({
+  id: '/$vehicleId',
+  path: '/$vehicleId',
+  getParentRoute: () => VehiclesRoute,
 } as any)
 const SettingsProfileRoute = SettingsProfileRouteImport.update({
   id: '/profile',
@@ -52,76 +94,187 @@ const SettingsAppearanceRoute = SettingsAppearanceRouteImport.update({
   path: '/appearance',
   getParentRoute: () => SettingsRoute,
 } as any)
+const CustomersNewRoute = CustomersNewRouteImport.update({
+  id: '/new',
+  path: '/new',
+  getParentRoute: () => CustomersRoute,
+} as any)
+const CustomersCustomerIdRoute = CustomersCustomerIdRouteImport.update({
+  id: '/$customerId',
+  path: '/$customerId',
+  getParentRoute: () => CustomersRoute,
+} as any)
+const VehiclesVehicleIdIndexRoute = VehiclesVehicleIdIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => VehiclesVehicleIdRoute,
+} as any)
+const CustomersCustomerIdIndexRoute =
+  CustomersCustomerIdIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => CustomersCustomerIdRoute,
+  } as any)
+const VehiclesVehicleIdEditRoute = VehiclesVehicleIdEditRouteImport.update({
+  id: '/edit',
+  path: '/edit',
+  getParentRoute: () => VehiclesVehicleIdRoute,
+} as any)
+const CustomersCustomerIdEditRoute = CustomersCustomerIdEditRouteImport.update({
+  id: '/edit',
+  path: '/edit',
+  getParentRoute: () => CustomersCustomerIdRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/activity': typeof ActivityRoute
+  '/customers': typeof CustomersRouteWithChildren
   '/settings': typeof SettingsRouteWithChildren
+  '/vehicles': typeof VehiclesRouteWithChildren
+  '/customers/$customerId': typeof CustomersCustomerIdRouteWithChildren
+  '/customers/new': typeof CustomersNewRoute
   '/settings/appearance': typeof SettingsAppearanceRoute
   '/settings/modules': typeof SettingsModulesRoute
   '/settings/profile': typeof SettingsProfileRoute
+  '/vehicles/$vehicleId': typeof VehiclesVehicleIdRouteWithChildren
+  '/vehicles/new': typeof VehiclesNewRoute
+  '/customers/': typeof CustomersIndexRoute
   '/settings/': typeof SettingsIndexRoute
+  '/vehicles/': typeof VehiclesIndexRoute
+  '/customers/$customerId/edit': typeof CustomersCustomerIdEditRoute
+  '/vehicles/$vehicleId/edit': typeof VehiclesVehicleIdEditRoute
+  '/customers/$customerId/': typeof CustomersCustomerIdIndexRoute
+  '/vehicles/$vehicleId/': typeof VehiclesVehicleIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/activity': typeof ActivityRoute
+  '/customers/new': typeof CustomersNewRoute
   '/settings/appearance': typeof SettingsAppearanceRoute
   '/settings/modules': typeof SettingsModulesRoute
   '/settings/profile': typeof SettingsProfileRoute
+  '/vehicles/new': typeof VehiclesNewRoute
+  '/customers': typeof CustomersIndexRoute
   '/settings': typeof SettingsIndexRoute
+  '/vehicles': typeof VehiclesIndexRoute
+  '/customers/$customerId/edit': typeof CustomersCustomerIdEditRoute
+  '/vehicles/$vehicleId/edit': typeof VehiclesVehicleIdEditRoute
+  '/customers/$customerId': typeof CustomersCustomerIdIndexRoute
+  '/vehicles/$vehicleId': typeof VehiclesVehicleIdIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/activity': typeof ActivityRoute
+  '/customers': typeof CustomersRouteWithChildren
   '/settings': typeof SettingsRouteWithChildren
+  '/vehicles': typeof VehiclesRouteWithChildren
+  '/customers/$customerId': typeof CustomersCustomerIdRouteWithChildren
+  '/customers/new': typeof CustomersNewRoute
   '/settings/appearance': typeof SettingsAppearanceRoute
   '/settings/modules': typeof SettingsModulesRoute
   '/settings/profile': typeof SettingsProfileRoute
+  '/vehicles/$vehicleId': typeof VehiclesVehicleIdRouteWithChildren
+  '/vehicles/new': typeof VehiclesNewRoute
+  '/customers/': typeof CustomersIndexRoute
   '/settings/': typeof SettingsIndexRoute
+  '/vehicles/': typeof VehiclesIndexRoute
+  '/customers/$customerId/edit': typeof CustomersCustomerIdEditRoute
+  '/vehicles/$vehicleId/edit': typeof VehiclesVehicleIdEditRoute
+  '/customers/$customerId/': typeof CustomersCustomerIdIndexRoute
+  '/vehicles/$vehicleId/': typeof VehiclesVehicleIdIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
     | '/activity'
+    | '/customers'
     | '/settings'
+    | '/vehicles'
+    | '/customers/$customerId'
+    | '/customers/new'
     | '/settings/appearance'
     | '/settings/modules'
     | '/settings/profile'
+    | '/vehicles/$vehicleId'
+    | '/vehicles/new'
+    | '/customers/'
     | '/settings/'
+    | '/vehicles/'
+    | '/customers/$customerId/edit'
+    | '/vehicles/$vehicleId/edit'
+    | '/customers/$customerId/'
+    | '/vehicles/$vehicleId/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/activity'
+    | '/customers/new'
     | '/settings/appearance'
     | '/settings/modules'
     | '/settings/profile'
+    | '/vehicles/new'
+    | '/customers'
     | '/settings'
+    | '/vehicles'
+    | '/customers/$customerId/edit'
+    | '/vehicles/$vehicleId/edit'
+    | '/customers/$customerId'
+    | '/vehicles/$vehicleId'
   id:
     | '__root__'
     | '/'
     | '/activity'
+    | '/customers'
     | '/settings'
+    | '/vehicles'
+    | '/customers/$customerId'
+    | '/customers/new'
     | '/settings/appearance'
     | '/settings/modules'
     | '/settings/profile'
+    | '/vehicles/$vehicleId'
+    | '/vehicles/new'
+    | '/customers/'
     | '/settings/'
+    | '/vehicles/'
+    | '/customers/$customerId/edit'
+    | '/vehicles/$vehicleId/edit'
+    | '/customers/$customerId/'
+    | '/vehicles/$vehicleId/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ActivityRoute: typeof ActivityRoute
+  CustomersRoute: typeof CustomersRouteWithChildren
   SettingsRoute: typeof SettingsRouteWithChildren
+  VehiclesRoute: typeof VehiclesRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/vehicles': {
+      id: '/vehicles'
+      path: '/vehicles'
+      fullPath: '/vehicles'
+      preLoaderRoute: typeof VehiclesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/settings': {
       id: '/settings'
       path: '/settings'
       fullPath: '/settings'
       preLoaderRoute: typeof SettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/customers': {
+      id: '/customers'
+      path: '/customers'
+      fullPath: '/customers'
+      preLoaderRoute: typeof CustomersRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/activity': {
@@ -138,12 +291,40 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/vehicles/': {
+      id: '/vehicles/'
+      path: '/'
+      fullPath: '/vehicles/'
+      preLoaderRoute: typeof VehiclesIndexRouteImport
+      parentRoute: typeof VehiclesRoute
+    }
     '/settings/': {
       id: '/settings/'
       path: '/'
       fullPath: '/settings/'
       preLoaderRoute: typeof SettingsIndexRouteImport
       parentRoute: typeof SettingsRoute
+    }
+    '/customers/': {
+      id: '/customers/'
+      path: '/'
+      fullPath: '/customers/'
+      preLoaderRoute: typeof CustomersIndexRouteImport
+      parentRoute: typeof CustomersRoute
+    }
+    '/vehicles/new': {
+      id: '/vehicles/new'
+      path: '/new'
+      fullPath: '/vehicles/new'
+      preLoaderRoute: typeof VehiclesNewRouteImport
+      parentRoute: typeof VehiclesRoute
+    }
+    '/vehicles/$vehicleId': {
+      id: '/vehicles/$vehicleId'
+      path: '/$vehicleId'
+      fullPath: '/vehicles/$vehicleId'
+      preLoaderRoute: typeof VehiclesVehicleIdRouteImport
+      parentRoute: typeof VehiclesRoute
     }
     '/settings/profile': {
       id: '/settings/profile'
@@ -166,8 +347,79 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SettingsAppearanceRouteImport
       parentRoute: typeof SettingsRoute
     }
+    '/customers/new': {
+      id: '/customers/new'
+      path: '/new'
+      fullPath: '/customers/new'
+      preLoaderRoute: typeof CustomersNewRouteImport
+      parentRoute: typeof CustomersRoute
+    }
+    '/customers/$customerId': {
+      id: '/customers/$customerId'
+      path: '/$customerId'
+      fullPath: '/customers/$customerId'
+      preLoaderRoute: typeof CustomersCustomerIdRouteImport
+      parentRoute: typeof CustomersRoute
+    }
+    '/vehicles/$vehicleId/': {
+      id: '/vehicles/$vehicleId/'
+      path: '/'
+      fullPath: '/vehicles/$vehicleId/'
+      preLoaderRoute: typeof VehiclesVehicleIdIndexRouteImport
+      parentRoute: typeof VehiclesVehicleIdRoute
+    }
+    '/customers/$customerId/': {
+      id: '/customers/$customerId/'
+      path: '/'
+      fullPath: '/customers/$customerId/'
+      preLoaderRoute: typeof CustomersCustomerIdIndexRouteImport
+      parentRoute: typeof CustomersCustomerIdRoute
+    }
+    '/vehicles/$vehicleId/edit': {
+      id: '/vehicles/$vehicleId/edit'
+      path: '/edit'
+      fullPath: '/vehicles/$vehicleId/edit'
+      preLoaderRoute: typeof VehiclesVehicleIdEditRouteImport
+      parentRoute: typeof VehiclesVehicleIdRoute
+    }
+    '/customers/$customerId/edit': {
+      id: '/customers/$customerId/edit'
+      path: '/edit'
+      fullPath: '/customers/$customerId/edit'
+      preLoaderRoute: typeof CustomersCustomerIdEditRouteImport
+      parentRoute: typeof CustomersCustomerIdRoute
+    }
   }
 }
+
+interface CustomersCustomerIdRouteChildren {
+  CustomersCustomerIdEditRoute: typeof CustomersCustomerIdEditRoute
+  CustomersCustomerIdIndexRoute: typeof CustomersCustomerIdIndexRoute
+}
+
+const CustomersCustomerIdRouteChildren: CustomersCustomerIdRouteChildren = {
+  CustomersCustomerIdEditRoute: CustomersCustomerIdEditRoute,
+  CustomersCustomerIdIndexRoute: CustomersCustomerIdIndexRoute,
+}
+
+const CustomersCustomerIdRouteWithChildren =
+  CustomersCustomerIdRoute._addFileChildren(CustomersCustomerIdRouteChildren)
+
+interface CustomersRouteChildren {
+  CustomersCustomerIdRoute: typeof CustomersCustomerIdRouteWithChildren
+  CustomersNewRoute: typeof CustomersNewRoute
+  CustomersIndexRoute: typeof CustomersIndexRoute
+}
+
+const CustomersRouteChildren: CustomersRouteChildren = {
+  CustomersCustomerIdRoute: CustomersCustomerIdRouteWithChildren,
+  CustomersNewRoute: CustomersNewRoute,
+  CustomersIndexRoute: CustomersIndexRoute,
+}
+
+const CustomersRouteWithChildren = CustomersRoute._addFileChildren(
+  CustomersRouteChildren,
+)
 
 interface SettingsRouteChildren {
   SettingsAppearanceRoute: typeof SettingsAppearanceRoute
@@ -187,10 +439,41 @@ const SettingsRouteWithChildren = SettingsRoute._addFileChildren(
   SettingsRouteChildren,
 )
 
+interface VehiclesVehicleIdRouteChildren {
+  VehiclesVehicleIdEditRoute: typeof VehiclesVehicleIdEditRoute
+  VehiclesVehicleIdIndexRoute: typeof VehiclesVehicleIdIndexRoute
+}
+
+const VehiclesVehicleIdRouteChildren: VehiclesVehicleIdRouteChildren = {
+  VehiclesVehicleIdEditRoute: VehiclesVehicleIdEditRoute,
+  VehiclesVehicleIdIndexRoute: VehiclesVehicleIdIndexRoute,
+}
+
+const VehiclesVehicleIdRouteWithChildren =
+  VehiclesVehicleIdRoute._addFileChildren(VehiclesVehicleIdRouteChildren)
+
+interface VehiclesRouteChildren {
+  VehiclesVehicleIdRoute: typeof VehiclesVehicleIdRouteWithChildren
+  VehiclesNewRoute: typeof VehiclesNewRoute
+  VehiclesIndexRoute: typeof VehiclesIndexRoute
+}
+
+const VehiclesRouteChildren: VehiclesRouteChildren = {
+  VehiclesVehicleIdRoute: VehiclesVehicleIdRouteWithChildren,
+  VehiclesNewRoute: VehiclesNewRoute,
+  VehiclesIndexRoute: VehiclesIndexRoute,
+}
+
+const VehiclesRouteWithChildren = VehiclesRoute._addFileChildren(
+  VehiclesRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ActivityRoute: ActivityRoute,
+  CustomersRoute: CustomersRouteWithChildren,
   SettingsRoute: SettingsRouteWithChildren,
+  VehiclesRoute: VehiclesRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
