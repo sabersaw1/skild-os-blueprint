@@ -11,6 +11,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { createModuleRoute } from "@/core/routes/createModuleRoute";
+import { useHasCapability } from "@/core/roles/roles";
 import {
   useInspection,
   useInspectionsRepository,
