@@ -8,7 +8,10 @@ export type Store<T> = {
   get: () => T;
   set: (next: T | ((prev: T) => T)) => void;
   subscribe: (listener: () => void) => () => void;
-  use: <S>(selector?: (state: T) => S) => S;
+  use: {
+    (): T;
+    <S>(selector: (state: T) => S): S;
+  };
 };
 
 export function createStore<T>(initial: T): Store<T> {
