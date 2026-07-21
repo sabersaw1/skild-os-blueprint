@@ -29,6 +29,8 @@ function InspectionDetail() {
   const { data: photos } = useInspectionPhotos(inspectionId);
   const { data: vehicle } = useVehicle(inspection?.vehicleId);
   const { data: customer } = useCustomer(inspection?.customerId);
+  const canWrite = useHasCapability("inspections.write");
+  const canPhoto = useHasCapability("inspections.photos.write");
 
   if (loading)
     return <p className="p-6 text-sm text-muted-foreground">Loading…</p>;
