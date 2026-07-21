@@ -1,29 +1,17 @@
 // Route safety helper for module authors.
 //
 // Wraps TanStack Router's `createFileRoute(...)` factory and:
-//   1. Guarantees an `errorComponent` and `notFoundComponent` exist (defaults
-//      to shared shell fallbacks). Modules can override.
-//   2. Enforces a `moduleId` in options so activity logs / breadcrumbs know
-//      the owning module.
+//   1. Guarantees an `errorComponent` and `notFoundComponent` exist
+//      (defaults to shared shell fallbacks). Modules can override.
+//   2. Enforces a `moduleId` in options so activity logs / breadcrumbs
+//      know the owning module.
 //
-// Usage:
-//   export const Route = createModuleRoute("/customers")({
-//     moduleId: "crm",
-//     component: CustomersPage,
-//     // errorComponent / notFoundComponent are auto-provided.
-//   });
-//
-// This helper is intentionally thin — it does NOT hide any TanStack API,
-// only defaults required boundaries.
+// The wrapper is generic over the path literal so `Route.useParams()`,
+// `Route.useLoaderData()`, `Route.useSearch()`, and friends stay fully
+// typed — no manual casts required at call sites.
 
 import { createFileRoute } from "@tanstack/react-router";
 import type { ComponentType } from "react";
-
-// Route options are typed as `unknown` here because TanStack's factory is
-// path-literal generic; see the note on `createModuleRoute` below.
-export type ModuleRouteOptions = Record<string, unknown> & {
-  moduleId: string;
-};
 
 export const DefaultRouteErrorComponent: ComponentType<{ error: Error }> = ({
   error,
@@ -47,13 +35,22 @@ export const DefaultRouteNotFoundComponent: ComponentType = () => (
   </div>
 );
 
-export function createModuleRoute(path: string) {
-  // Typed loosely — TanStack's createFileRoute uses a path-literal generic
-  // that we can't preserve through a wrapper without regenerating the route
-  // tree types. Module authors still get full type-safety from the returned
-  // Route object (Route.useParams(), Route.useLoaderData(), etc.).
-  const inner = (createFileRoute as unknown as (p: string) => (opts: unknown) => unknown)(path);
-  return (options: ModuleRouteOptions) => {
+// TanStack's createFileRoute is generic on the path literal; we preserve
+// that generic through the wrapper so `Route.useParams()` etc. remain
+// typed. The options bag is whatever the inner factory accepts, plus a
+// required `moduleId`.
+type InnerFactory<TPath extends string> = ReturnType<
+  typeof createFileRoute<TPath>
+>;
+type InnerOptions<TPath extends string> = Parameters<InnerFactory<TPath>>[0];
+
+export type ModuleRouteOptions<TPath extends string> = InnerOptions<TPath> & {
+  moduleId: string;
+};
+
+export function createModuleRoute<TPath extends string>(path: TPath) {
+  const inner = createFileRoute(path);
+  return (options: ModuleRouteOptions<TPath>) => {
     if (!options.moduleId) {
       throw new Error(
         `createModuleRoute("${path}"): moduleId is required.`,
@@ -64,6 +61,6 @@ export function createModuleRoute(path: string) {
       errorComponent: DefaultRouteErrorComponent,
       notFoundComponent: DefaultRouteNotFoundComponent,
       ...routeOptions,
-    });
+    } as InnerOptions<TPath>);
   };
 }
