@@ -31,8 +31,8 @@ export function createStore<T>(initial: T): Store<T> {
     };
   };
 
-  function use<S>(selector?: (state: T) => S): S {
-    const sel = selector ?? ((s: T) => s as unknown as S);
+  function use<S>(selector?: (state: T) => S): S | T {
+    const sel = selector ?? ((s: T) => s);
     return useSyncExternalStore(
       subscribe,
       () => sel(state),
@@ -40,5 +40,5 @@ export function createStore<T>(initial: T): Store<T> {
     );
   }
 
-  return { get, set, subscribe, use };
+  return { get, set, subscribe, use: use as Store<T>["use"] };
 }
