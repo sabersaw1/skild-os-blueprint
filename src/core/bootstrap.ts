@@ -137,4 +137,7 @@ export function bootstrapPhase1() {
 
   // Product modules (Phase 5).
   registerQuotesModule();
+
+  // Product modules (Phase 6).
+  registerJobsModule();
 }
