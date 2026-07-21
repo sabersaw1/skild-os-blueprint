@@ -2,7 +2,7 @@ import { Link, useNavigate } from "@tanstack/react-router";
 import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { createModuleRoute } from "@/core/routes/createModuleRoute";
-import { useHasCapability } from "@/core/roles/roles";
+import { useHasCapability } from "@/core/roles/hooks";
 import { useInspectionTemplates } from "@/modules/inspections/hooks";
 
 export const Route = createModuleRoute("/templates/inspections/")({

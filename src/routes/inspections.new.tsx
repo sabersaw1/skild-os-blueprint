@@ -1,6 +1,6 @@
 import { useNavigate } from "@tanstack/react-router";
 import { createModuleRoute } from "@/core/routes/createModuleRoute";
-import { useHasCapability } from "@/core/roles/roles";
+import { useHasCapability } from "@/core/roles/hooks";
 import { InspectionForm } from "@/modules/inspections/components/InspectionForm";
 import {
   useInspectionsRepository,
