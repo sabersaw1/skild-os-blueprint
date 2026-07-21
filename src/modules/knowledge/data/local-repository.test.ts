@@ -114,12 +114,12 @@ describe("KnowledgeRepository — documents", () => {
       content: "A",
     });
     expect(
-      emitSpy.mock.calls.map((c) => c[0].type),
+      emitSpy.mock.calls.map((c: any) => c[0].type),
     ).toEqual([KNOWLEDGE_EVENTS.documentCreated]);
 
     emitSpy.mockClear();
     await repo.updateDocument(doc.id, { content: "B" }, "why");
-    const types = emitSpy.mock.calls.map((c) => c[0].type);
+    const types = emitSpy.mock.calls.map((c: any) => c[0].type);
     expect(types).toContain(KNOWLEDGE_EVENTS.documentVersionCreated);
     expect(types).toContain(KNOWLEDGE_EVENTS.documentUpdated);
   });
@@ -192,7 +192,7 @@ describe("KnowledgeRepository — documents", () => {
       },
       "raise labor",
     );
-    const types = emitSpy.mock.calls.map((c) => c[0].type);
+    const types = emitSpy.mock.calls.map((c: any) => c[0].type);
     expect(types).toContain(KNOWLEDGE_EVENTS.pricingRuleUpdated);
     expect(types).not.toContain(KNOWLEDGE_EVENTS.documentUpdated);
   });
