@@ -3,7 +3,6 @@
 // The check surface exists so wiring real users/roles later is a swap-in.
 
 import { createStore } from "../store";
-import { useIdentity } from "../auth/identity";
 
 export type Capability = {
   id: string;
