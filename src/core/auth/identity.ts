@@ -1,61 +1,55 @@
-// Phase 1 placeholder identity.
-// A single local "Owner" is assumed. Real authentication lands in a later phase
-// and MUST replace only this file — no consumers should import auth internals
-// beyond the exported `useIdentity` / `getIdentity` API.
+// Public identity API. Delegates to whatever IdentityProvider is currently
+// registered (see ./provider.ts). Phase 1.5: the default provider is
+// LocalIdentityProvider. Later phases swap the provider — this module and
+// all its consumers stay untouched.
 
-import { createStore } from "../store";
-import { OWNER_ROLE_ID } from "../roles/roles";
+import { useSyncExternalStore } from "react";
+import {
+  ANONYMOUS,
+  getIdentityProvider,
+  subscribeIdentityProvider,
+  type Identity,
+} from "./provider";
 
-export type Identity = {
-  id: string;
-  displayName: string;
-  roleId: string;
-};
-
-const DEFAULT: Identity = {
-  id: "local-operator",
-  displayName: "Operator",
-  roleId: OWNER_ROLE_ID,
-};
-
-const identityStore = createStore<Identity>(loadFromLocal() ?? DEFAULT);
-
-function loadFromLocal(): Identity | null {
-  if (typeof window === "undefined") return null;
-  try {
-    const raw = window.localStorage.getItem("skildos.identity");
-    if (!raw) return null;
-    const parsed = JSON.parse(raw);
-    if (parsed && typeof parsed.displayName === "string") {
-      return { ...DEFAULT, ...parsed };
-    }
-  } catch {
-    /* ignore */
-  }
-  return null;
-}
-
-function persist(identity: Identity) {
-  if (typeof window === "undefined") return;
-  try {
-    window.localStorage.setItem("skildos.identity", JSON.stringify(identity));
-  } catch {
-    /* ignore */
-  }
-}
+export type { Identity } from "./provider";
 
 export function getIdentity(): Identity {
-  return identityStore.get();
+  try {
+    return getIdentityProvider().get();
+  } catch {
+    return ANONYMOUS;
+  }
+}
+
+// Subscribe to identity changes, including provider swaps.
+function subscribe(listener: () => void): () => void {
+  let unsubFromProvider = getIdentityProvider().subscribe(listener);
+  const unsubFromRegistry = subscribeIdentityProvider(() => {
+    unsubFromProvider();
+    unsubFromProvider = getIdentityProvider().subscribe(listener);
+    listener();
+  });
+  return () => {
+    unsubFromProvider();
+    unsubFromRegistry();
+  };
 }
 
 export function useIdentity(): Identity {
-  return identityStore.use();
+  return useSyncExternalStore(subscribe, getIdentity, getIdentity);
 }
 
 export function updateIdentity(patch: Partial<Identity>) {
-  identityStore.set((prev) => {
-    const next = { ...prev, ...patch };
-    persist(next);
-    return next;
-  });
+  const p = getIdentityProvider();
+  if (!p.update) {
+    throw new Error(
+      `IdentityProvider "${p.kind}" does not support local updates.`,
+    );
+  }
+  p.update(patch);
+}
+
+export function signOut(): void | Promise<void> {
+  const p = getIdentityProvider();
+  return p.signOut?.();
 }
