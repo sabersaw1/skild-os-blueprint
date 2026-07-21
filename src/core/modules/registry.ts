@@ -40,10 +40,7 @@ export type ModuleManifest = {
   description?: string;
   capabilities?: Capability[];
   navEntries?: NavEntry[];
-  commands?: Omit<Command, "id"> &
-    { id: string } extends never
-    ? never
-    : Command[];
+  commands?: Command[];
   settingsSections?: SettingsSection[];
   dashboardWidgets?: DashboardWidget[];
 };
