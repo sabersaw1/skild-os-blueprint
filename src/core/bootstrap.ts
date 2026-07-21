@@ -9,6 +9,8 @@
 import { registerModule } from "./modules/registry";
 import { openCommandBar } from "./commands/CommandBar";
 import { registerReservedCapabilities } from "./roles/reserved-capabilities";
+import { registerCrmModule } from "@/modules/crm";
+import { registerVehiclesModule } from "@/modules/vehicles";
 
 let bootstrapped = false;
 
