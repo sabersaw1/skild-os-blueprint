@@ -269,10 +269,11 @@ describe("QuotesRepository — totals", () => {
       discount: 0.005,
       tax: 1,
     });
-    expect(q.subtotal).toBe(30);
+    // 3 * 9.999 rounds to 30 per line, 1 * 0.011 rounds to 0.01 per line.
+    expect(q.subtotal).toBe(30.01);
     expect(q.discount).toBe(0.01);
     expect(q.tax).toBe(1);
-    expect(q.total).toBe(30 - 0.01 + 1);
+    expect(q.total).toBe(30.01 - 0.01 + 1);
   });
 });
 
