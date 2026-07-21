@@ -27,6 +27,17 @@ export const RESERVED_CAPABILITIES = [
     ownerModuleId: "knowledge",
   },
   {
+    id: "knowledge.version",
+    description: "View and restore knowledge document versions.",
+    ownerModuleId: "knowledge",
+  },
+  {
+    id: "knowledge.approve",
+    description:
+      "Approve knowledge changes that require approval (e.g. pricing rules).",
+    ownerModuleId: "knowledge",
+  },
+  {
     id: "ai.read",
     description: "View AI outputs, suggestions, and reasoning traces.",
     ownerModuleId: "ai",
