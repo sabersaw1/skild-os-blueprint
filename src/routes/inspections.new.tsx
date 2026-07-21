@@ -20,13 +20,18 @@ function NewInspection() {
   const { data: vehicles } = useVehicles();
   const { data: customers } = useCustomers();
   const { data: templates } = useInspectionTemplates();
+  const canWrite = useHasCapability("inspections.write");
 
   return (
     <div className="mx-auto w-full max-w-2xl px-4 py-6">
       <h1 className="mb-4 text-2xl font-semibold tracking-tight">
         New inspection
       </h1>
-      {vehicles.length === 0 ? (
+      {!canWrite ? (
+        <p className="text-sm text-muted-foreground">
+          You do not have permission to create inspections.
+        </p>
+      ) : vehicles.length === 0 ? (
         <p className="text-sm text-muted-foreground">
           You need at least one vehicle before starting an inspection.
         </p>
