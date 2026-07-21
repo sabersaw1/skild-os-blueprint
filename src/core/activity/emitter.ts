@@ -1,23 +1,16 @@
-// Activity Log — Phase 1 sink is an in-memory ring buffer.
-// Every state-changing UI action should call `emit(...)`.
-// Later phases replace the sink with persistent storage; the emit API stays.
+// Activity Log emitter — thin wrapper over the currently registered
+// ActivityStore adapter (see ./store-adapter.ts). Callers only see
+// `emit()`, `useActivity()`, and `clearActivity()`.
 
-import { createStore } from "../store";
+import { useSyncExternalStore } from "react";
 import { getIdentity } from "../auth/identity";
+import {
+  getActivityStore,
+  subscribeActivityStoreRegistry,
+} from "./store-adapter";
+import type { ActivityEvent } from "./types";
 
-export type ActivityEvent = {
-  id: string;
-  at: number; // epoch ms
-  actorId: string;
-  type: string; // e.g. "navigation", "settings.change", "command.run"
-  moduleId: string;
-  summary: string;
-  payload?: Record<string, unknown>;
-};
-
-const MAX_EVENTS = 500;
-
-const store = createStore<ActivityEvent[]>([]);
+export type { ActivityEvent } from "./types";
 
 function makeId(): string {
   if (typeof crypto !== "undefined" && "randomUUID" in crypto) {
@@ -39,16 +32,29 @@ export function emit(
     summary: input.summary,
     payload: input.payload,
   };
-  store.set((prev) => {
-    const next = [evt, ...prev];
-    return next.length > MAX_EVENTS ? next.slice(0, MAX_EVENTS) : next;
-  });
+  void getActivityStore().append(evt);
 }
 
+// Subscribe across both the adapter and any adapter swap.
+function subscribe(listener: () => void): () => void {
+  let unsub = getActivityStore().subscribe(listener);
+  const unsubRegistry = subscribeActivityStoreRegistry(() => {
+    unsub();
+    unsub = getActivityStore().subscribe(listener);
+    listener();
+  });
+  return () => {
+    unsub();
+    unsubRegistry();
+  };
+}
+
+const getSnapshot = () => getActivityStore().list();
+
 export function useActivity(): ActivityEvent[] {
-  return store.use();
+  return useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
 }
 
 export function clearActivity() {
-  store.set([]);
+  void getActivityStore().clear();
 }

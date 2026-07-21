@@ -8,12 +8,18 @@
 
 import { registerModule } from "./modules/registry";
 import { openCommandBar } from "./commands/CommandBar";
+import { registerReservedCapabilities } from "./roles/reserved-capabilities";
 
 let bootstrapped = false;
 
 export function bootstrapPhase1() {
   if (bootstrapped) return;
   bootstrapped = true;
+
+  // Reserve capability IDs owned by future modules (knowledge, ai, system).
+  // Registering here is behaviourally neutral today — the Owner role holds
+  // "*" — but locks the IDs against accidental squatting by Phase 2 work.
+  registerReservedCapabilities();
 
   registerModule({
     id: "shell",
