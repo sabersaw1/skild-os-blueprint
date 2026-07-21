@@ -3,7 +3,7 @@ import {
   registerRepository,
   getRepository,
   subscribeRepository,
-  resetRegistryForTests,
+  clearRepository,
 } from "./registry";
 
 const KEY = "test.thing";
@@ -14,7 +14,7 @@ interface Fake {
 
 describe("data registry", () => {
   beforeEach(() => {
-    resetRegistryForTests();
+    clearRepository();
   });
 
   it("throws when reading an unregistered key", () => {
