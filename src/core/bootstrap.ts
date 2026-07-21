@@ -14,6 +14,7 @@ import { registerVehiclesModule } from "@/modules/vehicles";
 import { registerKnowledgeModule } from "@/modules/knowledge";
 import { registerInspectionsModule } from "@/modules/inspections";
 import { registerQuotesModule } from "@/modules/quotes";
+import { registerJobsModule } from "@/modules/jobs";
 
 let bootstrapped = false;
 
@@ -136,4 +137,7 @@ export function bootstrapPhase1() {
 
   // Product modules (Phase 5).
   registerQuotesModule();
+
+  // Product modules (Phase 6).
+  registerJobsModule();
 }

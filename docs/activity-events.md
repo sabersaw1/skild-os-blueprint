@@ -44,6 +44,21 @@ downstream automation.
 | `inspection.finding.created` | `{ findingId, inspectionId, severity }` |
 | `inspection.finding.updated` | `{ findingId, inspectionId, fields[] }` |
 | `inspection.photo.queued` | `{ photoId, inspectionId, findingId?, logicalKey }` |
+| `quote.created` | `{ quoteId, customerId, vehicleId, inspectionId?, total }` |
+| `quote.updated` | `{ quoteId, fields[] }` |
+| `quote.version.created` | `{ quoteId, versionId, versionNumber, changeReason }` |
+| `quote.sent` | `{ quoteId }` |
+| `quote.approved` | `{ quoteId }` |
+| `quote.declined` | `{ quoteId }` |
+| `quote.expired` | `{ quoteId }` |
+| `job.created` | `{ jobId, customerId, vehicleId, quoteId?, inspectionId?, priority }` |
+| `job.updated` | `{ jobId, fields[] }` |
+| `job.status.changed` | `{ jobId, fromStatus, toStatus, reason? }` |
+| `job.labor.added` | `{ jobId, laborId, hours, rate }` |
+| `job.note.added` | `{ jobId, noteId }` |
+| `job.assigned` | `{ jobId, assignedTo }` |
+
+
 
 Shell/system events (`shell.navigation.*`, `settings.value.updated`,
 `identity.session.started`) remain as defined in Phase 1.
