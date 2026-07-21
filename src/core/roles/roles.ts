@@ -66,7 +66,6 @@ export function hasAll(roleId: string, capabilityIds: string[] = []): boolean {
 // React hooks — resolve against the current identity's role and re-render
 // when identity or role changes. Prefer these in UI components over
 // hand-rolling capability lookups (Phase 4.1 hardening).
-import { useIdentity } from "../auth/identity";
 
 export function useHasCapability(capabilityId: string): boolean {
   const identity = useIdentity();
