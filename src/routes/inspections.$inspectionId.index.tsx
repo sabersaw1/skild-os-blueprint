@@ -2,6 +2,7 @@ import { Link, useNavigate } from "@tanstack/react-router";
 import { Camera, Pencil } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { createModuleRoute } from "@/core/routes/createModuleRoute";
+import { useHasCapability } from "@/core/roles/roles";
 import {
   useFindings,
   useInspection,
