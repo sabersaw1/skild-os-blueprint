@@ -47,9 +47,11 @@ type InnerOptions<TPath extends RoutePath> = Parameters<InnerFactory<TPath>>[0];
 export type ModuleRouteOptions<TPath extends RoutePath> =
   InnerOptions<TPath> & { moduleId: string };
 
-export function createModuleRoute<TPath extends RoutePath>(path: TPath) {
-  const inner = createFileRoute(path);
-  return (options: ModuleRouteOptions<TPath>) => {
+export function createModuleRoute<TPath extends RoutePath>(
+  path: TPath,
+): (options: ModuleRouteOptions<TPath>) => ReturnType<InnerFactory<TPath>> {
+  const inner: InnerFactory<TPath> = createFileRoute(path);
+  return (options) => {
     if (!options.moduleId) {
       throw new Error(
         `createModuleRoute("${path}"): moduleId is required.`,
