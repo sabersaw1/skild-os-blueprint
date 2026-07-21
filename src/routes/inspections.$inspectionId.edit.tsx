@@ -52,6 +52,18 @@ function EditInspection() {
   if (loading || !inspection)
     return <p className="p-6 text-sm text-muted-foreground">Loading…</p>;
 
+  if (!canWrite)
+    return (
+      <div className="mx-auto w-full max-w-2xl px-4 py-6">
+        <h1 className="mb-4 text-2xl font-semibold tracking-tight">
+          Edit inspection
+        </h1>
+        <p className="text-sm text-muted-foreground">
+          You do not have permission to edit inspections.
+        </p>
+      </div>
+    );
+
   return (
     <div className="mx-auto w-full max-w-2xl px-4 py-6">
       <h1 className="mb-4 text-2xl font-semibold tracking-tight">
