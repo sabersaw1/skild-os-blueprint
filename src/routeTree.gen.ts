@@ -12,12 +12,14 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as VehiclesRouteImport } from './routes/vehicles'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as KnowledgeRouteImport } from './routes/knowledge'
+import { Route as InspectionsRouteImport } from './routes/inspections'
 import { Route as CustomersRouteImport } from './routes/customers'
 import { Route as ActivityRouteImport } from './routes/activity'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as VehiclesIndexRouteImport } from './routes/vehicles.index'
 import { Route as SettingsIndexRouteImport } from './routes/settings.index'
 import { Route as KnowledgeIndexRouteImport } from './routes/knowledge.index'
+import { Route as InspectionsIndexRouteImport } from './routes/inspections.index'
 import { Route as CustomersIndexRouteImport } from './routes/customers.index'
 import { Route as VehiclesNewRouteImport } from './routes/vehicles.new'
 import { Route as VehiclesVehicleIdRouteImport } from './routes/vehicles.$vehicleId'
@@ -26,13 +28,19 @@ import { Route as SettingsModulesRouteImport } from './routes/settings.modules'
 import { Route as SettingsAppearanceRouteImport } from './routes/settings.appearance'
 import { Route as KnowledgeNewRouteImport } from './routes/knowledge.new'
 import { Route as KnowledgeKnowledgeIdRouteImport } from './routes/knowledge.$knowledgeId'
+import { Route as InspectionsNewRouteImport } from './routes/inspections.new'
+import { Route as InspectionsInspectionIdRouteImport } from './routes/inspections.$inspectionId'
 import { Route as CustomersNewRouteImport } from './routes/customers.new'
 import { Route as CustomersCustomerIdRouteImport } from './routes/customers.$customerId'
 import { Route as VehiclesVehicleIdIndexRouteImport } from './routes/vehicles.$vehicleId.index'
+import { Route as TemplatesInspectionsIndexRouteImport } from './routes/templates.inspections.index'
 import { Route as KnowledgeKnowledgeIdIndexRouteImport } from './routes/knowledge.$knowledgeId.index'
+import { Route as InspectionsInspectionIdIndexRouteImport } from './routes/inspections.$inspectionId.index'
 import { Route as CustomersCustomerIdIndexRouteImport } from './routes/customers.$customerId.index'
 import { Route as VehiclesVehicleIdEditRouteImport } from './routes/vehicles.$vehicleId.edit'
+import { Route as TemplatesInspectionsNewRouteImport } from './routes/templates.inspections.new'
 import { Route as KnowledgeKnowledgeIdEditRouteImport } from './routes/knowledge.$knowledgeId.edit'
+import { Route as InspectionsInspectionIdEditRouteImport } from './routes/inspections.$inspectionId.edit'
 import { Route as CustomersCustomerIdEditRouteImport } from './routes/customers.$customerId.edit'
 
 const VehiclesRoute = VehiclesRouteImport.update({
@@ -48,6 +56,11 @@ const SettingsRoute = SettingsRouteImport.update({
 const KnowledgeRoute = KnowledgeRouteImport.update({
   id: '/knowledge',
   path: '/knowledge',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const InspectionsRoute = InspectionsRouteImport.update({
+  id: '/inspections',
+  path: '/inspections',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CustomersRoute = CustomersRouteImport.update({
@@ -79,6 +92,11 @@ const KnowledgeIndexRoute = KnowledgeIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => KnowledgeRoute,
+} as any)
+const InspectionsIndexRoute = InspectionsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => InspectionsRoute,
 } as any)
 const CustomersIndexRoute = CustomersIndexRouteImport.update({
   id: '/',
@@ -120,6 +138,16 @@ const KnowledgeKnowledgeIdRoute = KnowledgeKnowledgeIdRouteImport.update({
   path: '/$knowledgeId',
   getParentRoute: () => KnowledgeRoute,
 } as any)
+const InspectionsNewRoute = InspectionsNewRouteImport.update({
+  id: '/new',
+  path: '/new',
+  getParentRoute: () => InspectionsRoute,
+} as any)
+const InspectionsInspectionIdRoute = InspectionsInspectionIdRouteImport.update({
+  id: '/$inspectionId',
+  path: '/$inspectionId',
+  getParentRoute: () => InspectionsRoute,
+} as any)
 const CustomersNewRoute = CustomersNewRouteImport.update({
   id: '/new',
   path: '/new',
@@ -135,11 +163,23 @@ const VehiclesVehicleIdIndexRoute = VehiclesVehicleIdIndexRouteImport.update({
   path: '/',
   getParentRoute: () => VehiclesVehicleIdRoute,
 } as any)
+const TemplatesInspectionsIndexRoute =
+  TemplatesInspectionsIndexRouteImport.update({
+    id: '/templates/inspections/',
+    path: '/templates/inspections/',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const KnowledgeKnowledgeIdIndexRoute =
   KnowledgeKnowledgeIdIndexRouteImport.update({
     id: '/',
     path: '/',
     getParentRoute: () => KnowledgeKnowledgeIdRoute,
+  } as any)
+const InspectionsInspectionIdIndexRoute =
+  InspectionsInspectionIdIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => InspectionsInspectionIdRoute,
   } as any)
 const CustomersCustomerIdIndexRoute =
   CustomersCustomerIdIndexRouteImport.update({
@@ -152,11 +192,22 @@ const VehiclesVehicleIdEditRoute = VehiclesVehicleIdEditRouteImport.update({
   path: '/edit',
   getParentRoute: () => VehiclesVehicleIdRoute,
 } as any)
+const TemplatesInspectionsNewRoute = TemplatesInspectionsNewRouteImport.update({
+  id: '/templates/inspections/new',
+  path: '/templates/inspections/new',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const KnowledgeKnowledgeIdEditRoute =
   KnowledgeKnowledgeIdEditRouteImport.update({
     id: '/edit',
     path: '/edit',
     getParentRoute: () => KnowledgeKnowledgeIdRoute,
+  } as any)
+const InspectionsInspectionIdEditRoute =
+  InspectionsInspectionIdEditRouteImport.update({
+    id: '/edit',
+    path: '/edit',
+    getParentRoute: () => InspectionsInspectionIdRoute,
   } as any)
 const CustomersCustomerIdEditRoute = CustomersCustomerIdEditRouteImport.update({
   id: '/edit',
@@ -168,11 +219,14 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/activity': typeof ActivityRoute
   '/customers': typeof CustomersRouteWithChildren
+  '/inspections': typeof InspectionsRouteWithChildren
   '/knowledge': typeof KnowledgeRouteWithChildren
   '/settings': typeof SettingsRouteWithChildren
   '/vehicles': typeof VehiclesRouteWithChildren
   '/customers/$customerId': typeof CustomersCustomerIdRouteWithChildren
   '/customers/new': typeof CustomersNewRoute
+  '/inspections/$inspectionId': typeof InspectionsInspectionIdRouteWithChildren
+  '/inspections/new': typeof InspectionsNewRoute
   '/knowledge/$knowledgeId': typeof KnowledgeKnowledgeIdRouteWithChildren
   '/knowledge/new': typeof KnowledgeNewRoute
   '/settings/appearance': typeof SettingsAppearanceRoute
@@ -181,34 +235,45 @@ export interface FileRoutesByFullPath {
   '/vehicles/$vehicleId': typeof VehiclesVehicleIdRouteWithChildren
   '/vehicles/new': typeof VehiclesNewRoute
   '/customers/': typeof CustomersIndexRoute
+  '/inspections/': typeof InspectionsIndexRoute
   '/knowledge/': typeof KnowledgeIndexRoute
   '/settings/': typeof SettingsIndexRoute
   '/vehicles/': typeof VehiclesIndexRoute
   '/customers/$customerId/edit': typeof CustomersCustomerIdEditRoute
+  '/inspections/$inspectionId/edit': typeof InspectionsInspectionIdEditRoute
   '/knowledge/$knowledgeId/edit': typeof KnowledgeKnowledgeIdEditRoute
+  '/templates/inspections/new': typeof TemplatesInspectionsNewRoute
   '/vehicles/$vehicleId/edit': typeof VehiclesVehicleIdEditRoute
   '/customers/$customerId/': typeof CustomersCustomerIdIndexRoute
+  '/inspections/$inspectionId/': typeof InspectionsInspectionIdIndexRoute
   '/knowledge/$knowledgeId/': typeof KnowledgeKnowledgeIdIndexRoute
+  '/templates/inspections/': typeof TemplatesInspectionsIndexRoute
   '/vehicles/$vehicleId/': typeof VehiclesVehicleIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/activity': typeof ActivityRoute
   '/customers/new': typeof CustomersNewRoute
+  '/inspections/new': typeof InspectionsNewRoute
   '/knowledge/new': typeof KnowledgeNewRoute
   '/settings/appearance': typeof SettingsAppearanceRoute
   '/settings/modules': typeof SettingsModulesRoute
   '/settings/profile': typeof SettingsProfileRoute
   '/vehicles/new': typeof VehiclesNewRoute
   '/customers': typeof CustomersIndexRoute
+  '/inspections': typeof InspectionsIndexRoute
   '/knowledge': typeof KnowledgeIndexRoute
   '/settings': typeof SettingsIndexRoute
   '/vehicles': typeof VehiclesIndexRoute
   '/customers/$customerId/edit': typeof CustomersCustomerIdEditRoute
+  '/inspections/$inspectionId/edit': typeof InspectionsInspectionIdEditRoute
   '/knowledge/$knowledgeId/edit': typeof KnowledgeKnowledgeIdEditRoute
+  '/templates/inspections/new': typeof TemplatesInspectionsNewRoute
   '/vehicles/$vehicleId/edit': typeof VehiclesVehicleIdEditRoute
   '/customers/$customerId': typeof CustomersCustomerIdIndexRoute
+  '/inspections/$inspectionId': typeof InspectionsInspectionIdIndexRoute
   '/knowledge/$knowledgeId': typeof KnowledgeKnowledgeIdIndexRoute
+  '/templates/inspections': typeof TemplatesInspectionsIndexRoute
   '/vehicles/$vehicleId': typeof VehiclesVehicleIdIndexRoute
 }
 export interface FileRoutesById {
@@ -216,11 +281,14 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/activity': typeof ActivityRoute
   '/customers': typeof CustomersRouteWithChildren
+  '/inspections': typeof InspectionsRouteWithChildren
   '/knowledge': typeof KnowledgeRouteWithChildren
   '/settings': typeof SettingsRouteWithChildren
   '/vehicles': typeof VehiclesRouteWithChildren
   '/customers/$customerId': typeof CustomersCustomerIdRouteWithChildren
   '/customers/new': typeof CustomersNewRoute
+  '/inspections/$inspectionId': typeof InspectionsInspectionIdRouteWithChildren
+  '/inspections/new': typeof InspectionsNewRoute
   '/knowledge/$knowledgeId': typeof KnowledgeKnowledgeIdRouteWithChildren
   '/knowledge/new': typeof KnowledgeNewRoute
   '/settings/appearance': typeof SettingsAppearanceRoute
@@ -229,14 +297,19 @@ export interface FileRoutesById {
   '/vehicles/$vehicleId': typeof VehiclesVehicleIdRouteWithChildren
   '/vehicles/new': typeof VehiclesNewRoute
   '/customers/': typeof CustomersIndexRoute
+  '/inspections/': typeof InspectionsIndexRoute
   '/knowledge/': typeof KnowledgeIndexRoute
   '/settings/': typeof SettingsIndexRoute
   '/vehicles/': typeof VehiclesIndexRoute
   '/customers/$customerId/edit': typeof CustomersCustomerIdEditRoute
+  '/inspections/$inspectionId/edit': typeof InspectionsInspectionIdEditRoute
   '/knowledge/$knowledgeId/edit': typeof KnowledgeKnowledgeIdEditRoute
+  '/templates/inspections/new': typeof TemplatesInspectionsNewRoute
   '/vehicles/$vehicleId/edit': typeof VehiclesVehicleIdEditRoute
   '/customers/$customerId/': typeof CustomersCustomerIdIndexRoute
+  '/inspections/$inspectionId/': typeof InspectionsInspectionIdIndexRoute
   '/knowledge/$knowledgeId/': typeof KnowledgeKnowledgeIdIndexRoute
+  '/templates/inspections/': typeof TemplatesInspectionsIndexRoute
   '/vehicles/$vehicleId/': typeof VehiclesVehicleIdIndexRoute
 }
 export interface FileRouteTypes {
@@ -245,11 +318,14 @@ export interface FileRouteTypes {
     | '/'
     | '/activity'
     | '/customers'
+    | '/inspections'
     | '/knowledge'
     | '/settings'
     | '/vehicles'
     | '/customers/$customerId'
     | '/customers/new'
+    | '/inspections/$inspectionId'
+    | '/inspections/new'
     | '/knowledge/$knowledgeId'
     | '/knowledge/new'
     | '/settings/appearance'
@@ -258,45 +334,59 @@ export interface FileRouteTypes {
     | '/vehicles/$vehicleId'
     | '/vehicles/new'
     | '/customers/'
+    | '/inspections/'
     | '/knowledge/'
     | '/settings/'
     | '/vehicles/'
     | '/customers/$customerId/edit'
+    | '/inspections/$inspectionId/edit'
     | '/knowledge/$knowledgeId/edit'
+    | '/templates/inspections/new'
     | '/vehicles/$vehicleId/edit'
     | '/customers/$customerId/'
+    | '/inspections/$inspectionId/'
     | '/knowledge/$knowledgeId/'
+    | '/templates/inspections/'
     | '/vehicles/$vehicleId/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/activity'
     | '/customers/new'
+    | '/inspections/new'
     | '/knowledge/new'
     | '/settings/appearance'
     | '/settings/modules'
     | '/settings/profile'
     | '/vehicles/new'
     | '/customers'
+    | '/inspections'
     | '/knowledge'
     | '/settings'
     | '/vehicles'
     | '/customers/$customerId/edit'
+    | '/inspections/$inspectionId/edit'
     | '/knowledge/$knowledgeId/edit'
+    | '/templates/inspections/new'
     | '/vehicles/$vehicleId/edit'
     | '/customers/$customerId'
+    | '/inspections/$inspectionId'
     | '/knowledge/$knowledgeId'
+    | '/templates/inspections'
     | '/vehicles/$vehicleId'
   id:
     | '__root__'
     | '/'
     | '/activity'
     | '/customers'
+    | '/inspections'
     | '/knowledge'
     | '/settings'
     | '/vehicles'
     | '/customers/$customerId'
     | '/customers/new'
+    | '/inspections/$inspectionId'
+    | '/inspections/new'
     | '/knowledge/$knowledgeId'
     | '/knowledge/new'
     | '/settings/appearance'
@@ -305,14 +395,19 @@ export interface FileRouteTypes {
     | '/vehicles/$vehicleId'
     | '/vehicles/new'
     | '/customers/'
+    | '/inspections/'
     | '/knowledge/'
     | '/settings/'
     | '/vehicles/'
     | '/customers/$customerId/edit'
+    | '/inspections/$inspectionId/edit'
     | '/knowledge/$knowledgeId/edit'
+    | '/templates/inspections/new'
     | '/vehicles/$vehicleId/edit'
     | '/customers/$customerId/'
+    | '/inspections/$inspectionId/'
     | '/knowledge/$knowledgeId/'
+    | '/templates/inspections/'
     | '/vehicles/$vehicleId/'
   fileRoutesById: FileRoutesById
 }
@@ -320,9 +415,12 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ActivityRoute: typeof ActivityRoute
   CustomersRoute: typeof CustomersRouteWithChildren
+  InspectionsRoute: typeof InspectionsRouteWithChildren
   KnowledgeRoute: typeof KnowledgeRouteWithChildren
   SettingsRoute: typeof SettingsRouteWithChildren
   VehiclesRoute: typeof VehiclesRouteWithChildren
+  TemplatesInspectionsNewRoute: typeof TemplatesInspectionsNewRoute
+  TemplatesInspectionsIndexRoute: typeof TemplatesInspectionsIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -346,6 +444,13 @@ declare module '@tanstack/react-router' {
       path: '/knowledge'
       fullPath: '/knowledge'
       preLoaderRoute: typeof KnowledgeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/inspections': {
+      id: '/inspections'
+      path: '/inspections'
+      fullPath: '/inspections'
+      preLoaderRoute: typeof InspectionsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/customers': {
@@ -389,6 +494,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/knowledge/'
       preLoaderRoute: typeof KnowledgeIndexRouteImport
       parentRoute: typeof KnowledgeRoute
+    }
+    '/inspections/': {
+      id: '/inspections/'
+      path: '/'
+      fullPath: '/inspections/'
+      preLoaderRoute: typeof InspectionsIndexRouteImport
+      parentRoute: typeof InspectionsRoute
     }
     '/customers/': {
       id: '/customers/'
@@ -446,6 +558,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof KnowledgeKnowledgeIdRouteImport
       parentRoute: typeof KnowledgeRoute
     }
+    '/inspections/new': {
+      id: '/inspections/new'
+      path: '/new'
+      fullPath: '/inspections/new'
+      preLoaderRoute: typeof InspectionsNewRouteImport
+      parentRoute: typeof InspectionsRoute
+    }
+    '/inspections/$inspectionId': {
+      id: '/inspections/$inspectionId'
+      path: '/$inspectionId'
+      fullPath: '/inspections/$inspectionId'
+      preLoaderRoute: typeof InspectionsInspectionIdRouteImport
+      parentRoute: typeof InspectionsRoute
+    }
     '/customers/new': {
       id: '/customers/new'
       path: '/new'
@@ -467,12 +593,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof VehiclesVehicleIdIndexRouteImport
       parentRoute: typeof VehiclesVehicleIdRoute
     }
+    '/templates/inspections/': {
+      id: '/templates/inspections/'
+      path: '/templates/inspections'
+      fullPath: '/templates/inspections/'
+      preLoaderRoute: typeof TemplatesInspectionsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/knowledge/$knowledgeId/': {
       id: '/knowledge/$knowledgeId/'
       path: '/'
       fullPath: '/knowledge/$knowledgeId/'
       preLoaderRoute: typeof KnowledgeKnowledgeIdIndexRouteImport
       parentRoute: typeof KnowledgeKnowledgeIdRoute
+    }
+    '/inspections/$inspectionId/': {
+      id: '/inspections/$inspectionId/'
+      path: '/'
+      fullPath: '/inspections/$inspectionId/'
+      preLoaderRoute: typeof InspectionsInspectionIdIndexRouteImport
+      parentRoute: typeof InspectionsInspectionIdRoute
     }
     '/customers/$customerId/': {
       id: '/customers/$customerId/'
@@ -488,12 +628,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof VehiclesVehicleIdEditRouteImport
       parentRoute: typeof VehiclesVehicleIdRoute
     }
+    '/templates/inspections/new': {
+      id: '/templates/inspections/new'
+      path: '/templates/inspections/new'
+      fullPath: '/templates/inspections/new'
+      preLoaderRoute: typeof TemplatesInspectionsNewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/knowledge/$knowledgeId/edit': {
       id: '/knowledge/$knowledgeId/edit'
       path: '/edit'
       fullPath: '/knowledge/$knowledgeId/edit'
       preLoaderRoute: typeof KnowledgeKnowledgeIdEditRouteImport
       parentRoute: typeof KnowledgeKnowledgeIdRoute
+    }
+    '/inspections/$inspectionId/edit': {
+      id: '/inspections/$inspectionId/edit'
+      path: '/edit'
+      fullPath: '/inspections/$inspectionId/edit'
+      preLoaderRoute: typeof InspectionsInspectionIdEditRouteImport
+      parentRoute: typeof InspectionsInspectionIdRoute
     }
     '/customers/$customerId/edit': {
       id: '/customers/$customerId/edit'
@@ -532,6 +686,38 @@ const CustomersRouteChildren: CustomersRouteChildren = {
 
 const CustomersRouteWithChildren = CustomersRoute._addFileChildren(
   CustomersRouteChildren,
+)
+
+interface InspectionsInspectionIdRouteChildren {
+  InspectionsInspectionIdEditRoute: typeof InspectionsInspectionIdEditRoute
+  InspectionsInspectionIdIndexRoute: typeof InspectionsInspectionIdIndexRoute
+}
+
+const InspectionsInspectionIdRouteChildren: InspectionsInspectionIdRouteChildren =
+  {
+    InspectionsInspectionIdEditRoute: InspectionsInspectionIdEditRoute,
+    InspectionsInspectionIdIndexRoute: InspectionsInspectionIdIndexRoute,
+  }
+
+const InspectionsInspectionIdRouteWithChildren =
+  InspectionsInspectionIdRoute._addFileChildren(
+    InspectionsInspectionIdRouteChildren,
+  )
+
+interface InspectionsRouteChildren {
+  InspectionsInspectionIdRoute: typeof InspectionsInspectionIdRouteWithChildren
+  InspectionsNewRoute: typeof InspectionsNewRoute
+  InspectionsIndexRoute: typeof InspectionsIndexRoute
+}
+
+const InspectionsRouteChildren: InspectionsRouteChildren = {
+  InspectionsInspectionIdRoute: InspectionsInspectionIdRouteWithChildren,
+  InspectionsNewRoute: InspectionsNewRoute,
+  InspectionsIndexRoute: InspectionsIndexRoute,
+}
+
+const InspectionsRouteWithChildren = InspectionsRoute._addFileChildren(
+  InspectionsRouteChildren,
 )
 
 interface KnowledgeKnowledgeIdRouteChildren {
@@ -614,9 +800,12 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ActivityRoute: ActivityRoute,
   CustomersRoute: CustomersRouteWithChildren,
+  InspectionsRoute: InspectionsRouteWithChildren,
   KnowledgeRoute: KnowledgeRouteWithChildren,
   SettingsRoute: SettingsRouteWithChildren,
   VehiclesRoute: VehiclesRouteWithChildren,
+  TemplatesInspectionsNewRoute: TemplatesInspectionsNewRoute,
+  TemplatesInspectionsIndexRoute: TemplatesInspectionsIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
