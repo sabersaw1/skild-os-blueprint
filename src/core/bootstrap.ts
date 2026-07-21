@@ -133,4 +133,7 @@ export function bootstrapPhase1() {
 
   // Product modules (Phase 4).
   registerInspectionsModule();
+
+  // Product modules (Phase 5).
+  registerQuotesModule();
 }
