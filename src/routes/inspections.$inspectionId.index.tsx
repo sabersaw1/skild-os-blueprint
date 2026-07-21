@@ -100,9 +100,9 @@ function InspectionDetail() {
         <div className="space-y-3">
           <FindingList
             findings={findings}
-            onQueuePhoto={(findingId) =>
-              repo.queuePhoto({ inspectionId, findingId })
-            }
+            onQueuePhoto={async (findingId) => {
+              await repo.queuePhoto({ inspectionId, findingId });
+            }}
           />
           <FindingForm
             inspectionId={inspectionId}
