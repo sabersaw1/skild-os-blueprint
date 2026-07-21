@@ -47,21 +47,23 @@ export const DefaultRouteNotFoundComponent: ComponentType = () => (
   </div>
 );
 
-export function createModuleRoute(path: Parameters<typeof createFileRoute>[0]) {
-  const inner = createFileRoute(path);
+export function createModuleRoute(path: string) {
+  // Typed loosely — TanStack's createFileRoute uses a path-literal generic
+  // that we can't preserve through a wrapper without regenerating the route
+  // tree types. Module authors still get full type-safety from the returned
+  // Route object (Route.useParams(), Route.useLoaderData(), etc.).
+  const inner = (createFileRoute as unknown as (p: string) => (opts: unknown) => unknown)(path);
   return (options: ModuleRouteOptions) => {
     if (!options.moduleId) {
       throw new Error(
-        `createModuleRoute("${String(path)}"): moduleId is required.`,
+        `createModuleRoute("${path}"): moduleId is required.`,
       );
     }
-    // Strip moduleId before forwarding to TanStack (it's shell metadata, not
-    // a router option).
     const { moduleId: _moduleId, ...routeOptions } = options;
     return inner({
       errorComponent: DefaultRouteErrorComponent,
       notFoundComponent: DefaultRouteNotFoundComponent,
       ...routeOptions,
-    } as BaseOptions);
+    });
   };
 }
