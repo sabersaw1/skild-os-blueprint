@@ -11,6 +11,7 @@ import { openCommandBar } from "./commands/CommandBar";
 import { registerReservedCapabilities } from "./roles/reserved-capabilities";
 import { registerCrmModule } from "@/modules/crm";
 import { registerVehiclesModule } from "@/modules/vehicles";
+import { registerKnowledgeModule } from "@/modules/knowledge";
 
 let bootstrapped = false;
 
@@ -124,4 +125,7 @@ export function bootstrapPhase1() {
   // Product modules (Phase 2).
   registerCrmModule();
   registerVehiclesModule();
+
+  // Product modules (Phase 3).
+  registerKnowledgeModule();
 }

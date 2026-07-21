@@ -31,6 +31,12 @@ downstream automation.
 | `vehicles.ownership.transferred` | `{ vehicleId, fromCustomerId, toCustomerId, reason }` |
 | `vehicles.odometer.recorded` | `{ vehicleId, value, unit }` |
 | `vehicles.photo.queued` | `{ vehicleId, logicalKey }` |
+| `knowledge.document.created` | `{ knowledgeId, type, versionId }` |
+| `knowledge.document.updated` | `{ knowledgeId, versionNumber, fields[] }` |
+| `knowledge.document.version.created` | `{ knowledgeId, versionId, versionNumber, changeReason }` |
+| `knowledge.document.archived` | `{ knowledgeId }` |
+| `knowledge.link.created` | `{ knowledgeId, linkId, targetType, targetId }` |
+| `knowledge.pricing_rule.updated` | `{ knowledgeId, versionNumber }` |
 
 Shell/system events (`shell.navigation.*`, `settings.value.updated`,
 `identity.session.started`) remain as defined in Phase 1.
