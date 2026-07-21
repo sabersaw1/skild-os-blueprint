@@ -19,9 +19,9 @@
 import { createFileRoute } from "@tanstack/react-router";
 import type { ComponentType } from "react";
 
-type BaseOptions = Parameters<ReturnType<typeof createFileRoute>>[0];
-
-export type ModuleRouteOptions = BaseOptions & {
+// Route options are typed as `unknown` here because TanStack's factory is
+// path-literal generic; see the note on `createModuleRoute` below.
+export type ModuleRouteOptions = Record<string, unknown> & {
   moduleId: string;
 };
 
