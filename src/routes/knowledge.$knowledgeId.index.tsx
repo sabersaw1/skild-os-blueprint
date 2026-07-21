@@ -17,7 +17,7 @@ export const Route = createModuleRoute("/knowledge/$knowledgeId/")({
 });
 
 function KnowledgeDetail() {
-  const { knowledgeId } = (Route as { useParams: () => { knowledgeId: string } }).useParams();
+  const { knowledgeId } = Route.useParams();
   const navigate = useNavigate();
   const repo = useKnowledgeRepository();
   const { data: doc, loading } = useKnowledgeDocument(knowledgeId);

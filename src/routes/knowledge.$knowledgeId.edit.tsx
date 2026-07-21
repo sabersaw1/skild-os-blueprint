@@ -12,7 +12,7 @@ export const Route = createModuleRoute("/knowledge/$knowledgeId/edit")({
 });
 
 function EditKnowledgeDocument() {
-  const { knowledgeId } = (Route as { useParams: () => { knowledgeId: string } }).useParams();
+  const { knowledgeId } = Route.useParams();
   const { data: doc, loading } = useKnowledgeDocument(knowledgeId);
   const repo = useKnowledgeRepository();
   const navigate = useNavigate();
