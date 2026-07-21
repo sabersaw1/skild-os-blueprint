@@ -120,4 +120,8 @@ export function bootstrapPhase1() {
       },
     ],
   });
+
+  // Product modules (Phase 2).
+  registerCrmModule();
+  registerVehiclesModule();
 }
