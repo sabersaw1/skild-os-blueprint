@@ -10,7 +10,7 @@
 // `Route.useLoaderData()`, `Route.useSearch()`, and friends stay fully
 // typed — no manual casts required at call sites.
 
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, type FileRoutesByPath } from "@tanstack/react-router";
 import type { ComponentType } from "react";
 
 export const DefaultRouteErrorComponent: ComponentType<{ error: Error }> = ({
@@ -35,20 +35,19 @@ export const DefaultRouteNotFoundComponent: ComponentType = () => (
   </div>
 );
 
-// TanStack's createFileRoute is generic on the path literal; we preserve
-// that generic through the wrapper so `Route.useParams()` etc. remain
-// typed. The options bag is whatever the inner factory accepts, plus a
-// required `moduleId`.
-type InnerFactory<TPath extends string> = ReturnType<
+// Constrain to generated route paths so `Route.useParams()` etc. stay typed
+// at call sites. `FileRoutesByPath` is produced by the TanStack Router
+// Vite plugin from files under src/routes/.
+type RoutePath = keyof FileRoutesByPath;
+type InnerFactory<TPath extends RoutePath> = ReturnType<
   typeof createFileRoute<TPath>
 >;
-type InnerOptions<TPath extends string> = Parameters<InnerFactory<TPath>>[0];
+type InnerOptions<TPath extends RoutePath> = Parameters<InnerFactory<TPath>>[0];
 
-export type ModuleRouteOptions<TPath extends string> = InnerOptions<TPath> & {
-  moduleId: string;
-};
+export type ModuleRouteOptions<TPath extends RoutePath> =
+  InnerOptions<TPath> & { moduleId: string };
 
-export function createModuleRoute<TPath extends string>(path: TPath) {
+export function createModuleRoute<TPath extends RoutePath>(path: TPath) {
   const inner = createFileRoute(path);
   return (options: ModuleRouteOptions<TPath>) => {
     if (!options.moduleId) {
