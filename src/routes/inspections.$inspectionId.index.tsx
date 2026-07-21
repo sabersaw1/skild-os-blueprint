@@ -107,16 +107,22 @@ function InspectionDetail() {
         <div className="space-y-3">
           <FindingList
             findings={findings}
-            onQueuePhoto={async (findingId) => {
-              await repo.queuePhoto({ inspectionId, findingId });
-            }}
+            onQueuePhoto={
+              canPhoto
+                ? async (findingId) => {
+                    await repo.queuePhoto({ inspectionId, findingId });
+                  }
+                : undefined
+            }
           />
-          <FindingForm
-            inspectionId={inspectionId}
-            onSubmit={async (input) => {
-              await repo.createFinding(input);
-            }}
-          />
+          {canWrite && (
+            <FindingForm
+              inspectionId={inspectionId}
+              onSubmit={async (input) => {
+                await repo.createFinding(input);
+              }}
+            />
+          )}
         </div>
       </section>
 
