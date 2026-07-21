@@ -28,7 +28,7 @@ downstream automation.
 | `crm.tag.upserted` | `{ id, label }` |
 | `vehicles.vehicle.created` | `{ id, customerId, make, model }` |
 | `vehicles.vehicle.updated` | `{ id, changedFields[] }` |
-| `vehicles.vehicle.transferred` | `{ id, fromCustomerId, toCustomerId, reason }` |
+| `vehicles.ownership.transferred` | `{ vehicleId, fromCustomerId, toCustomerId, reason }` |
 | `vehicles.odometer.recorded` | `{ vehicleId, value, unit }` |
 | `vehicles.photo.queued` | `{ vehicleId, logicalKey }` |
 
