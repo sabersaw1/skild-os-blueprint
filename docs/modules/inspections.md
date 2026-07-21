@@ -71,3 +71,27 @@ as required by the Phase 4 authorization brief.
 - `/templates/inspections/new` — create template
 
 All routes are declared via `createModuleRoute()`.
+
+## Capability enforcement in the UI (Phase 4.1)
+
+Every mutation surface in the Inspections routes gates on the matching
+capability via the `useHasCapability` / `useHasAllCapabilities` hooks in
+`src/core/roles/hooks.ts` (kept out of `roles.ts` to avoid a cycle with
+`auth/identity`):
+
+| Route | UI element | Capability |
+| --- | --- | --- |
+| `/inspections` | "New inspection" button | `inspections.write` |
+| `/inspections/new` | Create form | `inspections.write` |
+| `/inspections/$inspectionId` | "Edit" button | `inspections.write` |
+| `/inspections/$inspectionId` | New finding form | `inspections.write` |
+| `/inspections/$inspectionId` | "Queue photo" (header + per-finding) | `inspections.photos.write` |
+| `/inspections/$inspectionId/edit` | Save form | `inspections.write` |
+| `/templates/inspections` | "New template" button | `inspections.templates.write` |
+| `/templates/inspections/new` | Create form | `inspections.templates.write` |
+
+Owner role holds `*` so all checks currently pass — the gating is
+documentary and forward-compatible with real role/permission wiring.
+Repository methods remain the source of truth; UI checks only decide
+whether to render the mutation control.
+

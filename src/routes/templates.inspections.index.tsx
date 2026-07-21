@@ -2,6 +2,7 @@ import { Link, useNavigate } from "@tanstack/react-router";
 import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { createModuleRoute } from "@/core/routes/createModuleRoute";
+import { useHasCapability } from "@/core/roles/hooks";
 import { useInspectionTemplates } from "@/modules/inspections/hooks";
 
 export const Route = createModuleRoute("/templates/inspections/")({
@@ -21,6 +22,7 @@ export const Route = createModuleRoute("/templates/inspections/")({
 function TemplatesIndex() {
   const navigate = useNavigate();
   const { data, loading } = useInspectionTemplates();
+  const canWriteTemplates = useHasCapability("inspections.templates.write");
   return (
     <div className="mx-auto w-full max-w-3xl px-4 py-6">
       <header className="mb-4 flex flex-wrap items-center justify-between gap-2">
@@ -35,9 +37,11 @@ function TemplatesIndex() {
             </Link>
           </p>
         </div>
-        <Button onClick={() => navigate({ to: "/templates/inspections/new" })}>
-          <Plus className="mr-1 h-4 w-4" /> New template
-        </Button>
+        {canWriteTemplates && (
+          <Button onClick={() => navigate({ to: "/templates/inspections/new" })}>
+            <Plus className="mr-1 h-4 w-4" /> New template
+          </Button>
+        )}
       </header>
 
       {loading ? (

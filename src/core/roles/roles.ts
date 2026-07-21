@@ -62,6 +62,12 @@ export function hasAll(roleId: string, capabilityIds: string[] = []): boolean {
   return capabilityIds.every((c) => hasCapability(roleId, c));
 }
 
+// React hooks for capability checks live in ./hooks.ts to avoid a circular
+// import between roles.ts and the auth/identity module. Import them from
+// "@/core/roles/hooks" (or "@/core/roles").
+
+
+
 // Baseline capabilities the shell itself owns.
 registerCapability({
   id: "shell.navigate",

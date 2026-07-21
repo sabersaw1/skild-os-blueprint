@@ -2,6 +2,7 @@ import { Link, useNavigate } from "@tanstack/react-router";
 import { Camera, Pencil } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { createModuleRoute } from "@/core/routes/createModuleRoute";
+import { useHasCapability } from "@/core/roles/hooks";
 import {
   useFindings,
   useInspection,
@@ -28,6 +29,8 @@ function InspectionDetail() {
   const { data: photos } = useInspectionPhotos(inspectionId);
   const { data: vehicle } = useVehicle(inspection?.vehicleId);
   const { data: customer } = useCustomer(inspection?.customerId);
+  const canWrite = useHasCapability("inspections.write");
+  const canPhoto = useHasCapability("inspections.photos.write");
 
   if (loading)
     return <p className="p-6 text-sm text-muted-foreground">Loading…</p>;
@@ -73,25 +76,29 @@ function InspectionDetail() {
           )}
         </div>
         <div className="flex gap-2">
-          <Button
-            variant="outline"
-            onClick={() =>
-              navigate({
-                to: "/inspections/$inspectionId/edit",
-                params: { inspectionId },
-              })
-            }
-          >
-            <Pencil className="mr-1 h-4 w-4" /> Edit
-          </Button>
-          <Button
-            variant="outline"
-            onClick={async () => {
-              await repo.queuePhoto({ inspectionId });
-            }}
-          >
-            <Camera className="mr-1 h-4 w-4" /> Queue photo
-          </Button>
+          {canWrite && (
+            <Button
+              variant="outline"
+              onClick={() =>
+                navigate({
+                  to: "/inspections/$inspectionId/edit",
+                  params: { inspectionId },
+                })
+              }
+            >
+              <Pencil className="mr-1 h-4 w-4" /> Edit
+            </Button>
+          )}
+          {canPhoto && (
+            <Button
+              variant="outline"
+              onClick={async () => {
+                await repo.queuePhoto({ inspectionId });
+              }}
+            >
+              <Camera className="mr-1 h-4 w-4" /> Queue photo
+            </Button>
+          )}
         </div>
       </header>
 
@@ -100,16 +107,22 @@ function InspectionDetail() {
         <div className="space-y-3">
           <FindingList
             findings={findings}
-            onQueuePhoto={async (findingId) => {
-              await repo.queuePhoto({ inspectionId, findingId });
-            }}
+            onQueuePhoto={
+              canPhoto
+                ? async (findingId) => {
+                    await repo.queuePhoto({ inspectionId, findingId });
+                  }
+                : undefined
+            }
           />
-          <FindingForm
-            inspectionId={inspectionId}
-            onSubmit={async (input) => {
-              await repo.createFinding(input);
-            }}
-          />
+          {canWrite && (
+            <FindingForm
+              inspectionId={inspectionId}
+              onSubmit={async (input) => {
+                await repo.createFinding(input);
+              }}
+            />
+          )}
         </div>
       </section>
 

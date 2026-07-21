@@ -11,6 +11,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { createModuleRoute } from "@/core/routes/createModuleRoute";
+import { useHasCapability } from "@/core/roles/hooks";
 import { useInspections } from "@/modules/inspections/hooks";
 import { InspectionListItem } from "@/modules/inspections/components/InspectionListItem";
 import {
@@ -40,6 +41,7 @@ function InspectionsIndex() {
   const { data, loading } = useInspections(query);
   const { data: vehicles } = useVehicles();
   const { data: customers } = useCustomers();
+  const canWrite = useHasCapability("inspections.write");
 
   return (
     <div className="mx-auto w-full max-w-4xl px-4 py-6">
@@ -56,9 +58,11 @@ function InspectionsIndex() {
             </Link>
           </p>
         </div>
-        <Button onClick={() => navigate({ to: "/inspections/new" })}>
-          <Plus className="mr-1 h-4 w-4" /> New inspection
-        </Button>
+        {canWrite && (
+          <Button onClick={() => navigate({ to: "/inspections/new" })}>
+            <Plus className="mr-1 h-4 w-4" /> New inspection
+          </Button>
+        )}
       </header>
 
       <div className="mb-4 flex flex-wrap gap-2">
