@@ -4,43 +4,21 @@
 // OF CENTS (USD). No floating-point dollars are ever written to storage.
 // Dollars only exist at the UI edge, converted via `toCents` / `formatCents`.
 //
+// Phase 8 promoted the shared primitives to `@/core/money` so Parts and
+// Finance use one implementation. This module re-exports them and keeps the
+// Parts-specific purchase totals math.
+//
 // (Quotes/Jobs Phase 5–6 persist rounded float dollars. Parts intentionally
 // adopts the stricter exact-money representation required for Finance; see
 // docs/parts-model.md → "Money".)
 
-/** Parse a user-entered dollar string/number into integer cents. */
-export function toCents(dollars: number | string): number {
-  const n = typeof dollars === "string" ? Number(dollars) : dollars;
-  if (!Number.isFinite(n)) return 0;
-  return Math.round(n * 100);
-}
-
-/** Integer cents → dollars number (display only, never persisted). */
-export function toDollars(cents: number): number {
-  return (Number.isFinite(cents) ? Math.trunc(cents) : 0) / 100;
-}
-
-export function formatCents(cents: number, currency: "USD" = "USD"): string {
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency,
-  }).format(toDollars(cents));
-}
-
-/** True when `v` is a safe integer cents amount >= 0. */
-export function isCents(v: unknown): v is number {
-  return typeof v === "number" && Number.isSafeInteger(v) && v >= 0;
-}
-
-/**
- * Line total in cents. Quantity may be fractional (e.g. 0.5 L of fluid), so
- * the product is rounded half-up to whole cents deterministically.
- */
-export function lineTotalCents(quantity: number, unitCostCents: number): number {
-  const q = Number.isFinite(quantity) ? quantity : 0;
-  const u = Number.isSafeInteger(unitCostCents) ? unitCostCents : 0;
-  return Math.round(q * u);
-}
+export {
+  toCents,
+  toDollars,
+  formatCents,
+  isCents,
+  lineTotalCents,
+} from "@/core/money";
 
 export interface PurchaseTotals {
   subtotal: number;
