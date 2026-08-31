@@ -446,6 +446,9 @@ export function createLocalPartsRepository(): PartsRepository {
 
     async createPurchase(input: CreatePurchaseInput): Promise<Purchase> {
       if (!input.supplierId?.trim()) throw new Error("supplierId is required.");
+      if (!suppliers.some((s) => s.id === input.supplierId.trim())) {
+        throw new Error(`Unknown supplier "${input.supplierId}".`);
+      }
       validatePurchaseStatus(input.status);
       assertCents(input.shipping, "shipping");
       assertCents(input.tax, "tax");
