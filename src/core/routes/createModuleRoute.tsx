@@ -47,11 +47,12 @@ type InnerOptions<TPath extends RoutePath> = Parameters<InnerFactory<TPath>>[0];
 export type ModuleRouteOptions<TPath extends RoutePath> =
   InnerOptions<TPath> & { moduleId: string };
 
-export function createModuleRoute<TPath extends RoutePath>(
-  path: TPath,
-): (options: ModuleRouteOptions<TPath>) => ReturnType<InnerFactory<TPath>> {
-  const inner: InnerFactory<TPath> = createFileRoute(path);
-  return (options) => {
+export function createModuleRoute<TPath extends RoutePath>(path: TPath) {
+  // NOTE: `inner` is deliberately left un-annotated. Annotating it with
+  // `InnerFactory<TPath>` instantiates the factory's own generics with
+  // `unknown`, which erases `Route.useParams()` inference at call sites.
+  const inner = createFileRoute(path);
+  return (options: ModuleRouteOptions<TPath>) => {
     if (!options.moduleId) {
       throw new Error(
         `createModuleRoute("${path}"): moduleId is required.`,
@@ -62,6 +63,6 @@ export function createModuleRoute<TPath extends RoutePath>(
       errorComponent: DefaultRouteErrorComponent,
       notFoundComponent: DefaultRouteNotFoundComponent,
       ...routeOptions,
-    } as InnerOptions<TPath>);
+    } as Parameters<typeof inner>[0]);
   };
 }
