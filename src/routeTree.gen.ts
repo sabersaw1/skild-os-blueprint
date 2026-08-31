@@ -56,6 +56,7 @@ import { Route as PurchasesPartsIndexRouteImport } from './routes/purchases.part
 import { Route as PartsPartIdIndexRouteImport } from './routes/parts.$partId.index'
 import { Route as KnowledgeKnowledgeIdIndexRouteImport } from './routes/knowledge.$knowledgeId.index'
 import { Route as JobsJobIdIndexRouteImport } from './routes/jobs.$jobId.index'
+import { Route as InvoicesInvoiceIdIndexRouteImport } from './routes/invoices.$invoiceId.index'
 import { Route as InspectionsInspectionIdIndexRouteImport } from './routes/inspections.$inspectionId.index'
 import { Route as CustomersCustomerIdIndexRouteImport } from './routes/customers.$customerId.index'
 import { Route as VehiclesVehicleIdEditRouteImport } from './routes/vehicles.$vehicleId.edit'
@@ -306,6 +307,11 @@ const JobsJobIdIndexRoute = JobsJobIdIndexRouteImport.update({
   path: '/',
   getParentRoute: () => JobsJobIdRoute,
 } as any)
+const InvoicesInvoiceIdIndexRoute = InvoicesInvoiceIdIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => InvoicesInvoiceIdRoute,
+} as any)
 const InspectionsInspectionIdIndexRoute =
   InspectionsInspectionIdIndexRouteImport.update({
     id: '/',
@@ -388,7 +394,7 @@ export interface FileRoutesByFullPath {
   '/customers/new': typeof CustomersNewRoute
   '/inspections/$inspectionId': typeof InspectionsInspectionIdRouteWithChildren
   '/inspections/new': typeof InspectionsNewRoute
-  '/invoices/$invoiceId': typeof InvoicesInvoiceIdRoute
+  '/invoices/$invoiceId': typeof InvoicesInvoiceIdRouteWithChildren
   '/invoices/new': typeof InvoicesNewRoute
   '/jobs/$jobId': typeof JobsJobIdRouteWithChildren
   '/jobs/new': typeof JobsNewRoute
@@ -425,6 +431,7 @@ export interface FileRoutesByFullPath {
   '/vehicles/$vehicleId/edit': typeof VehiclesVehicleIdEditRoute
   '/customers/$customerId/': typeof CustomersCustomerIdIndexRoute
   '/inspections/$inspectionId/': typeof InspectionsInspectionIdIndexRoute
+  '/invoices/$invoiceId/': typeof InvoicesInvoiceIdIndexRoute
   '/jobs/$jobId/': typeof JobsJobIdIndexRoute
   '/knowledge/$knowledgeId/': typeof KnowledgeKnowledgeIdIndexRoute
   '/parts/$partId/': typeof PartsPartIdIndexRoute
@@ -438,7 +445,6 @@ export interface FileRoutesByTo {
   '/activity': typeof ActivityRoute
   '/customers/new': typeof CustomersNewRoute
   '/inspections/new': typeof InspectionsNewRoute
-  '/invoices/$invoiceId': typeof InvoicesInvoiceIdRoute
   '/invoices/new': typeof InvoicesNewRoute
   '/jobs/new': typeof JobsNewRoute
   '/knowledge/new': typeof KnowledgeNewRoute
@@ -470,6 +476,7 @@ export interface FileRoutesByTo {
   '/vehicles/$vehicleId/edit': typeof VehiclesVehicleIdEditRoute
   '/customers/$customerId': typeof CustomersCustomerIdIndexRoute
   '/inspections/$inspectionId': typeof InspectionsInspectionIdIndexRoute
+  '/invoices/$invoiceId': typeof InvoicesInvoiceIdIndexRoute
   '/jobs/$jobId': typeof JobsJobIdIndexRoute
   '/knowledge/$knowledgeId': typeof KnowledgeKnowledgeIdIndexRoute
   '/parts/$partId': typeof PartsPartIdIndexRoute
@@ -495,7 +502,7 @@ export interface FileRoutesById {
   '/customers/new': typeof CustomersNewRoute
   '/inspections/$inspectionId': typeof InspectionsInspectionIdRouteWithChildren
   '/inspections/new': typeof InspectionsNewRoute
-  '/invoices/$invoiceId': typeof InvoicesInvoiceIdRoute
+  '/invoices/$invoiceId': typeof InvoicesInvoiceIdRouteWithChildren
   '/invoices/new': typeof InvoicesNewRoute
   '/jobs/$jobId': typeof JobsJobIdRouteWithChildren
   '/jobs/new': typeof JobsNewRoute
@@ -532,6 +539,7 @@ export interface FileRoutesById {
   '/vehicles/$vehicleId/edit': typeof VehiclesVehicleIdEditRoute
   '/customers/$customerId/': typeof CustomersCustomerIdIndexRoute
   '/inspections/$inspectionId/': typeof InspectionsInspectionIdIndexRoute
+  '/invoices/$invoiceId/': typeof InvoicesInvoiceIdIndexRoute
   '/jobs/$jobId/': typeof JobsJobIdIndexRoute
   '/knowledge/$knowledgeId/': typeof KnowledgeKnowledgeIdIndexRoute
   '/parts/$partId/': typeof PartsPartIdIndexRoute
@@ -595,6 +603,7 @@ export interface FileRouteTypes {
     | '/vehicles/$vehicleId/edit'
     | '/customers/$customerId/'
     | '/inspections/$inspectionId/'
+    | '/invoices/$invoiceId/'
     | '/jobs/$jobId/'
     | '/knowledge/$knowledgeId/'
     | '/parts/$partId/'
@@ -608,7 +617,6 @@ export interface FileRouteTypes {
     | '/activity'
     | '/customers/new'
     | '/inspections/new'
-    | '/invoices/$invoiceId'
     | '/invoices/new'
     | '/jobs/new'
     | '/knowledge/new'
@@ -640,6 +648,7 @@ export interface FileRouteTypes {
     | '/vehicles/$vehicleId/edit'
     | '/customers/$customerId'
     | '/inspections/$inspectionId'
+    | '/invoices/$invoiceId'
     | '/jobs/$jobId'
     | '/knowledge/$knowledgeId'
     | '/parts/$partId'
@@ -701,6 +710,7 @@ export interface FileRouteTypes {
     | '/vehicles/$vehicleId/edit'
     | '/customers/$customerId/'
     | '/inspections/$inspectionId/'
+    | '/invoices/$invoiceId/'
     | '/jobs/$jobId/'
     | '/knowledge/$knowledgeId/'
     | '/parts/$partId/'
@@ -1061,6 +1071,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof JobsJobIdIndexRouteImport
       parentRoute: typeof JobsJobIdRoute
     }
+    '/invoices/$invoiceId/': {
+      id: '/invoices/$invoiceId/'
+      path: '/'
+      fullPath: '/invoices/$invoiceId/'
+      preLoaderRoute: typeof InvoicesInvoiceIdIndexRouteImport
+      parentRoute: typeof InvoicesInvoiceIdRoute
+    }
     '/inspections/$inspectionId/': {
       id: '/inspections/$inspectionId/'
       path: '/'
@@ -1209,14 +1226,25 @@ const InspectionsRouteWithChildren = InspectionsRoute._addFileChildren(
   InspectionsRouteChildren,
 )
 
+interface InvoicesInvoiceIdRouteChildren {
+  InvoicesInvoiceIdIndexRoute: typeof InvoicesInvoiceIdIndexRoute
+}
+
+const InvoicesInvoiceIdRouteChildren: InvoicesInvoiceIdRouteChildren = {
+  InvoicesInvoiceIdIndexRoute: InvoicesInvoiceIdIndexRoute,
+}
+
+const InvoicesInvoiceIdRouteWithChildren =
+  InvoicesInvoiceIdRoute._addFileChildren(InvoicesInvoiceIdRouteChildren)
+
 interface InvoicesRouteChildren {
-  InvoicesInvoiceIdRoute: typeof InvoicesInvoiceIdRoute
+  InvoicesInvoiceIdRoute: typeof InvoicesInvoiceIdRouteWithChildren
   InvoicesNewRoute: typeof InvoicesNewRoute
   InvoicesIndexRoute: typeof InvoicesIndexRoute
 }
 
 const InvoicesRouteChildren: InvoicesRouteChildren = {
-  InvoicesInvoiceIdRoute: InvoicesInvoiceIdRoute,
+  InvoicesInvoiceIdRoute: InvoicesInvoiceIdRouteWithChildren,
   InvoicesNewRoute: InvoicesNewRoute,
   InvoicesIndexRoute: InvoicesIndexRoute,
 }
