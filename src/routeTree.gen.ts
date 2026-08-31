@@ -47,6 +47,7 @@ import { Route as CustomersCustomerIdRouteImport } from './routes/customers.$cus
 import { Route as VehiclesVehicleIdIndexRouteImport } from './routes/vehicles.$vehicleId.index'
 import { Route as TemplatesInspectionsIndexRouteImport } from './routes/templates.inspections.index'
 import { Route as QuotesQuoteIdIndexRouteImport } from './routes/quotes.$quoteId.index'
+import { Route as PartsPartIdIndexRouteImport } from './routes/parts.$partId.index'
 import { Route as KnowledgeKnowledgeIdIndexRouteImport } from './routes/knowledge.$knowledgeId.index'
 import { Route as JobsJobIdIndexRouteImport } from './routes/jobs.$jobId.index'
 import { Route as InspectionsInspectionIdIndexRouteImport } from './routes/inspections.$inspectionId.index'
@@ -250,6 +251,11 @@ const QuotesQuoteIdIndexRoute = QuotesQuoteIdIndexRouteImport.update({
   path: '/',
   getParentRoute: () => QuotesQuoteIdRoute,
 } as any)
+const PartsPartIdIndexRoute = PartsPartIdIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => PartsPartIdRoute,
+} as any)
 const KnowledgeKnowledgeIdIndexRoute =
   KnowledgeKnowledgeIdIndexRouteImport.update({
     id: '/',
@@ -330,7 +336,7 @@ export interface FileRoutesByFullPath {
   '/jobs/new': typeof JobsNewRoute
   '/knowledge/$knowledgeId': typeof KnowledgeKnowledgeIdRouteWithChildren
   '/knowledge/new': typeof KnowledgeNewRoute
-  '/parts/$partId': typeof PartsPartIdRoute
+  '/parts/$partId': typeof PartsPartIdRouteWithChildren
   '/parts/new': typeof PartsNewRoute
   '/quotes/$quoteId': typeof QuotesQuoteIdRouteWithChildren
   '/quotes/new': typeof QuotesNewRoute
@@ -358,6 +364,7 @@ export interface FileRoutesByFullPath {
   '/inspections/$inspectionId/': typeof InspectionsInspectionIdIndexRoute
   '/jobs/$jobId/': typeof JobsJobIdIndexRoute
   '/knowledge/$knowledgeId/': typeof KnowledgeKnowledgeIdIndexRoute
+  '/parts/$partId/': typeof PartsPartIdIndexRoute
   '/quotes/$quoteId/': typeof QuotesQuoteIdIndexRoute
   '/templates/inspections/': typeof TemplatesInspectionsIndexRoute
   '/vehicles/$vehicleId/': typeof VehiclesVehicleIdIndexRoute
@@ -369,7 +376,6 @@ export interface FileRoutesByTo {
   '/inspections/new': typeof InspectionsNewRoute
   '/jobs/new': typeof JobsNewRoute
   '/knowledge/new': typeof KnowledgeNewRoute
-  '/parts/$partId': typeof PartsPartIdRoute
   '/parts/new': typeof PartsNewRoute
   '/quotes/new': typeof QuotesNewRoute
   '/settings/appearance': typeof SettingsAppearanceRoute
@@ -395,6 +401,7 @@ export interface FileRoutesByTo {
   '/inspections/$inspectionId': typeof InspectionsInspectionIdIndexRoute
   '/jobs/$jobId': typeof JobsJobIdIndexRoute
   '/knowledge/$knowledgeId': typeof KnowledgeKnowledgeIdIndexRoute
+  '/parts/$partId': typeof PartsPartIdIndexRoute
   '/quotes/$quoteId': typeof QuotesQuoteIdIndexRoute
   '/templates/inspections': typeof TemplatesInspectionsIndexRoute
   '/vehicles/$vehicleId': typeof VehiclesVehicleIdIndexRoute
@@ -419,7 +426,7 @@ export interface FileRoutesById {
   '/jobs/new': typeof JobsNewRoute
   '/knowledge/$knowledgeId': typeof KnowledgeKnowledgeIdRouteWithChildren
   '/knowledge/new': typeof KnowledgeNewRoute
-  '/parts/$partId': typeof PartsPartIdRoute
+  '/parts/$partId': typeof PartsPartIdRouteWithChildren
   '/parts/new': typeof PartsNewRoute
   '/quotes/$quoteId': typeof QuotesQuoteIdRouteWithChildren
   '/quotes/new': typeof QuotesNewRoute
@@ -447,6 +454,7 @@ export interface FileRoutesById {
   '/inspections/$inspectionId/': typeof InspectionsInspectionIdIndexRoute
   '/jobs/$jobId/': typeof JobsJobIdIndexRoute
   '/knowledge/$knowledgeId/': typeof KnowledgeKnowledgeIdIndexRoute
+  '/parts/$partId/': typeof PartsPartIdIndexRoute
   '/quotes/$quoteId/': typeof QuotesQuoteIdIndexRoute
   '/templates/inspections/': typeof TemplatesInspectionsIndexRoute
   '/vehicles/$vehicleId/': typeof VehiclesVehicleIdIndexRoute
@@ -500,6 +508,7 @@ export interface FileRouteTypes {
     | '/inspections/$inspectionId/'
     | '/jobs/$jobId/'
     | '/knowledge/$knowledgeId/'
+    | '/parts/$partId/'
     | '/quotes/$quoteId/'
     | '/templates/inspections/'
     | '/vehicles/$vehicleId/'
@@ -511,7 +520,6 @@ export interface FileRouteTypes {
     | '/inspections/new'
     | '/jobs/new'
     | '/knowledge/new'
-    | '/parts/$partId'
     | '/parts/new'
     | '/quotes/new'
     | '/settings/appearance'
@@ -537,6 +545,7 @@ export interface FileRouteTypes {
     | '/inspections/$inspectionId'
     | '/jobs/$jobId'
     | '/knowledge/$knowledgeId'
+    | '/parts/$partId'
     | '/quotes/$quoteId'
     | '/templates/inspections'
     | '/vehicles/$vehicleId'
@@ -588,6 +597,7 @@ export interface FileRouteTypes {
     | '/inspections/$inspectionId/'
     | '/jobs/$jobId/'
     | '/knowledge/$knowledgeId/'
+    | '/parts/$partId/'
     | '/quotes/$quoteId/'
     | '/templates/inspections/'
     | '/vehicles/$vehicleId/'
@@ -876,6 +886,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof QuotesQuoteIdIndexRouteImport
       parentRoute: typeof QuotesQuoteIdRoute
     }
+    '/parts/$partId/': {
+      id: '/parts/$partId/'
+      path: '/'
+      fullPath: '/parts/$partId/'
+      preLoaderRoute: typeof PartsPartIdIndexRouteImport
+      parentRoute: typeof PartsPartIdRoute
+    }
     '/knowledge/$knowledgeId/': {
       id: '/knowledge/$knowledgeId/'
       path: '/'
@@ -1074,14 +1091,26 @@ const KnowledgeRouteWithChildren = KnowledgeRoute._addFileChildren(
   KnowledgeRouteChildren,
 )
 
+interface PartsPartIdRouteChildren {
+  PartsPartIdIndexRoute: typeof PartsPartIdIndexRoute
+}
+
+const PartsPartIdRouteChildren: PartsPartIdRouteChildren = {
+  PartsPartIdIndexRoute: PartsPartIdIndexRoute,
+}
+
+const PartsPartIdRouteWithChildren = PartsPartIdRoute._addFileChildren(
+  PartsPartIdRouteChildren,
+)
+
 interface PartsRouteChildren {
-  PartsPartIdRoute: typeof PartsPartIdRoute
+  PartsPartIdRoute: typeof PartsPartIdRouteWithChildren
   PartsNewRoute: typeof PartsNewRoute
   PartsIndexRoute: typeof PartsIndexRoute
 }
 
 const PartsRouteChildren: PartsRouteChildren = {
-  PartsPartIdRoute: PartsPartIdRoute,
+  PartsPartIdRoute: PartsPartIdRouteWithChildren,
   PartsNewRoute: PartsNewRoute,
   PartsIndexRoute: PartsIndexRoute,
 }
