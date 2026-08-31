@@ -44,12 +44,30 @@ type InnerFactory<TPath extends RoutePath> = ReturnType<
 >;
 type InnerOptions<TPath extends RoutePath> = Parameters<InnerFactory<TPath>>[0];
 
+/**
+ * Path params derived from the route path literal ("/jobs/$jobId/" →
+ * `{ jobId: string }`). `ReturnType<InnerFactory<TPath>>` instantiates the
+ * factory's `TParams` generic with `unknown`, so `Route.useParams()` would
+ * otherwise be untyped at call sites.
+ */
+type PathParams<T extends string> =
+  T extends `${string}$${infer P}/${infer Rest}`
+    ? { [K in P]: string } & PathParams<Rest>
+    : T extends `${string}$${infer P}`
+      ? { [K in P]: string }
+      : Record<never, string>;
+
+type ModuleRouteResult<TPath extends RoutePath> = Omit<
+  ReturnType<InnerFactory<TPath>>,
+  "useParams"
+> & { useParams: () => PathParams<TPath & string> };
+
 export type ModuleRouteOptions<TPath extends RoutePath> =
   InnerOptions<TPath> & { moduleId: string };
 
 export function createModuleRoute<TPath extends RoutePath>(
   path: TPath,
-): (options: ModuleRouteOptions<TPath>) => ReturnType<InnerFactory<TPath>> {
+): (options: ModuleRouteOptions<TPath>) => ModuleRouteResult<TPath> {
   const inner: InnerFactory<TPath> = createFileRoute(path);
   return (options) => {
     if (!options.moduleId) {
@@ -62,6 +80,6 @@ export function createModuleRoute<TPath extends RoutePath>(
       errorComponent: DefaultRouteErrorComponent,
       notFoundComponent: DefaultRouteNotFoundComponent,
       ...routeOptions,
-    } as InnerOptions<TPath>);
+    } as InnerOptions<TPath>) as unknown as ModuleRouteResult<TPath>;
   };
 }

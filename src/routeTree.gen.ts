@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as VehiclesRouteImport } from './routes/vehicles'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as QuotesRouteImport } from './routes/quotes'
+import { Route as PartsRouteImport } from './routes/parts'
 import { Route as KnowledgeRouteImport } from './routes/knowledge'
 import { Route as JobsRouteImport } from './routes/jobs'
 import { Route as InspectionsRouteImport } from './routes/inspections'
@@ -21,17 +22,21 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as VehiclesIndexRouteImport } from './routes/vehicles.index'
 import { Route as SettingsIndexRouteImport } from './routes/settings.index'
 import { Route as QuotesIndexRouteImport } from './routes/quotes.index'
+import { Route as PartsIndexRouteImport } from './routes/parts.index'
 import { Route as KnowledgeIndexRouteImport } from './routes/knowledge.index'
 import { Route as JobsIndexRouteImport } from './routes/jobs.index'
 import { Route as InspectionsIndexRouteImport } from './routes/inspections.index'
 import { Route as CustomersIndexRouteImport } from './routes/customers.index'
 import { Route as VehiclesNewRouteImport } from './routes/vehicles.new'
 import { Route as VehiclesVehicleIdRouteImport } from './routes/vehicles.$vehicleId'
+import { Route as SuppliersPartsRouteImport } from './routes/suppliers.parts'
 import { Route as SettingsProfileRouteImport } from './routes/settings.profile'
 import { Route as SettingsModulesRouteImport } from './routes/settings.modules'
 import { Route as SettingsAppearanceRouteImport } from './routes/settings.appearance'
 import { Route as QuotesNewRouteImport } from './routes/quotes.new'
 import { Route as QuotesQuoteIdRouteImport } from './routes/quotes.$quoteId'
+import { Route as PartsNewRouteImport } from './routes/parts.new'
+import { Route as PartsPartIdRouteImport } from './routes/parts.$partId'
 import { Route as KnowledgeNewRouteImport } from './routes/knowledge.new'
 import { Route as KnowledgeKnowledgeIdRouteImport } from './routes/knowledge.$knowledgeId'
 import { Route as JobsNewRouteImport } from './routes/jobs.new'
@@ -43,6 +48,8 @@ import { Route as CustomersCustomerIdRouteImport } from './routes/customers.$cus
 import { Route as VehiclesVehicleIdIndexRouteImport } from './routes/vehicles.$vehicleId.index'
 import { Route as TemplatesInspectionsIndexRouteImport } from './routes/templates.inspections.index'
 import { Route as QuotesQuoteIdIndexRouteImport } from './routes/quotes.$quoteId.index'
+import { Route as PurchasesPartsIndexRouteImport } from './routes/purchases.parts.index'
+import { Route as PartsPartIdIndexRouteImport } from './routes/parts.$partId.index'
 import { Route as KnowledgeKnowledgeIdIndexRouteImport } from './routes/knowledge.$knowledgeId.index'
 import { Route as JobsJobIdIndexRouteImport } from './routes/jobs.$jobId.index'
 import { Route as InspectionsInspectionIdIndexRouteImport } from './routes/inspections.$inspectionId.index'
@@ -50,6 +57,9 @@ import { Route as CustomersCustomerIdIndexRouteImport } from './routes/customers
 import { Route as VehiclesVehicleIdEditRouteImport } from './routes/vehicles.$vehicleId.edit'
 import { Route as TemplatesInspectionsNewRouteImport } from './routes/templates.inspections.new'
 import { Route as QuotesQuoteIdEditRouteImport } from './routes/quotes.$quoteId.edit'
+import { Route as PurchasesPartsNewRouteImport } from './routes/purchases.parts.new'
+import { Route as PurchasesPartsPurchaseIdRouteImport } from './routes/purchases.parts.$purchaseId'
+import { Route as PartsPartIdEditRouteImport } from './routes/parts.$partId.edit'
 import { Route as KnowledgeKnowledgeIdEditRouteImport } from './routes/knowledge.$knowledgeId.edit'
 import { Route as JobsJobIdEditRouteImport } from './routes/jobs.$jobId.edit'
 import { Route as InspectionsInspectionIdEditRouteImport } from './routes/inspections.$inspectionId.edit'
@@ -68,6 +78,11 @@ const SettingsRoute = SettingsRouteImport.update({
 const QuotesRoute = QuotesRouteImport.update({
   id: '/quotes',
   path: '/quotes',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PartsRoute = PartsRouteImport.update({
+  id: '/parts',
+  path: '/parts',
   getParentRoute: () => rootRouteImport,
 } as any)
 const KnowledgeRoute = KnowledgeRouteImport.update({
@@ -115,6 +130,11 @@ const QuotesIndexRoute = QuotesIndexRouteImport.update({
   path: '/',
   getParentRoute: () => QuotesRoute,
 } as any)
+const PartsIndexRoute = PartsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => PartsRoute,
+} as any)
 const KnowledgeIndexRoute = KnowledgeIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -145,6 +165,11 @@ const VehiclesVehicleIdRoute = VehiclesVehicleIdRouteImport.update({
   path: '/$vehicleId',
   getParentRoute: () => VehiclesRoute,
 } as any)
+const SuppliersPartsRoute = SuppliersPartsRouteImport.update({
+  id: '/suppliers/parts',
+  path: '/suppliers/parts',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SettingsProfileRoute = SettingsProfileRouteImport.update({
   id: '/profile',
   path: '/profile',
@@ -169,6 +194,16 @@ const QuotesQuoteIdRoute = QuotesQuoteIdRouteImport.update({
   id: '/$quoteId',
   path: '/$quoteId',
   getParentRoute: () => QuotesRoute,
+} as any)
+const PartsNewRoute = PartsNewRouteImport.update({
+  id: '/new',
+  path: '/new',
+  getParentRoute: () => PartsRoute,
+} as any)
+const PartsPartIdRoute = PartsPartIdRouteImport.update({
+  id: '/$partId',
+  path: '/$partId',
+  getParentRoute: () => PartsRoute,
 } as any)
 const KnowledgeNewRoute = KnowledgeNewRouteImport.update({
   id: '/new',
@@ -226,6 +261,16 @@ const QuotesQuoteIdIndexRoute = QuotesQuoteIdIndexRouteImport.update({
   path: '/',
   getParentRoute: () => QuotesQuoteIdRoute,
 } as any)
+const PurchasesPartsIndexRoute = PurchasesPartsIndexRouteImport.update({
+  id: '/purchases/parts/',
+  path: '/purchases/parts/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PartsPartIdIndexRoute = PartsPartIdIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => PartsPartIdRoute,
+} as any)
 const KnowledgeKnowledgeIdIndexRoute =
   KnowledgeKnowledgeIdIndexRouteImport.update({
     id: '/',
@@ -264,6 +309,22 @@ const QuotesQuoteIdEditRoute = QuotesQuoteIdEditRouteImport.update({
   path: '/edit',
   getParentRoute: () => QuotesQuoteIdRoute,
 } as any)
+const PurchasesPartsNewRoute = PurchasesPartsNewRouteImport.update({
+  id: '/purchases/parts/new',
+  path: '/purchases/parts/new',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PurchasesPartsPurchaseIdRoute =
+  PurchasesPartsPurchaseIdRouteImport.update({
+    id: '/purchases/parts/$purchaseId',
+    path: '/purchases/parts/$purchaseId',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const PartsPartIdEditRoute = PartsPartIdEditRouteImport.update({
+  id: '/edit',
+  path: '/edit',
+  getParentRoute: () => PartsPartIdRoute,
+} as any)
 const KnowledgeKnowledgeIdEditRoute =
   KnowledgeKnowledgeIdEditRouteImport.update({
     id: '/edit',
@@ -294,6 +355,7 @@ export interface FileRoutesByFullPath {
   '/inspections': typeof InspectionsRouteWithChildren
   '/jobs': typeof JobsRouteWithChildren
   '/knowledge': typeof KnowledgeRouteWithChildren
+  '/parts': typeof PartsRouteWithChildren
   '/quotes': typeof QuotesRouteWithChildren
   '/settings': typeof SettingsRouteWithChildren
   '/vehicles': typeof VehiclesRouteWithChildren
@@ -305,17 +367,21 @@ export interface FileRoutesByFullPath {
   '/jobs/new': typeof JobsNewRoute
   '/knowledge/$knowledgeId': typeof KnowledgeKnowledgeIdRouteWithChildren
   '/knowledge/new': typeof KnowledgeNewRoute
+  '/parts/$partId': typeof PartsPartIdRouteWithChildren
+  '/parts/new': typeof PartsNewRoute
   '/quotes/$quoteId': typeof QuotesQuoteIdRouteWithChildren
   '/quotes/new': typeof QuotesNewRoute
   '/settings/appearance': typeof SettingsAppearanceRoute
   '/settings/modules': typeof SettingsModulesRoute
   '/settings/profile': typeof SettingsProfileRoute
+  '/suppliers/parts': typeof SuppliersPartsRoute
   '/vehicles/$vehicleId': typeof VehiclesVehicleIdRouteWithChildren
   '/vehicles/new': typeof VehiclesNewRoute
   '/customers/': typeof CustomersIndexRoute
   '/inspections/': typeof InspectionsIndexRoute
   '/jobs/': typeof JobsIndexRoute
   '/knowledge/': typeof KnowledgeIndexRoute
+  '/parts/': typeof PartsIndexRoute
   '/quotes/': typeof QuotesIndexRoute
   '/settings/': typeof SettingsIndexRoute
   '/vehicles/': typeof VehiclesIndexRoute
@@ -323,6 +389,9 @@ export interface FileRoutesByFullPath {
   '/inspections/$inspectionId/edit': typeof InspectionsInspectionIdEditRoute
   '/jobs/$jobId/edit': typeof JobsJobIdEditRoute
   '/knowledge/$knowledgeId/edit': typeof KnowledgeKnowledgeIdEditRoute
+  '/parts/$partId/edit': typeof PartsPartIdEditRoute
+  '/purchases/parts/$purchaseId': typeof PurchasesPartsPurchaseIdRoute
+  '/purchases/parts/new': typeof PurchasesPartsNewRoute
   '/quotes/$quoteId/edit': typeof QuotesQuoteIdEditRoute
   '/templates/inspections/new': typeof TemplatesInspectionsNewRoute
   '/vehicles/$vehicleId/edit': typeof VehiclesVehicleIdEditRoute
@@ -330,6 +399,8 @@ export interface FileRoutesByFullPath {
   '/inspections/$inspectionId/': typeof InspectionsInspectionIdIndexRoute
   '/jobs/$jobId/': typeof JobsJobIdIndexRoute
   '/knowledge/$knowledgeId/': typeof KnowledgeKnowledgeIdIndexRoute
+  '/parts/$partId/': typeof PartsPartIdIndexRoute
+  '/purchases/parts/': typeof PurchasesPartsIndexRoute
   '/quotes/$quoteId/': typeof QuotesQuoteIdIndexRoute
   '/templates/inspections/': typeof TemplatesInspectionsIndexRoute
   '/vehicles/$vehicleId/': typeof VehiclesVehicleIdIndexRoute
@@ -341,15 +412,18 @@ export interface FileRoutesByTo {
   '/inspections/new': typeof InspectionsNewRoute
   '/jobs/new': typeof JobsNewRoute
   '/knowledge/new': typeof KnowledgeNewRoute
+  '/parts/new': typeof PartsNewRoute
   '/quotes/new': typeof QuotesNewRoute
   '/settings/appearance': typeof SettingsAppearanceRoute
   '/settings/modules': typeof SettingsModulesRoute
   '/settings/profile': typeof SettingsProfileRoute
+  '/suppliers/parts': typeof SuppliersPartsRoute
   '/vehicles/new': typeof VehiclesNewRoute
   '/customers': typeof CustomersIndexRoute
   '/inspections': typeof InspectionsIndexRoute
   '/jobs': typeof JobsIndexRoute
   '/knowledge': typeof KnowledgeIndexRoute
+  '/parts': typeof PartsIndexRoute
   '/quotes': typeof QuotesIndexRoute
   '/settings': typeof SettingsIndexRoute
   '/vehicles': typeof VehiclesIndexRoute
@@ -357,6 +431,9 @@ export interface FileRoutesByTo {
   '/inspections/$inspectionId/edit': typeof InspectionsInspectionIdEditRoute
   '/jobs/$jobId/edit': typeof JobsJobIdEditRoute
   '/knowledge/$knowledgeId/edit': typeof KnowledgeKnowledgeIdEditRoute
+  '/parts/$partId/edit': typeof PartsPartIdEditRoute
+  '/purchases/parts/$purchaseId': typeof PurchasesPartsPurchaseIdRoute
+  '/purchases/parts/new': typeof PurchasesPartsNewRoute
   '/quotes/$quoteId/edit': typeof QuotesQuoteIdEditRoute
   '/templates/inspections/new': typeof TemplatesInspectionsNewRoute
   '/vehicles/$vehicleId/edit': typeof VehiclesVehicleIdEditRoute
@@ -364,6 +441,8 @@ export interface FileRoutesByTo {
   '/inspections/$inspectionId': typeof InspectionsInspectionIdIndexRoute
   '/jobs/$jobId': typeof JobsJobIdIndexRoute
   '/knowledge/$knowledgeId': typeof KnowledgeKnowledgeIdIndexRoute
+  '/parts/$partId': typeof PartsPartIdIndexRoute
+  '/purchases/parts': typeof PurchasesPartsIndexRoute
   '/quotes/$quoteId': typeof QuotesQuoteIdIndexRoute
   '/templates/inspections': typeof TemplatesInspectionsIndexRoute
   '/vehicles/$vehicleId': typeof VehiclesVehicleIdIndexRoute
@@ -376,6 +455,7 @@ export interface FileRoutesById {
   '/inspections': typeof InspectionsRouteWithChildren
   '/jobs': typeof JobsRouteWithChildren
   '/knowledge': typeof KnowledgeRouteWithChildren
+  '/parts': typeof PartsRouteWithChildren
   '/quotes': typeof QuotesRouteWithChildren
   '/settings': typeof SettingsRouteWithChildren
   '/vehicles': typeof VehiclesRouteWithChildren
@@ -387,17 +467,21 @@ export interface FileRoutesById {
   '/jobs/new': typeof JobsNewRoute
   '/knowledge/$knowledgeId': typeof KnowledgeKnowledgeIdRouteWithChildren
   '/knowledge/new': typeof KnowledgeNewRoute
+  '/parts/$partId': typeof PartsPartIdRouteWithChildren
+  '/parts/new': typeof PartsNewRoute
   '/quotes/$quoteId': typeof QuotesQuoteIdRouteWithChildren
   '/quotes/new': typeof QuotesNewRoute
   '/settings/appearance': typeof SettingsAppearanceRoute
   '/settings/modules': typeof SettingsModulesRoute
   '/settings/profile': typeof SettingsProfileRoute
+  '/suppliers/parts': typeof SuppliersPartsRoute
   '/vehicles/$vehicleId': typeof VehiclesVehicleIdRouteWithChildren
   '/vehicles/new': typeof VehiclesNewRoute
   '/customers/': typeof CustomersIndexRoute
   '/inspections/': typeof InspectionsIndexRoute
   '/jobs/': typeof JobsIndexRoute
   '/knowledge/': typeof KnowledgeIndexRoute
+  '/parts/': typeof PartsIndexRoute
   '/quotes/': typeof QuotesIndexRoute
   '/settings/': typeof SettingsIndexRoute
   '/vehicles/': typeof VehiclesIndexRoute
@@ -405,6 +489,9 @@ export interface FileRoutesById {
   '/inspections/$inspectionId/edit': typeof InspectionsInspectionIdEditRoute
   '/jobs/$jobId/edit': typeof JobsJobIdEditRoute
   '/knowledge/$knowledgeId/edit': typeof KnowledgeKnowledgeIdEditRoute
+  '/parts/$partId/edit': typeof PartsPartIdEditRoute
+  '/purchases/parts/$purchaseId': typeof PurchasesPartsPurchaseIdRoute
+  '/purchases/parts/new': typeof PurchasesPartsNewRoute
   '/quotes/$quoteId/edit': typeof QuotesQuoteIdEditRoute
   '/templates/inspections/new': typeof TemplatesInspectionsNewRoute
   '/vehicles/$vehicleId/edit': typeof VehiclesVehicleIdEditRoute
@@ -412,6 +499,8 @@ export interface FileRoutesById {
   '/inspections/$inspectionId/': typeof InspectionsInspectionIdIndexRoute
   '/jobs/$jobId/': typeof JobsJobIdIndexRoute
   '/knowledge/$knowledgeId/': typeof KnowledgeKnowledgeIdIndexRoute
+  '/parts/$partId/': typeof PartsPartIdIndexRoute
+  '/purchases/parts/': typeof PurchasesPartsIndexRoute
   '/quotes/$quoteId/': typeof QuotesQuoteIdIndexRoute
   '/templates/inspections/': typeof TemplatesInspectionsIndexRoute
   '/vehicles/$vehicleId/': typeof VehiclesVehicleIdIndexRoute
@@ -425,6 +514,7 @@ export interface FileRouteTypes {
     | '/inspections'
     | '/jobs'
     | '/knowledge'
+    | '/parts'
     | '/quotes'
     | '/settings'
     | '/vehicles'
@@ -436,17 +526,21 @@ export interface FileRouteTypes {
     | '/jobs/new'
     | '/knowledge/$knowledgeId'
     | '/knowledge/new'
+    | '/parts/$partId'
+    | '/parts/new'
     | '/quotes/$quoteId'
     | '/quotes/new'
     | '/settings/appearance'
     | '/settings/modules'
     | '/settings/profile'
+    | '/suppliers/parts'
     | '/vehicles/$vehicleId'
     | '/vehicles/new'
     | '/customers/'
     | '/inspections/'
     | '/jobs/'
     | '/knowledge/'
+    | '/parts/'
     | '/quotes/'
     | '/settings/'
     | '/vehicles/'
@@ -454,6 +548,9 @@ export interface FileRouteTypes {
     | '/inspections/$inspectionId/edit'
     | '/jobs/$jobId/edit'
     | '/knowledge/$knowledgeId/edit'
+    | '/parts/$partId/edit'
+    | '/purchases/parts/$purchaseId'
+    | '/purchases/parts/new'
     | '/quotes/$quoteId/edit'
     | '/templates/inspections/new'
     | '/vehicles/$vehicleId/edit'
@@ -461,6 +558,8 @@ export interface FileRouteTypes {
     | '/inspections/$inspectionId/'
     | '/jobs/$jobId/'
     | '/knowledge/$knowledgeId/'
+    | '/parts/$partId/'
+    | '/purchases/parts/'
     | '/quotes/$quoteId/'
     | '/templates/inspections/'
     | '/vehicles/$vehicleId/'
@@ -472,15 +571,18 @@ export interface FileRouteTypes {
     | '/inspections/new'
     | '/jobs/new'
     | '/knowledge/new'
+    | '/parts/new'
     | '/quotes/new'
     | '/settings/appearance'
     | '/settings/modules'
     | '/settings/profile'
+    | '/suppliers/parts'
     | '/vehicles/new'
     | '/customers'
     | '/inspections'
     | '/jobs'
     | '/knowledge'
+    | '/parts'
     | '/quotes'
     | '/settings'
     | '/vehicles'
@@ -488,6 +590,9 @@ export interface FileRouteTypes {
     | '/inspections/$inspectionId/edit'
     | '/jobs/$jobId/edit'
     | '/knowledge/$knowledgeId/edit'
+    | '/parts/$partId/edit'
+    | '/purchases/parts/$purchaseId'
+    | '/purchases/parts/new'
     | '/quotes/$quoteId/edit'
     | '/templates/inspections/new'
     | '/vehicles/$vehicleId/edit'
@@ -495,6 +600,8 @@ export interface FileRouteTypes {
     | '/inspections/$inspectionId'
     | '/jobs/$jobId'
     | '/knowledge/$knowledgeId'
+    | '/parts/$partId'
+    | '/purchases/parts'
     | '/quotes/$quoteId'
     | '/templates/inspections'
     | '/vehicles/$vehicleId'
@@ -506,6 +613,7 @@ export interface FileRouteTypes {
     | '/inspections'
     | '/jobs'
     | '/knowledge'
+    | '/parts'
     | '/quotes'
     | '/settings'
     | '/vehicles'
@@ -517,17 +625,21 @@ export interface FileRouteTypes {
     | '/jobs/new'
     | '/knowledge/$knowledgeId'
     | '/knowledge/new'
+    | '/parts/$partId'
+    | '/parts/new'
     | '/quotes/$quoteId'
     | '/quotes/new'
     | '/settings/appearance'
     | '/settings/modules'
     | '/settings/profile'
+    | '/suppliers/parts'
     | '/vehicles/$vehicleId'
     | '/vehicles/new'
     | '/customers/'
     | '/inspections/'
     | '/jobs/'
     | '/knowledge/'
+    | '/parts/'
     | '/quotes/'
     | '/settings/'
     | '/vehicles/'
@@ -535,6 +647,9 @@ export interface FileRouteTypes {
     | '/inspections/$inspectionId/edit'
     | '/jobs/$jobId/edit'
     | '/knowledge/$knowledgeId/edit'
+    | '/parts/$partId/edit'
+    | '/purchases/parts/$purchaseId'
+    | '/purchases/parts/new'
     | '/quotes/$quoteId/edit'
     | '/templates/inspections/new'
     | '/vehicles/$vehicleId/edit'
@@ -542,6 +657,8 @@ export interface FileRouteTypes {
     | '/inspections/$inspectionId/'
     | '/jobs/$jobId/'
     | '/knowledge/$knowledgeId/'
+    | '/parts/$partId/'
+    | '/purchases/parts/'
     | '/quotes/$quoteId/'
     | '/templates/inspections/'
     | '/vehicles/$vehicleId/'
@@ -554,10 +671,15 @@ export interface RootRouteChildren {
   InspectionsRoute: typeof InspectionsRouteWithChildren
   JobsRoute: typeof JobsRouteWithChildren
   KnowledgeRoute: typeof KnowledgeRouteWithChildren
+  PartsRoute: typeof PartsRouteWithChildren
   QuotesRoute: typeof QuotesRouteWithChildren
   SettingsRoute: typeof SettingsRouteWithChildren
   VehiclesRoute: typeof VehiclesRouteWithChildren
+  SuppliersPartsRoute: typeof SuppliersPartsRoute
+  PurchasesPartsPurchaseIdRoute: typeof PurchasesPartsPurchaseIdRoute
+  PurchasesPartsNewRoute: typeof PurchasesPartsNewRoute
   TemplatesInspectionsNewRoute: typeof TemplatesInspectionsNewRoute
+  PurchasesPartsIndexRoute: typeof PurchasesPartsIndexRoute
   TemplatesInspectionsIndexRoute: typeof TemplatesInspectionsIndexRoute
 }
 
@@ -582,6 +704,13 @@ declare module '@tanstack/react-router' {
       path: '/quotes'
       fullPath: '/quotes'
       preLoaderRoute: typeof QuotesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/parts': {
+      id: '/parts'
+      path: '/parts'
+      fullPath: '/parts'
+      preLoaderRoute: typeof PartsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/knowledge': {
@@ -647,6 +776,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof QuotesIndexRouteImport
       parentRoute: typeof QuotesRoute
     }
+    '/parts/': {
+      id: '/parts/'
+      path: '/'
+      fullPath: '/parts/'
+      preLoaderRoute: typeof PartsIndexRouteImport
+      parentRoute: typeof PartsRoute
+    }
     '/knowledge/': {
       id: '/knowledge/'
       path: '/'
@@ -689,6 +825,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof VehiclesVehicleIdRouteImport
       parentRoute: typeof VehiclesRoute
     }
+    '/suppliers/parts': {
+      id: '/suppliers/parts'
+      path: '/suppliers/parts'
+      fullPath: '/suppliers/parts'
+      preLoaderRoute: typeof SuppliersPartsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/settings/profile': {
       id: '/settings/profile'
       path: '/profile'
@@ -723,6 +866,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/quotes/$quoteId'
       preLoaderRoute: typeof QuotesQuoteIdRouteImport
       parentRoute: typeof QuotesRoute
+    }
+    '/parts/new': {
+      id: '/parts/new'
+      path: '/new'
+      fullPath: '/parts/new'
+      preLoaderRoute: typeof PartsNewRouteImport
+      parentRoute: typeof PartsRoute
+    }
+    '/parts/$partId': {
+      id: '/parts/$partId'
+      path: '/$partId'
+      fullPath: '/parts/$partId'
+      preLoaderRoute: typeof PartsPartIdRouteImport
+      parentRoute: typeof PartsRoute
     }
     '/knowledge/new': {
       id: '/knowledge/new'
@@ -801,6 +958,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof QuotesQuoteIdIndexRouteImport
       parentRoute: typeof QuotesQuoteIdRoute
     }
+    '/purchases/parts/': {
+      id: '/purchases/parts/'
+      path: '/purchases/parts'
+      fullPath: '/purchases/parts/'
+      preLoaderRoute: typeof PurchasesPartsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/parts/$partId/': {
+      id: '/parts/$partId/'
+      path: '/'
+      fullPath: '/parts/$partId/'
+      preLoaderRoute: typeof PartsPartIdIndexRouteImport
+      parentRoute: typeof PartsPartIdRoute
+    }
     '/knowledge/$knowledgeId/': {
       id: '/knowledge/$knowledgeId/'
       path: '/'
@@ -849,6 +1020,27 @@ declare module '@tanstack/react-router' {
       fullPath: '/quotes/$quoteId/edit'
       preLoaderRoute: typeof QuotesQuoteIdEditRouteImport
       parentRoute: typeof QuotesQuoteIdRoute
+    }
+    '/purchases/parts/new': {
+      id: '/purchases/parts/new'
+      path: '/purchases/parts/new'
+      fullPath: '/purchases/parts/new'
+      preLoaderRoute: typeof PurchasesPartsNewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/purchases/parts/$purchaseId': {
+      id: '/purchases/parts/$purchaseId'
+      path: '/purchases/parts/$purchaseId'
+      fullPath: '/purchases/parts/$purchaseId'
+      preLoaderRoute: typeof PurchasesPartsPurchaseIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/parts/$partId/edit': {
+      id: '/parts/$partId/edit'
+      path: '/edit'
+      fullPath: '/parts/$partId/edit'
+      preLoaderRoute: typeof PartsPartIdEditRouteImport
+      parentRoute: typeof PartsPartIdRoute
     }
     '/knowledge/$knowledgeId/edit': {
       id: '/knowledge/$knowledgeId/edit'
@@ -999,6 +1191,34 @@ const KnowledgeRouteWithChildren = KnowledgeRoute._addFileChildren(
   KnowledgeRouteChildren,
 )
 
+interface PartsPartIdRouteChildren {
+  PartsPartIdEditRoute: typeof PartsPartIdEditRoute
+  PartsPartIdIndexRoute: typeof PartsPartIdIndexRoute
+}
+
+const PartsPartIdRouteChildren: PartsPartIdRouteChildren = {
+  PartsPartIdEditRoute: PartsPartIdEditRoute,
+  PartsPartIdIndexRoute: PartsPartIdIndexRoute,
+}
+
+const PartsPartIdRouteWithChildren = PartsPartIdRoute._addFileChildren(
+  PartsPartIdRouteChildren,
+)
+
+interface PartsRouteChildren {
+  PartsPartIdRoute: typeof PartsPartIdRouteWithChildren
+  PartsNewRoute: typeof PartsNewRoute
+  PartsIndexRoute: typeof PartsIndexRoute
+}
+
+const PartsRouteChildren: PartsRouteChildren = {
+  PartsPartIdRoute: PartsPartIdRouteWithChildren,
+  PartsNewRoute: PartsNewRoute,
+  PartsIndexRoute: PartsIndexRoute,
+}
+
+const PartsRouteWithChildren = PartsRoute._addFileChildren(PartsRouteChildren)
+
 interface QuotesQuoteIdRouteChildren {
   QuotesQuoteIdEditRoute: typeof QuotesQuoteIdEditRoute
   QuotesQuoteIdIndexRoute: typeof QuotesQuoteIdIndexRoute
@@ -1082,12 +1302,27 @@ const rootRouteChildren: RootRouteChildren = {
   InspectionsRoute: InspectionsRouteWithChildren,
   JobsRoute: JobsRouteWithChildren,
   KnowledgeRoute: KnowledgeRouteWithChildren,
+  PartsRoute: PartsRouteWithChildren,
   QuotesRoute: QuotesRouteWithChildren,
   SettingsRoute: SettingsRouteWithChildren,
   VehiclesRoute: VehiclesRouteWithChildren,
+  SuppliersPartsRoute: SuppliersPartsRoute,
+  PurchasesPartsPurchaseIdRoute: PurchasesPartsPurchaseIdRoute,
+  PurchasesPartsNewRoute: PurchasesPartsNewRoute,
   TemplatesInspectionsNewRoute: TemplatesInspectionsNewRoute,
+  PurchasesPartsIndexRoute: PurchasesPartsIndexRoute,
   TemplatesInspectionsIndexRoute: TemplatesInspectionsIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
