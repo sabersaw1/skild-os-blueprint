@@ -29,6 +29,7 @@ import { Route as InspectionsIndexRouteImport } from './routes/inspections.index
 import { Route as CustomersIndexRouteImport } from './routes/customers.index'
 import { Route as VehiclesNewRouteImport } from './routes/vehicles.new'
 import { Route as VehiclesVehicleIdRouteImport } from './routes/vehicles.$vehicleId'
+import { Route as SuppliersPartsRouteImport } from './routes/suppliers.parts'
 import { Route as SettingsProfileRouteImport } from './routes/settings.profile'
 import { Route as SettingsModulesRouteImport } from './routes/settings.modules'
 import { Route as SettingsAppearanceRouteImport } from './routes/settings.appearance'
@@ -163,6 +164,11 @@ const VehiclesVehicleIdRoute = VehiclesVehicleIdRouteImport.update({
   id: '/$vehicleId',
   path: '/$vehicleId',
   getParentRoute: () => VehiclesRoute,
+} as any)
+const SuppliersPartsRoute = SuppliersPartsRouteImport.update({
+  id: '/suppliers/parts',
+  path: '/suppliers/parts',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const SettingsProfileRoute = SettingsProfileRouteImport.update({
   id: '/profile',
@@ -368,6 +374,7 @@ export interface FileRoutesByFullPath {
   '/settings/appearance': typeof SettingsAppearanceRoute
   '/settings/modules': typeof SettingsModulesRoute
   '/settings/profile': typeof SettingsProfileRoute
+  '/suppliers/parts': typeof SuppliersPartsRoute
   '/vehicles/$vehicleId': typeof VehiclesVehicleIdRouteWithChildren
   '/vehicles/new': typeof VehiclesNewRoute
   '/customers/': typeof CustomersIndexRoute
@@ -410,6 +417,7 @@ export interface FileRoutesByTo {
   '/settings/appearance': typeof SettingsAppearanceRoute
   '/settings/modules': typeof SettingsModulesRoute
   '/settings/profile': typeof SettingsProfileRoute
+  '/suppliers/parts': typeof SuppliersPartsRoute
   '/vehicles/new': typeof VehiclesNewRoute
   '/customers': typeof CustomersIndexRoute
   '/inspections': typeof InspectionsIndexRoute
@@ -466,6 +474,7 @@ export interface FileRoutesById {
   '/settings/appearance': typeof SettingsAppearanceRoute
   '/settings/modules': typeof SettingsModulesRoute
   '/settings/profile': typeof SettingsProfileRoute
+  '/suppliers/parts': typeof SuppliersPartsRoute
   '/vehicles/$vehicleId': typeof VehiclesVehicleIdRouteWithChildren
   '/vehicles/new': typeof VehiclesNewRoute
   '/customers/': typeof CustomersIndexRoute
@@ -524,6 +533,7 @@ export interface FileRouteTypes {
     | '/settings/appearance'
     | '/settings/modules'
     | '/settings/profile'
+    | '/suppliers/parts'
     | '/vehicles/$vehicleId'
     | '/vehicles/new'
     | '/customers/'
@@ -566,6 +576,7 @@ export interface FileRouteTypes {
     | '/settings/appearance'
     | '/settings/modules'
     | '/settings/profile'
+    | '/suppliers/parts'
     | '/vehicles/new'
     | '/customers'
     | '/inspections'
@@ -621,6 +632,7 @@ export interface FileRouteTypes {
     | '/settings/appearance'
     | '/settings/modules'
     | '/settings/profile'
+    | '/suppliers/parts'
     | '/vehicles/$vehicleId'
     | '/vehicles/new'
     | '/customers/'
@@ -663,6 +675,7 @@ export interface RootRouteChildren {
   QuotesRoute: typeof QuotesRouteWithChildren
   SettingsRoute: typeof SettingsRouteWithChildren
   VehiclesRoute: typeof VehiclesRouteWithChildren
+  SuppliersPartsRoute: typeof SuppliersPartsRoute
   PurchasesPartsPurchaseIdRoute: typeof PurchasesPartsPurchaseIdRoute
   PurchasesPartsNewRoute: typeof PurchasesPartsNewRoute
   TemplatesInspectionsNewRoute: typeof TemplatesInspectionsNewRoute
@@ -811,6 +824,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/vehicles/$vehicleId'
       preLoaderRoute: typeof VehiclesVehicleIdRouteImport
       parentRoute: typeof VehiclesRoute
+    }
+    '/suppliers/parts': {
+      id: '/suppliers/parts'
+      path: '/suppliers/parts'
+      fullPath: '/suppliers/parts'
+      preLoaderRoute: typeof SuppliersPartsRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/settings/profile': {
       id: '/settings/profile'
@@ -1286,6 +1306,7 @@ const rootRouteChildren: RootRouteChildren = {
   QuotesRoute: QuotesRouteWithChildren,
   SettingsRoute: SettingsRouteWithChildren,
   VehiclesRoute: VehiclesRouteWithChildren,
+  SuppliersPartsRoute: SuppliersPartsRoute,
   PurchasesPartsPurchaseIdRoute: PurchasesPartsPurchaseIdRoute,
   PurchasesPartsNewRoute: PurchasesPartsNewRoute,
   TemplatesInspectionsNewRoute: TemplatesInspectionsNewRoute,
