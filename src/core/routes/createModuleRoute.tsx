@@ -45,13 +45,22 @@ type InnerFactory<TPath extends RoutePath> = ReturnType<
 type InnerOptions<TPath extends RoutePath> = Parameters<InnerFactory<TPath>>[0];
 
 /**
- * The generated Route type for a path. `ReturnType<InnerFactory<TPath>>`
- * cannot be used here: it instantiates the factory's own generics (notably
- * `TParams`) with `unknown`, which erases `Route.useParams()` typing at call
- * sites. The generated route tree already carries the fully-resolved type.
+ * Path params derived from the route path literal ("/jobs/$jobId/" →
+ * `{ jobId: string }`). `ReturnType<InnerFactory<TPath>>` instantiates the
+ * factory's `TParams` generic with `unknown`, so `Route.useParams()` would
+ * otherwise be untyped at call sites.
  */
-type ModuleRouteResult<TPath extends RoutePath> =
-  FileRoutesByPath[TPath]["preLoaderRoute"];
+type PathParams<T extends string> =
+  T extends `${string}$${infer P}/${infer Rest}`
+    ? { [K in P]: string } & PathParams<Rest>
+    : T extends `${string}$${infer P}`
+      ? { [K in P]: string }
+      : Record<never, string>;
+
+type ModuleRouteResult<TPath extends RoutePath> = Omit<
+  ReturnType<InnerFactory<TPath>>,
+  "useParams"
+> & { useParams: () => PathParams<TPath & string> };
 
 export type ModuleRouteOptions<TPath extends RoutePath> =
   InnerOptions<TPath> & { moduleId: string };
