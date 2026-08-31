@@ -57,6 +57,7 @@ import { Route as VehiclesVehicleIdEditRouteImport } from './routes/vehicles.$ve
 import { Route as TemplatesInspectionsNewRouteImport } from './routes/templates.inspections.new'
 import { Route as QuotesQuoteIdEditRouteImport } from './routes/quotes.$quoteId.edit'
 import { Route as PurchasesPartsNewRouteImport } from './routes/purchases.parts.new'
+import { Route as PurchasesPartsPurchaseIdRouteImport } from './routes/purchases.parts.$purchaseId'
 import { Route as PartsPartIdEditRouteImport } from './routes/parts.$partId.edit'
 import { Route as KnowledgeKnowledgeIdEditRouteImport } from './routes/knowledge.$knowledgeId.edit'
 import { Route as JobsJobIdEditRouteImport } from './routes/jobs.$jobId.edit'
@@ -307,6 +308,12 @@ const PurchasesPartsNewRoute = PurchasesPartsNewRouteImport.update({
   path: '/purchases/parts/new',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PurchasesPartsPurchaseIdRoute =
+  PurchasesPartsPurchaseIdRouteImport.update({
+    id: '/purchases/parts/$purchaseId',
+    path: '/purchases/parts/$purchaseId',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const PartsPartIdEditRoute = PartsPartIdEditRouteImport.update({
   id: '/edit',
   path: '/edit',
@@ -376,6 +383,7 @@ export interface FileRoutesByFullPath {
   '/jobs/$jobId/edit': typeof JobsJobIdEditRoute
   '/knowledge/$knowledgeId/edit': typeof KnowledgeKnowledgeIdEditRoute
   '/parts/$partId/edit': typeof PartsPartIdEditRoute
+  '/purchases/parts/$purchaseId': typeof PurchasesPartsPurchaseIdRoute
   '/purchases/parts/new': typeof PurchasesPartsNewRoute
   '/quotes/$quoteId/edit': typeof QuotesQuoteIdEditRoute
   '/templates/inspections/new': typeof TemplatesInspectionsNewRoute
@@ -416,6 +424,7 @@ export interface FileRoutesByTo {
   '/jobs/$jobId/edit': typeof JobsJobIdEditRoute
   '/knowledge/$knowledgeId/edit': typeof KnowledgeKnowledgeIdEditRoute
   '/parts/$partId/edit': typeof PartsPartIdEditRoute
+  '/purchases/parts/$purchaseId': typeof PurchasesPartsPurchaseIdRoute
   '/purchases/parts/new': typeof PurchasesPartsNewRoute
   '/quotes/$quoteId/edit': typeof QuotesQuoteIdEditRoute
   '/templates/inspections/new': typeof TemplatesInspectionsNewRoute
@@ -472,6 +481,7 @@ export interface FileRoutesById {
   '/jobs/$jobId/edit': typeof JobsJobIdEditRoute
   '/knowledge/$knowledgeId/edit': typeof KnowledgeKnowledgeIdEditRoute
   '/parts/$partId/edit': typeof PartsPartIdEditRoute
+  '/purchases/parts/$purchaseId': typeof PurchasesPartsPurchaseIdRoute
   '/purchases/parts/new': typeof PurchasesPartsNewRoute
   '/quotes/$quoteId/edit': typeof QuotesQuoteIdEditRoute
   '/templates/inspections/new': typeof TemplatesInspectionsNewRoute
@@ -529,6 +539,7 @@ export interface FileRouteTypes {
     | '/jobs/$jobId/edit'
     | '/knowledge/$knowledgeId/edit'
     | '/parts/$partId/edit'
+    | '/purchases/parts/$purchaseId'
     | '/purchases/parts/new'
     | '/quotes/$quoteId/edit'
     | '/templates/inspections/new'
@@ -569,6 +580,7 @@ export interface FileRouteTypes {
     | '/jobs/$jobId/edit'
     | '/knowledge/$knowledgeId/edit'
     | '/parts/$partId/edit'
+    | '/purchases/parts/$purchaseId'
     | '/purchases/parts/new'
     | '/quotes/$quoteId/edit'
     | '/templates/inspections/new'
@@ -624,6 +636,7 @@ export interface FileRouteTypes {
     | '/jobs/$jobId/edit'
     | '/knowledge/$knowledgeId/edit'
     | '/parts/$partId/edit'
+    | '/purchases/parts/$purchaseId'
     | '/purchases/parts/new'
     | '/quotes/$quoteId/edit'
     | '/templates/inspections/new'
@@ -650,6 +663,7 @@ export interface RootRouteChildren {
   QuotesRoute: typeof QuotesRouteWithChildren
   SettingsRoute: typeof SettingsRouteWithChildren
   VehiclesRoute: typeof VehiclesRouteWithChildren
+  PurchasesPartsPurchaseIdRoute: typeof PurchasesPartsPurchaseIdRoute
   PurchasesPartsNewRoute: typeof PurchasesPartsNewRoute
   TemplatesInspectionsNewRoute: typeof TemplatesInspectionsNewRoute
   PurchasesPartsIndexRoute: typeof PurchasesPartsIndexRoute
@@ -994,6 +1008,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PurchasesPartsNewRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/purchases/parts/$purchaseId': {
+      id: '/purchases/parts/$purchaseId'
+      path: '/purchases/parts/$purchaseId'
+      fullPath: '/purchases/parts/$purchaseId'
+      preLoaderRoute: typeof PurchasesPartsPurchaseIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/parts/$partId/edit': {
       id: '/parts/$partId/edit'
       path: '/edit'
@@ -1265,6 +1286,7 @@ const rootRouteChildren: RootRouteChildren = {
   QuotesRoute: QuotesRouteWithChildren,
   SettingsRoute: SettingsRouteWithChildren,
   VehiclesRoute: VehiclesRouteWithChildren,
+  PurchasesPartsPurchaseIdRoute: PurchasesPartsPurchaseIdRoute,
   PurchasesPartsNewRoute: PurchasesPartsNewRoute,
   TemplatesInspectionsNewRoute: TemplatesInspectionsNewRoute,
   PurchasesPartsIndexRoute: PurchasesPartsIndexRoute,
