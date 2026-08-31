@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as VehiclesRouteImport } from './routes/vehicles'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as QuotesRouteImport } from './routes/quotes'
+import { Route as PartsRouteImport } from './routes/parts'
 import { Route as KnowledgeRouteImport } from './routes/knowledge'
 import { Route as JobsRouteImport } from './routes/jobs'
 import { Route as InspectionsRouteImport } from './routes/inspections'
@@ -68,6 +69,11 @@ const SettingsRoute = SettingsRouteImport.update({
 const QuotesRoute = QuotesRouteImport.update({
   id: '/quotes',
   path: '/quotes',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PartsRoute = PartsRouteImport.update({
+  id: '/parts',
+  path: '/parts',
   getParentRoute: () => rootRouteImport,
 } as any)
 const KnowledgeRoute = KnowledgeRouteImport.update({
@@ -294,6 +300,7 @@ export interface FileRoutesByFullPath {
   '/inspections': typeof InspectionsRouteWithChildren
   '/jobs': typeof JobsRouteWithChildren
   '/knowledge': typeof KnowledgeRouteWithChildren
+  '/parts': typeof PartsRoute
   '/quotes': typeof QuotesRouteWithChildren
   '/settings': typeof SettingsRouteWithChildren
   '/vehicles': typeof VehiclesRouteWithChildren
@@ -337,6 +344,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/activity': typeof ActivityRoute
+  '/parts': typeof PartsRoute
   '/customers/new': typeof CustomersNewRoute
   '/inspections/new': typeof InspectionsNewRoute
   '/jobs/new': typeof JobsNewRoute
@@ -376,6 +384,7 @@ export interface FileRoutesById {
   '/inspections': typeof InspectionsRouteWithChildren
   '/jobs': typeof JobsRouteWithChildren
   '/knowledge': typeof KnowledgeRouteWithChildren
+  '/parts': typeof PartsRoute
   '/quotes': typeof QuotesRouteWithChildren
   '/settings': typeof SettingsRouteWithChildren
   '/vehicles': typeof VehiclesRouteWithChildren
@@ -425,6 +434,7 @@ export interface FileRouteTypes {
     | '/inspections'
     | '/jobs'
     | '/knowledge'
+    | '/parts'
     | '/quotes'
     | '/settings'
     | '/vehicles'
@@ -468,6 +478,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/activity'
+    | '/parts'
     | '/customers/new'
     | '/inspections/new'
     | '/jobs/new'
@@ -506,6 +517,7 @@ export interface FileRouteTypes {
     | '/inspections'
     | '/jobs'
     | '/knowledge'
+    | '/parts'
     | '/quotes'
     | '/settings'
     | '/vehicles'
@@ -554,6 +566,7 @@ export interface RootRouteChildren {
   InspectionsRoute: typeof InspectionsRouteWithChildren
   JobsRoute: typeof JobsRouteWithChildren
   KnowledgeRoute: typeof KnowledgeRouteWithChildren
+  PartsRoute: typeof PartsRoute
   QuotesRoute: typeof QuotesRouteWithChildren
   SettingsRoute: typeof SettingsRouteWithChildren
   VehiclesRoute: typeof VehiclesRouteWithChildren
@@ -582,6 +595,13 @@ declare module '@tanstack/react-router' {
       path: '/quotes'
       fullPath: '/quotes'
       preLoaderRoute: typeof QuotesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/parts': {
+      id: '/parts'
+      path: '/parts'
+      fullPath: '/parts'
+      preLoaderRoute: typeof PartsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/knowledge': {
@@ -1082,6 +1102,7 @@ const rootRouteChildren: RootRouteChildren = {
   InspectionsRoute: InspectionsRouteWithChildren,
   JobsRoute: JobsRouteWithChildren,
   KnowledgeRoute: KnowledgeRouteWithChildren,
+  PartsRoute: PartsRoute,
   QuotesRoute: QuotesRouteWithChildren,
   SettingsRoute: SettingsRouteWithChildren,
   VehiclesRoute: VehiclesRouteWithChildren,
