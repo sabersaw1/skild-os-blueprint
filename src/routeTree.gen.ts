@@ -43,6 +43,7 @@ import { Route as KnowledgeNewRouteImport } from './routes/knowledge.new'
 import { Route as KnowledgeKnowledgeIdRouteImport } from './routes/knowledge.$knowledgeId'
 import { Route as JobsNewRouteImport } from './routes/jobs.new'
 import { Route as JobsJobIdRouteImport } from './routes/jobs.$jobId'
+import { Route as InvoicesNewRouteImport } from './routes/invoices.new'
 import { Route as InspectionsNewRouteImport } from './routes/inspections.new'
 import { Route as InspectionsInspectionIdRouteImport } from './routes/inspections.$inspectionId'
 import { Route as CustomersNewRouteImport } from './routes/customers.new'
@@ -237,6 +238,11 @@ const JobsJobIdRoute = JobsJobIdRouteImport.update({
   path: '/$jobId',
   getParentRoute: () => JobsRoute,
 } as any)
+const InvoicesNewRoute = InvoicesNewRouteImport.update({
+  id: '/new',
+  path: '/new',
+  getParentRoute: () => InvoicesRoute,
+} as any)
 const InspectionsNewRoute = InspectionsNewRouteImport.update({
   id: '/new',
   path: '/new',
@@ -376,6 +382,7 @@ export interface FileRoutesByFullPath {
   '/customers/new': typeof CustomersNewRoute
   '/inspections/$inspectionId': typeof InspectionsInspectionIdRouteWithChildren
   '/inspections/new': typeof InspectionsNewRoute
+  '/invoices/new': typeof InvoicesNewRoute
   '/jobs/$jobId': typeof JobsJobIdRouteWithChildren
   '/jobs/new': typeof JobsNewRoute
   '/knowledge/$knowledgeId': typeof KnowledgeKnowledgeIdRouteWithChildren
@@ -424,6 +431,7 @@ export interface FileRoutesByTo {
   '/activity': typeof ActivityRoute
   '/customers/new': typeof CustomersNewRoute
   '/inspections/new': typeof InspectionsNewRoute
+  '/invoices/new': typeof InvoicesNewRoute
   '/jobs/new': typeof JobsNewRoute
   '/knowledge/new': typeof KnowledgeNewRoute
   '/parts/new': typeof PartsNewRoute
@@ -479,6 +487,7 @@ export interface FileRoutesById {
   '/customers/new': typeof CustomersNewRoute
   '/inspections/$inspectionId': typeof InspectionsInspectionIdRouteWithChildren
   '/inspections/new': typeof InspectionsNewRoute
+  '/invoices/new': typeof InvoicesNewRoute
   '/jobs/$jobId': typeof JobsJobIdRouteWithChildren
   '/jobs/new': typeof JobsNewRoute
   '/knowledge/$knowledgeId': typeof KnowledgeKnowledgeIdRouteWithChildren
@@ -540,6 +549,7 @@ export interface FileRouteTypes {
     | '/customers/new'
     | '/inspections/$inspectionId'
     | '/inspections/new'
+    | '/invoices/new'
     | '/jobs/$jobId'
     | '/jobs/new'
     | '/knowledge/$knowledgeId'
@@ -588,6 +598,7 @@ export interface FileRouteTypes {
     | '/activity'
     | '/customers/new'
     | '/inspections/new'
+    | '/invoices/new'
     | '/jobs/new'
     | '/knowledge/new'
     | '/parts/new'
@@ -642,6 +653,7 @@ export interface FileRouteTypes {
     | '/customers/new'
     | '/inspections/$inspectionId'
     | '/inspections/new'
+    | '/invoices/new'
     | '/jobs/$jobId'
     | '/jobs/new'
     | '/knowledge/$knowledgeId'
@@ -946,6 +958,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof JobsJobIdRouteImport
       parentRoute: typeof JobsRoute
     }
+    '/invoices/new': {
+      id: '/invoices/new'
+      path: '/new'
+      fullPath: '/invoices/new'
+      preLoaderRoute: typeof InvoicesNewRouteImport
+      parentRoute: typeof InvoicesRoute
+    }
     '/inspections/new': {
       id: '/inspections/new'
       path: '/new'
@@ -1172,10 +1191,12 @@ const InspectionsRouteWithChildren = InspectionsRoute._addFileChildren(
 )
 
 interface InvoicesRouteChildren {
+  InvoicesNewRoute: typeof InvoicesNewRoute
   InvoicesIndexRoute: typeof InvoicesIndexRoute
 }
 
 const InvoicesRouteChildren: InvoicesRouteChildren = {
+  InvoicesNewRoute: InvoicesNewRoute,
   InvoicesIndexRoute: InvoicesIndexRoute,
 }
 
