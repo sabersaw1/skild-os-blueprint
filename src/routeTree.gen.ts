@@ -47,6 +47,7 @@ import { Route as CustomersCustomerIdRouteImport } from './routes/customers.$cus
 import { Route as VehiclesVehicleIdIndexRouteImport } from './routes/vehicles.$vehicleId.index'
 import { Route as TemplatesInspectionsIndexRouteImport } from './routes/templates.inspections.index'
 import { Route as QuotesQuoteIdIndexRouteImport } from './routes/quotes.$quoteId.index'
+import { Route as PurchasesPartsIndexRouteImport } from './routes/purchases.parts.index'
 import { Route as PartsPartIdIndexRouteImport } from './routes/parts.$partId.index'
 import { Route as KnowledgeKnowledgeIdIndexRouteImport } from './routes/knowledge.$knowledgeId.index'
 import { Route as JobsJobIdIndexRouteImport } from './routes/jobs.$jobId.index'
@@ -252,6 +253,11 @@ const QuotesQuoteIdIndexRoute = QuotesQuoteIdIndexRouteImport.update({
   path: '/',
   getParentRoute: () => QuotesQuoteIdRoute,
 } as any)
+const PurchasesPartsIndexRoute = PurchasesPartsIndexRouteImport.update({
+  id: '/purchases/parts/',
+  path: '/purchases/parts/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PartsPartIdIndexRoute = PartsPartIdIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -372,6 +378,7 @@ export interface FileRoutesByFullPath {
   '/jobs/$jobId/': typeof JobsJobIdIndexRoute
   '/knowledge/$knowledgeId/': typeof KnowledgeKnowledgeIdIndexRoute
   '/parts/$partId/': typeof PartsPartIdIndexRoute
+  '/purchases/parts/': typeof PurchasesPartsIndexRoute
   '/quotes/$quoteId/': typeof QuotesQuoteIdIndexRoute
   '/templates/inspections/': typeof TemplatesInspectionsIndexRoute
   '/vehicles/$vehicleId/': typeof VehiclesVehicleIdIndexRoute
@@ -410,6 +417,7 @@ export interface FileRoutesByTo {
   '/jobs/$jobId': typeof JobsJobIdIndexRoute
   '/knowledge/$knowledgeId': typeof KnowledgeKnowledgeIdIndexRoute
   '/parts/$partId': typeof PartsPartIdIndexRoute
+  '/purchases/parts': typeof PurchasesPartsIndexRoute
   '/quotes/$quoteId': typeof QuotesQuoteIdIndexRoute
   '/templates/inspections': typeof TemplatesInspectionsIndexRoute
   '/vehicles/$vehicleId': typeof VehiclesVehicleIdIndexRoute
@@ -464,6 +472,7 @@ export interface FileRoutesById {
   '/jobs/$jobId/': typeof JobsJobIdIndexRoute
   '/knowledge/$knowledgeId/': typeof KnowledgeKnowledgeIdIndexRoute
   '/parts/$partId/': typeof PartsPartIdIndexRoute
+  '/purchases/parts/': typeof PurchasesPartsIndexRoute
   '/quotes/$quoteId/': typeof QuotesQuoteIdIndexRoute
   '/templates/inspections/': typeof TemplatesInspectionsIndexRoute
   '/vehicles/$vehicleId/': typeof VehiclesVehicleIdIndexRoute
@@ -519,6 +528,7 @@ export interface FileRouteTypes {
     | '/jobs/$jobId/'
     | '/knowledge/$knowledgeId/'
     | '/parts/$partId/'
+    | '/purchases/parts/'
     | '/quotes/$quoteId/'
     | '/templates/inspections/'
     | '/vehicles/$vehicleId/'
@@ -557,6 +567,7 @@ export interface FileRouteTypes {
     | '/jobs/$jobId'
     | '/knowledge/$knowledgeId'
     | '/parts/$partId'
+    | '/purchases/parts'
     | '/quotes/$quoteId'
     | '/templates/inspections'
     | '/vehicles/$vehicleId'
@@ -610,6 +621,7 @@ export interface FileRouteTypes {
     | '/jobs/$jobId/'
     | '/knowledge/$knowledgeId/'
     | '/parts/$partId/'
+    | '/purchases/parts/'
     | '/quotes/$quoteId/'
     | '/templates/inspections/'
     | '/vehicles/$vehicleId/'
@@ -627,6 +639,7 @@ export interface RootRouteChildren {
   SettingsRoute: typeof SettingsRouteWithChildren
   VehiclesRoute: typeof VehiclesRouteWithChildren
   TemplatesInspectionsNewRoute: typeof TemplatesInspectionsNewRoute
+  PurchasesPartsIndexRoute: typeof PurchasesPartsIndexRoute
   TemplatesInspectionsIndexRoute: typeof TemplatesInspectionsIndexRoute
 }
 
@@ -897,6 +910,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/quotes/$quoteId/'
       preLoaderRoute: typeof QuotesQuoteIdIndexRouteImport
       parentRoute: typeof QuotesQuoteIdRoute
+    }
+    '/purchases/parts/': {
+      id: '/purchases/parts/'
+      path: '/purchases/parts'
+      fullPath: '/purchases/parts/'
+      preLoaderRoute: typeof PurchasesPartsIndexRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/parts/$partId/': {
       id: '/parts/$partId/'
@@ -1226,6 +1246,7 @@ const rootRouteChildren: RootRouteChildren = {
   SettingsRoute: SettingsRouteWithChildren,
   VehiclesRoute: VehiclesRouteWithChildren,
   TemplatesInspectionsNewRoute: TemplatesInspectionsNewRoute,
+  PurchasesPartsIndexRoute: PurchasesPartsIndexRoute,
   TemplatesInspectionsIndexRoute: TemplatesInspectionsIndexRoute,
 }
 export const routeTree = rootRouteImport
