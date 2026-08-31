@@ -16,6 +16,7 @@ import { registerInspectionsModule } from "@/modules/inspections";
 import { registerQuotesModule } from "@/modules/quotes";
 import { registerJobsModule } from "@/modules/jobs";
 import { registerPartsModule } from "@/modules/parts";
+import { registerFinanceModule } from "@/modules/finance";
 
 let bootstrapped = false;
 
@@ -144,4 +145,7 @@ export function bootstrapPhase1() {
 
   // Product modules (Phase 7).
   registerPartsModule();
+
+  // Product modules (Phase 8).
+  registerFinanceModule();
 }
