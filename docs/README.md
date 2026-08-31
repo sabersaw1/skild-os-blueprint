@@ -19,5 +19,11 @@ Phase 1 foundation docs. Read these before adding a module.
   [money representation](./parts-money.md)
 - Finance: [data model](./finance-model.md) ·
   [invoicing lifecycle](./finance-invoicing.md)
+- Integrations: [overview](./integrations.md) ·
+  [architecture](./integration-architecture.md) ·
+  [security](./integration-security.md) ·
+  [sync & idempotency](./integration-sync.md)
+- [Capability catalog](./architecture/capabilities.md)
 
 Architecture Decision Records: see [`adr/`](./adr).
+

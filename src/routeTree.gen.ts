@@ -34,6 +34,7 @@ import { Route as VehiclesVehicleIdRouteImport } from './routes/vehicles.$vehicl
 import { Route as SuppliersPartsRouteImport } from './routes/suppliers.parts'
 import { Route as SettingsProfileRouteImport } from './routes/settings.profile'
 import { Route as SettingsModulesRouteImport } from './routes/settings.modules'
+import { Route as SettingsIntegrationsRouteImport } from './routes/settings.integrations'
 import { Route as SettingsAppearanceRouteImport } from './routes/settings.appearance'
 import { Route as QuotesNewRouteImport } from './routes/quotes.new'
 import { Route as QuotesQuoteIdRouteImport } from './routes/quotes.$quoteId'
@@ -194,6 +195,11 @@ const SettingsProfileRoute = SettingsProfileRouteImport.update({
 const SettingsModulesRoute = SettingsModulesRouteImport.update({
   id: '/modules',
   path: '/modules',
+  getParentRoute: () => SettingsRoute,
+} as any)
+const SettingsIntegrationsRoute = SettingsIntegrationsRouteImport.update({
+  id: '/integrations',
+  path: '/integrations',
   getParentRoute: () => SettingsRoute,
 } as any)
 const SettingsAppearanceRoute = SettingsAppearanceRouteImport.update({
@@ -411,6 +417,7 @@ export interface FileRoutesByFullPath {
   '/quotes/$quoteId': typeof QuotesQuoteIdRouteWithChildren
   '/quotes/new': typeof QuotesNewRoute
   '/settings/appearance': typeof SettingsAppearanceRoute
+  '/settings/integrations': typeof SettingsIntegrationsRoute
   '/settings/modules': typeof SettingsModulesRoute
   '/settings/profile': typeof SettingsProfileRoute
   '/suppliers/parts': typeof SuppliersPartsRoute
@@ -458,6 +465,7 @@ export interface FileRoutesByTo {
   '/parts/new': typeof PartsNewRoute
   '/quotes/new': typeof QuotesNewRoute
   '/settings/appearance': typeof SettingsAppearanceRoute
+  '/settings/integrations': typeof SettingsIntegrationsRoute
   '/settings/modules': typeof SettingsModulesRoute
   '/settings/profile': typeof SettingsProfileRoute
   '/suppliers/parts': typeof SuppliersPartsRoute
@@ -521,6 +529,7 @@ export interface FileRoutesById {
   '/quotes/$quoteId': typeof QuotesQuoteIdRouteWithChildren
   '/quotes/new': typeof QuotesNewRoute
   '/settings/appearance': typeof SettingsAppearanceRoute
+  '/settings/integrations': typeof SettingsIntegrationsRoute
   '/settings/modules': typeof SettingsModulesRoute
   '/settings/profile': typeof SettingsProfileRoute
   '/suppliers/parts': typeof SuppliersPartsRoute
@@ -586,6 +595,7 @@ export interface FileRouteTypes {
     | '/quotes/$quoteId'
     | '/quotes/new'
     | '/settings/appearance'
+    | '/settings/integrations'
     | '/settings/modules'
     | '/settings/profile'
     | '/suppliers/parts'
@@ -633,6 +643,7 @@ export interface FileRouteTypes {
     | '/parts/new'
     | '/quotes/new'
     | '/settings/appearance'
+    | '/settings/integrations'
     | '/settings/modules'
     | '/settings/profile'
     | '/suppliers/parts'
@@ -695,6 +706,7 @@ export interface FileRouteTypes {
     | '/quotes/$quoteId'
     | '/quotes/new'
     | '/settings/appearance'
+    | '/settings/integrations'
     | '/settings/modules'
     | '/settings/profile'
     | '/suppliers/parts'
@@ -927,6 +939,13 @@ declare module '@tanstack/react-router' {
       path: '/modules'
       fullPath: '/settings/modules'
       preLoaderRoute: typeof SettingsModulesRouteImport
+      parentRoute: typeof SettingsRoute
+    }
+    '/settings/integrations': {
+      id: '/settings/integrations'
+      path: '/integrations'
+      fullPath: '/settings/integrations'
+      preLoaderRoute: typeof SettingsIntegrationsRouteImport
       parentRoute: typeof SettingsRoute
     }
     '/settings/appearance': {
@@ -1390,6 +1409,7 @@ const QuotesRouteWithChildren =
 
 interface SettingsRouteChildren {
   SettingsAppearanceRoute: typeof SettingsAppearanceRoute
+  SettingsIntegrationsRoute: typeof SettingsIntegrationsRoute
   SettingsModulesRoute: typeof SettingsModulesRoute
   SettingsProfileRoute: typeof SettingsProfileRoute
   SettingsIndexRoute: typeof SettingsIndexRoute
@@ -1397,6 +1417,7 @@ interface SettingsRouteChildren {
 
 const SettingsRouteChildren: SettingsRouteChildren = {
   SettingsAppearanceRoute: SettingsAppearanceRoute,
+  SettingsIntegrationsRoute: SettingsIntegrationsRoute,
   SettingsModulesRoute: SettingsModulesRoute,
   SettingsProfileRoute: SettingsProfileRoute,
   SettingsIndexRoute: SettingsIndexRoute,
