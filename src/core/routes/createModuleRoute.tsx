@@ -44,15 +44,23 @@ type InnerFactory<TPath extends RoutePath> = ReturnType<
 >;
 type InnerOptions<TPath extends RoutePath> = Parameters<InnerFactory<TPath>>[0];
 
+/**
+ * The generated Route type for a path. `ReturnType<InnerFactory<TPath>>`
+ * cannot be used here: it instantiates the factory's own generics (notably
+ * `TParams`) with `unknown`, which erases `Route.useParams()` typing at call
+ * sites. The generated route tree already carries the fully-resolved type.
+ */
+type ModuleRouteResult<TPath extends RoutePath> =
+  FileRoutesByPath[TPath]["preLoaderRoute"];
+
 export type ModuleRouteOptions<TPath extends RoutePath> =
   InnerOptions<TPath> & { moduleId: string };
 
-export function createModuleRoute<TPath extends RoutePath>(path: TPath) {
-  // NOTE: `inner` is deliberately left un-annotated. Annotating it with
-  // `InnerFactory<TPath>` instantiates the factory's own generics with
-  // `unknown`, which erases `Route.useParams()` inference at call sites.
-  const inner = createFileRoute(path);
-  return (options: ModuleRouteOptions<TPath>) => {
+export function createModuleRoute<TPath extends RoutePath>(
+  path: TPath,
+): (options: ModuleRouteOptions<TPath>) => ModuleRouteResult<TPath> {
+  const inner: InnerFactory<TPath> = createFileRoute(path);
+  return (options) => {
     if (!options.moduleId) {
       throw new Error(
         `createModuleRoute("${path}"): moduleId is required.`,
@@ -63,6 +71,6 @@ export function createModuleRoute<TPath extends RoutePath>(path: TPath) {
       errorComponent: DefaultRouteErrorComponent,
       notFoundComponent: DefaultRouteNotFoundComponent,
       ...routeOptions,
-    } as Parameters<typeof inner>[0]);
+    } as InnerOptions<TPath>) as unknown as ModuleRouteResult<TPath>;
   };
 }
