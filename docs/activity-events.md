@@ -57,6 +57,18 @@ downstream automation.
 | `job.labor.added` | `{ jobId, laborId, hours, rate }` |
 | `job.note.added` | `{ jobId, noteId }` |
 | `job.assigned` | `{ jobId, assignedTo }` |
+| `parts.part.created` | `{ partId, name, partNumber? }` |
+| `parts.part.updated` | `{ partId, fields[] }` |
+| `parts.part.archived` | `{ partId }` |
+| `parts.supplier.created` | `{ supplierId, name, type }` |
+| `parts.supplier.updated` | `{ supplierId, fields[] }` |
+| `parts.purchase.created` | `{ purchaseId, supplierId, total, lineCount }` |
+| `parts.purchase.updated` | `{ purchaseId, fields[] }` |
+| `parts.purchase.received` | `{ purchaseId, receivedAt }` |
+| `parts.purchase_line.added` | `{ purchaseLineId, purchaseId, lineTotal }` |
+| `parts.usage.recorded` | `{ partUsageId, partId, vehicleId, jobId?, totalCost }` |
+| `parts.vehicle_reference.added` | `{ partVehicleReferenceId, partId, vehicleId }` |
+
 
 
 
