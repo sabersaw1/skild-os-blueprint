@@ -13,6 +13,14 @@ import { useCustomers } from "@/modules/crm/hooks";
 
 export const Route = createModuleRoute("/invoices/")({
   moduleId: "finance",
+  head: () => ({
+    meta: [
+      { title: "All Invoices — Skild OS" },
+      { name: "description", content: "Browse, filter, and track every shop invoice by status and outstanding balance." },
+      { property: "og:title", content: "All Invoices — Skild OS" },
+      { property: "og:description", content: "Browse, filter, and track every shop invoice by status and outstanding balance." },
+    ],
+  }),
   component: InvoicesIndex,
 });
 

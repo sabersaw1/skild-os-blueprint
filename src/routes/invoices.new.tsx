@@ -10,6 +10,14 @@ import { useQuotes } from "@/modules/quotes/hooks";
 
 export const Route = createModuleRoute("/invoices/new")({
   moduleId: "finance",
+  head: () => ({
+    meta: [
+      { title: "New Invoice — Skild OS" },
+      { name: "description", content: "Create a draft invoice with line items, discount, and tax in exact cents." },
+      { property: "og:title", content: "New Invoice — Skild OS" },
+      { property: "og:description", content: "Create a draft invoice with line items, discount, and tax in exact cents." },
+    ],
+  }),
   component: NewInvoice,
 });
 

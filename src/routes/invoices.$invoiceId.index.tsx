@@ -16,6 +16,14 @@ import { useVehicle } from "@/modules/vehicles/hooks";
 
 export const Route = createModuleRoute("/invoices/$invoiceId/")({
   moduleId: "finance",
+  head: () => ({
+    meta: [
+      { title: "Invoice Detail — Skild OS" },
+      { name: "description", content: "Review invoice lines, totals, payment history, and issued snapshots." },
+      { property: "og:title", content: "Invoice Detail — Skild OS" },
+      { property: "og:description", content: "Review invoice lines, totals, payment history, and issued snapshots." },
+    ],
+  }),
   component: InvoiceDetail,
 });
 
