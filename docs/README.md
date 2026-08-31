@@ -14,8 +14,10 @@ Phase 1 foundation docs. Read these before adding a module.
 - Modules: [CRM](./modules/crm.md) · [Vehicles](./modules/vehicles.md) ·
   [Knowledge](./modules/knowledge.md) · [Inspections](./modules/inspections.md) ·
   [Quotes](./modules/quotes.md) · [Jobs](./modules/jobs.md) ·
-  [Parts](./modules/parts.md)
+  [Parts](./modules/parts.md) · [Finance](./modules/finance.md)
 - Parts: [data model](./parts-model.md) · [purchasing workflow](./parts-purchasing.md) ·
   [money representation](./parts-money.md)
+- Finance: [data model](./finance-model.md) ·
+  [invoicing lifecycle](./finance-invoicing.md)
 
 Architecture Decision Records: see [`adr/`](./adr).

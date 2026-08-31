@@ -68,6 +68,13 @@ downstream automation.
 | `parts.purchase_line.added` | `{ purchaseLineId, purchaseId, lineTotal }` |
 | `parts.usage.recorded` | `{ partUsageId, partId, vehicleId, jobId?, totalCost }` |
 | `parts.vehicle_reference.added` | `{ partVehicleReferenceId, partId, vehicleId }` |
+| `finance.invoice.created` | `{ invoiceId, customerId }` |
+| `finance.invoice.updated` | `{ invoiceId }` |
+| `finance.invoice.issued` | `{ invoiceId, snapshotId, total, note? }` |
+| `finance.invoice.voided` | `{ invoiceId, reason }` |
+| `finance.payment.recorded` | `{ invoiceId, paymentId, method, balance }` |
+| `finance.invoice.partially_paid` | `{ invoiceId, amountPaid, balance }` |
+| `finance.invoice.paid` | `{ invoiceId, amountPaid, balance }` |
 
 
 
