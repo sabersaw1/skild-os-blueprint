@@ -15,6 +15,7 @@ import { Route as QuotesRouteImport } from './routes/quotes'
 import { Route as PartsRouteImport } from './routes/parts'
 import { Route as KnowledgeRouteImport } from './routes/knowledge'
 import { Route as JobsRouteImport } from './routes/jobs'
+import { Route as InvoicesRouteImport } from './routes/invoices'
 import { Route as InspectionsRouteImport } from './routes/inspections'
 import { Route as CustomersRouteImport } from './routes/customers'
 import { Route as ActivityRouteImport } from './routes/activity'
@@ -93,6 +94,11 @@ const KnowledgeRoute = KnowledgeRouteImport.update({
 const JobsRoute = JobsRouteImport.update({
   id: '/jobs',
   path: '/jobs',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const InvoicesRoute = InvoicesRouteImport.update({
+  id: '/invoices',
+  path: '/invoices',
   getParentRoute: () => rootRouteImport,
 } as any)
 const InspectionsRoute = InspectionsRouteImport.update({
@@ -353,6 +359,7 @@ export interface FileRoutesByFullPath {
   '/activity': typeof ActivityRoute
   '/customers': typeof CustomersRouteWithChildren
   '/inspections': typeof InspectionsRouteWithChildren
+  '/invoices': typeof InvoicesRoute
   '/jobs': typeof JobsRouteWithChildren
   '/knowledge': typeof KnowledgeRouteWithChildren
   '/parts': typeof PartsRouteWithChildren
@@ -408,6 +415,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/activity': typeof ActivityRoute
+  '/invoices': typeof InvoicesRoute
   '/customers/new': typeof CustomersNewRoute
   '/inspections/new': typeof InspectionsNewRoute
   '/jobs/new': typeof JobsNewRoute
@@ -453,6 +461,7 @@ export interface FileRoutesById {
   '/activity': typeof ActivityRoute
   '/customers': typeof CustomersRouteWithChildren
   '/inspections': typeof InspectionsRouteWithChildren
+  '/invoices': typeof InvoicesRoute
   '/jobs': typeof JobsRouteWithChildren
   '/knowledge': typeof KnowledgeRouteWithChildren
   '/parts': typeof PartsRouteWithChildren
@@ -512,6 +521,7 @@ export interface FileRouteTypes {
     | '/activity'
     | '/customers'
     | '/inspections'
+    | '/invoices'
     | '/jobs'
     | '/knowledge'
     | '/parts'
@@ -567,6 +577,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/activity'
+    | '/invoices'
     | '/customers/new'
     | '/inspections/new'
     | '/jobs/new'
@@ -611,6 +622,7 @@ export interface FileRouteTypes {
     | '/activity'
     | '/customers'
     | '/inspections'
+    | '/invoices'
     | '/jobs'
     | '/knowledge'
     | '/parts'
@@ -669,6 +681,7 @@ export interface RootRouteChildren {
   ActivityRoute: typeof ActivityRoute
   CustomersRoute: typeof CustomersRouteWithChildren
   InspectionsRoute: typeof InspectionsRouteWithChildren
+  InvoicesRoute: typeof InvoicesRoute
   JobsRoute: typeof JobsRouteWithChildren
   KnowledgeRoute: typeof KnowledgeRouteWithChildren
   PartsRoute: typeof PartsRouteWithChildren
@@ -725,6 +738,13 @@ declare module '@tanstack/react-router' {
       path: '/jobs'
       fullPath: '/jobs'
       preLoaderRoute: typeof JobsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/invoices': {
+      id: '/invoices'
+      path: '/invoices'
+      fullPath: '/invoices'
+      preLoaderRoute: typeof InvoicesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/inspections': {
@@ -1300,6 +1320,7 @@ const rootRouteChildren: RootRouteChildren = {
   ActivityRoute: ActivityRoute,
   CustomersRoute: CustomersRouteWithChildren,
   InspectionsRoute: InspectionsRouteWithChildren,
+  InvoicesRoute: InvoicesRoute,
   JobsRoute: JobsRouteWithChildren,
   KnowledgeRoute: KnowledgeRouteWithChildren,
   PartsRoute: PartsRouteWithChildren,
