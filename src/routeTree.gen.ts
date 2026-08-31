@@ -55,6 +55,7 @@ import { Route as CustomersCustomerIdIndexRouteImport } from './routes/customers
 import { Route as VehiclesVehicleIdEditRouteImport } from './routes/vehicles.$vehicleId.edit'
 import { Route as TemplatesInspectionsNewRouteImport } from './routes/templates.inspections.new'
 import { Route as QuotesQuoteIdEditRouteImport } from './routes/quotes.$quoteId.edit'
+import { Route as PartsPartIdEditRouteImport } from './routes/parts.$partId.edit'
 import { Route as KnowledgeKnowledgeIdEditRouteImport } from './routes/knowledge.$knowledgeId.edit'
 import { Route as JobsJobIdEditRouteImport } from './routes/jobs.$jobId.edit'
 import { Route as InspectionsInspectionIdEditRouteImport } from './routes/inspections.$inspectionId.edit'
@@ -294,6 +295,11 @@ const QuotesQuoteIdEditRoute = QuotesQuoteIdEditRouteImport.update({
   path: '/edit',
   getParentRoute: () => QuotesQuoteIdRoute,
 } as any)
+const PartsPartIdEditRoute = PartsPartIdEditRouteImport.update({
+  id: '/edit',
+  path: '/edit',
+  getParentRoute: () => PartsPartIdRoute,
+} as any)
 const KnowledgeKnowledgeIdEditRoute =
   KnowledgeKnowledgeIdEditRouteImport.update({
     id: '/edit',
@@ -357,6 +363,7 @@ export interface FileRoutesByFullPath {
   '/inspections/$inspectionId/edit': typeof InspectionsInspectionIdEditRoute
   '/jobs/$jobId/edit': typeof JobsJobIdEditRoute
   '/knowledge/$knowledgeId/edit': typeof KnowledgeKnowledgeIdEditRoute
+  '/parts/$partId/edit': typeof PartsPartIdEditRoute
   '/quotes/$quoteId/edit': typeof QuotesQuoteIdEditRoute
   '/templates/inspections/new': typeof TemplatesInspectionsNewRoute
   '/vehicles/$vehicleId/edit': typeof VehiclesVehicleIdEditRoute
@@ -394,6 +401,7 @@ export interface FileRoutesByTo {
   '/inspections/$inspectionId/edit': typeof InspectionsInspectionIdEditRoute
   '/jobs/$jobId/edit': typeof JobsJobIdEditRoute
   '/knowledge/$knowledgeId/edit': typeof KnowledgeKnowledgeIdEditRoute
+  '/parts/$partId/edit': typeof PartsPartIdEditRoute
   '/quotes/$quoteId/edit': typeof QuotesQuoteIdEditRoute
   '/templates/inspections/new': typeof TemplatesInspectionsNewRoute
   '/vehicles/$vehicleId/edit': typeof VehiclesVehicleIdEditRoute
@@ -447,6 +455,7 @@ export interface FileRoutesById {
   '/inspections/$inspectionId/edit': typeof InspectionsInspectionIdEditRoute
   '/jobs/$jobId/edit': typeof JobsJobIdEditRoute
   '/knowledge/$knowledgeId/edit': typeof KnowledgeKnowledgeIdEditRoute
+  '/parts/$partId/edit': typeof PartsPartIdEditRoute
   '/quotes/$quoteId/edit': typeof QuotesQuoteIdEditRoute
   '/templates/inspections/new': typeof TemplatesInspectionsNewRoute
   '/vehicles/$vehicleId/edit': typeof VehiclesVehicleIdEditRoute
@@ -501,6 +510,7 @@ export interface FileRouteTypes {
     | '/inspections/$inspectionId/edit'
     | '/jobs/$jobId/edit'
     | '/knowledge/$knowledgeId/edit'
+    | '/parts/$partId/edit'
     | '/quotes/$quoteId/edit'
     | '/templates/inspections/new'
     | '/vehicles/$vehicleId/edit'
@@ -538,6 +548,7 @@ export interface FileRouteTypes {
     | '/inspections/$inspectionId/edit'
     | '/jobs/$jobId/edit'
     | '/knowledge/$knowledgeId/edit'
+    | '/parts/$partId/edit'
     | '/quotes/$quoteId/edit'
     | '/templates/inspections/new'
     | '/vehicles/$vehicleId/edit'
@@ -590,6 +601,7 @@ export interface FileRouteTypes {
     | '/inspections/$inspectionId/edit'
     | '/jobs/$jobId/edit'
     | '/knowledge/$knowledgeId/edit'
+    | '/parts/$partId/edit'
     | '/quotes/$quoteId/edit'
     | '/templates/inspections/new'
     | '/vehicles/$vehicleId/edit'
@@ -942,6 +954,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof QuotesQuoteIdEditRouteImport
       parentRoute: typeof QuotesQuoteIdRoute
     }
+    '/parts/$partId/edit': {
+      id: '/parts/$partId/edit'
+      path: '/edit'
+      fullPath: '/parts/$partId/edit'
+      preLoaderRoute: typeof PartsPartIdEditRouteImport
+      parentRoute: typeof PartsPartIdRoute
+    }
     '/knowledge/$knowledgeId/edit': {
       id: '/knowledge/$knowledgeId/edit'
       path: '/edit'
@@ -1092,10 +1111,12 @@ const KnowledgeRouteWithChildren = KnowledgeRoute._addFileChildren(
 )
 
 interface PartsPartIdRouteChildren {
+  PartsPartIdEditRoute: typeof PartsPartIdEditRoute
   PartsPartIdIndexRoute: typeof PartsPartIdIndexRoute
 }
 
 const PartsPartIdRouteChildren: PartsPartIdRouteChildren = {
+  PartsPartIdEditRoute: PartsPartIdEditRoute,
   PartsPartIdIndexRoute: PartsPartIdIndexRoute,
 }
 
