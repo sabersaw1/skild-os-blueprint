@@ -15,6 +15,7 @@ import { registerKnowledgeModule } from "@/modules/knowledge";
 import { registerInspectionsModule } from "@/modules/inspections";
 import { registerQuotesModule } from "@/modules/quotes";
 import { registerJobsModule } from "@/modules/jobs";
+import { registerPartsModule } from "@/modules/parts";
 
 let bootstrapped = false;
 
