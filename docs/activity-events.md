@@ -75,6 +75,20 @@ downstream automation.
 | `finance.payment.recorded` | `{ invoiceId, paymentId, method, balance }` |
 | `finance.invoice.partially_paid` | `{ invoiceId, amountPaid, balance }` |
 | `finance.invoice.paid` | `{ invoiceId, amountPaid, balance }` |
+| `integration.connection.created` | `{ integrationId, provider }` |
+| `integration.connection.updated` | `{ integrationId, provider, fields[] }` |
+| `integration.connection.connected` | `{ integrationId, provider, accountLabel? }` |
+| `integration.connection.disconnected` | `{ integrationId, provider }` |
+| `integration.connection.failed` | `{ integrationId, provider, code, message }` |
+| `integration.connection.revoked` | `{ integrationId, provider }` |
+| `integration.sync.started` | `{ integrationId, provider, resourceType, mode }` |
+| `integration.sync.completed` | `{ integrationId, provider, resourceType, recordCount, newReferenceCount }` |
+| `integration.sync.failed` | `{ integrationId, provider, resourceType, code, message, retryable }` |
+| `integration.external_reference.seen` | `{ integrationId, provider, resourceType, externalId, created }` |
+
+Integration payloads carry provider ids, resource types, counts, error codes,
+and safe messages ONLY — never credentials, tokens, or raw provider payloads.
+
 
 
 
