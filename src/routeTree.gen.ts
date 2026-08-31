@@ -34,6 +34,7 @@ import { Route as SettingsModulesRouteImport } from './routes/settings.modules'
 import { Route as SettingsAppearanceRouteImport } from './routes/settings.appearance'
 import { Route as QuotesNewRouteImport } from './routes/quotes.new'
 import { Route as QuotesQuoteIdRouteImport } from './routes/quotes.$quoteId'
+import { Route as PartsNewRouteImport } from './routes/parts.new'
 import { Route as KnowledgeNewRouteImport } from './routes/knowledge.new'
 import { Route as KnowledgeKnowledgeIdRouteImport } from './routes/knowledge.$knowledgeId'
 import { Route as JobsNewRouteImport } from './routes/jobs.new'
@@ -182,6 +183,11 @@ const QuotesQuoteIdRoute = QuotesQuoteIdRouteImport.update({
   path: '/$quoteId',
   getParentRoute: () => QuotesRoute,
 } as any)
+const PartsNewRoute = PartsNewRouteImport.update({
+  id: '/new',
+  path: '/new',
+  getParentRoute: () => PartsRoute,
+} as any)
 const KnowledgeNewRoute = KnowledgeNewRouteImport.update({
   id: '/new',
   path: '/new',
@@ -318,6 +324,7 @@ export interface FileRoutesByFullPath {
   '/jobs/new': typeof JobsNewRoute
   '/knowledge/$knowledgeId': typeof KnowledgeKnowledgeIdRouteWithChildren
   '/knowledge/new': typeof KnowledgeNewRoute
+  '/parts/new': typeof PartsNewRoute
   '/quotes/$quoteId': typeof QuotesQuoteIdRouteWithChildren
   '/quotes/new': typeof QuotesNewRoute
   '/settings/appearance': typeof SettingsAppearanceRoute
@@ -355,6 +362,7 @@ export interface FileRoutesByTo {
   '/inspections/new': typeof InspectionsNewRoute
   '/jobs/new': typeof JobsNewRoute
   '/knowledge/new': typeof KnowledgeNewRoute
+  '/parts/new': typeof PartsNewRoute
   '/quotes/new': typeof QuotesNewRoute
   '/settings/appearance': typeof SettingsAppearanceRoute
   '/settings/modules': typeof SettingsModulesRoute
@@ -403,6 +411,7 @@ export interface FileRoutesById {
   '/jobs/new': typeof JobsNewRoute
   '/knowledge/$knowledgeId': typeof KnowledgeKnowledgeIdRouteWithChildren
   '/knowledge/new': typeof KnowledgeNewRoute
+  '/parts/new': typeof PartsNewRoute
   '/quotes/$quoteId': typeof QuotesQuoteIdRouteWithChildren
   '/quotes/new': typeof QuotesNewRoute
   '/settings/appearance': typeof SettingsAppearanceRoute
@@ -454,6 +463,7 @@ export interface FileRouteTypes {
     | '/jobs/new'
     | '/knowledge/$knowledgeId'
     | '/knowledge/new'
+    | '/parts/new'
     | '/quotes/$quoteId'
     | '/quotes/new'
     | '/settings/appearance'
@@ -491,6 +501,7 @@ export interface FileRouteTypes {
     | '/inspections/new'
     | '/jobs/new'
     | '/knowledge/new'
+    | '/parts/new'
     | '/quotes/new'
     | '/settings/appearance'
     | '/settings/modules'
@@ -538,6 +549,7 @@ export interface FileRouteTypes {
     | '/jobs/new'
     | '/knowledge/$knowledgeId'
     | '/knowledge/new'
+    | '/parts/new'
     | '/quotes/$quoteId'
     | '/quotes/new'
     | '/settings/appearance'
@@ -760,6 +772,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/quotes/$quoteId'
       preLoaderRoute: typeof QuotesQuoteIdRouteImport
       parentRoute: typeof QuotesRoute
+    }
+    '/parts/new': {
+      id: '/parts/new'
+      path: '/new'
+      fullPath: '/parts/new'
+      preLoaderRoute: typeof PartsNewRouteImport
+      parentRoute: typeof PartsRoute
     }
     '/knowledge/new': {
       id: '/knowledge/new'
@@ -1037,10 +1056,12 @@ const KnowledgeRouteWithChildren = KnowledgeRoute._addFileChildren(
 )
 
 interface PartsRouteChildren {
+  PartsNewRoute: typeof PartsNewRoute
   PartsIndexRoute: typeof PartsIndexRoute
 }
 
 const PartsRouteChildren: PartsRouteChildren = {
+  PartsNewRoute: PartsNewRoute,
   PartsIndexRoute: PartsIndexRoute,
 }
 
