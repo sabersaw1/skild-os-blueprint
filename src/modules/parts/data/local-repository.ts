@@ -446,6 +446,9 @@ export function createLocalPartsRepository(): PartsRepository {
 
     async createPurchase(input: CreatePurchaseInput): Promise<Purchase> {
       if (!input.supplierId?.trim()) throw new Error("supplierId is required.");
+      if (!suppliers.some((s) => s.id === input.supplierId.trim())) {
+        throw new Error(`Unknown supplier "${input.supplierId}".`);
+      }
       validatePurchaseStatus(input.status);
       assertCents(input.shipping, "shipping");
       assertCents(input.tax, "tax");
@@ -624,6 +627,9 @@ export function createLocalPartsRepository(): PartsRepository {
 
     async recordUsage(input: CreatePartUsageInput): Promise<PartUsage> {
       if (!input.partId?.trim()) throw new Error("partId is required.");
+      if (!parts.some((p) => p.id === input.partId.trim())) {
+        throw new Error(`Unknown part "${input.partId}".`);
+      }
       if (!input.vehicleId?.trim()) throw new Error("vehicleId is required.");
       if (!Number.isFinite(input.quantity) || input.quantity <= 0) {
         throw new Error("Usage quantity must be > 0.");

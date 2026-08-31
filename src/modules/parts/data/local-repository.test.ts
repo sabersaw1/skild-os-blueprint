@@ -71,7 +71,11 @@ describe("money — integer cents", () => {
   });
 
   it("computes purchase totals from cents", () => {
-    const t = computePurchaseTotals([1000, 2500], 599, 310);
+    const t = computePurchaseTotals(
+      [{ lineTotal: 1000 }, { lineTotal: 2500 }],
+      599,
+      310,
+    );
     expect(t.subtotal).toBe(3500);
     expect(t.total).toBe(4409);
   });
