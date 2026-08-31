@@ -10,5 +10,12 @@ Phase 1 foundation docs. Read these before adding a module.
 - [Roles & Permissions](./roles-and-permissions.md)
 - [Sync Engine & Uploads](./sync-and-uploads.md)
 - [UI guidelines](./ui-guidelines.md)
+- [Activity events registry](./activity-events.md)
+- Modules: [CRM](./modules/crm.md) · [Vehicles](./modules/vehicles.md) ·
+  [Knowledge](./modules/knowledge.md) · [Inspections](./modules/inspections.md) ·
+  [Quotes](./modules/quotes.md) · [Jobs](./modules/jobs.md) ·
+  [Parts](./modules/parts.md)
+- Parts: [data model](./parts-model.md) · [purchasing workflow](./parts-purchasing.md) ·
+  [money representation](./parts-money.md)
 
 Architecture Decision Records: see [`adr/`](./adr).
