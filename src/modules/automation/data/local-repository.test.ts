@@ -97,6 +97,7 @@ async function agentWithRule(
     name: "Watcher",
     purpose: "Notice quiet records.",
     status: "active",
+    allowedCapabilityIds: ["jarvis.propose", "communication.read"],
   });
   const rule = await repo.createRule({
     agentId: agent.id,
