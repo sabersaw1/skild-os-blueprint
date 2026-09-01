@@ -7,7 +7,6 @@
 // may rest on. It duplicates no record: a Fact holds a sentence plus the
 // ids it came from, never a copy of the underlying entity.
 
-import { formatCents } from "@/core/money";
 import { newId } from "@/core/ids";
 import { formatCents } from "@/core/money";
 import {
