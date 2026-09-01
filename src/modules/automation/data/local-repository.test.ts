@@ -5,6 +5,12 @@
 // happens twice, and what happens when the underlying work fails.
 
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import {
+  activityEventTrigger,
+  manualTrigger,
+  observerTrigger,
+  triggerMatches,
+} from "../engine/triggers";
 
 class MemoryStorage {
   private store = new Map<string, string>();
@@ -37,7 +43,7 @@ import { createLocalAutomationRepository } from "./local-repository";
 import { AUTOMATION_REPOSITORY, type AutomationRepository } from "./repository";
 import { AUTOMATION_EVENTS } from "../activity";
 import { decideActionPolicy } from "./policy";
-import { evaluateConditions, manualTrigger, triggerMatches } from "../engine/triggers";
+import { evaluateConditions } from "../engine/triggers";
 import { executeAction, idempotencyKey, runAutomationRule } from "../engine/executor";
 import * as emitter from "@/core/activity/emitter";
 import { clearRepository, registerRepository } from "@/core/data/registry";
@@ -466,5 +472,35 @@ describe("Automation — records and identifiers", () => {
     expect(overview.activeAutomations).toBeGreaterThanOrEqual(1);
     expect(overview).toHaveProperty("pendingApprovals");
     expect(overview).toHaveProperty("failedRuns");
+  });
+});
+
+// ---- Phase 13.5: manual trigger bypass -------------------------------
+describe("triggerMatches — manual bypass", () => {
+  it("a manual trigger runs any rule regardless of its trigger definition", () => {
+    // A human pressing "Run now" is an explicit authorization event; it is
+    // intentionally allowed to run a rule whose automatic trigger has not
+    // fired. This does NOT bypass capability checks or the approval
+    // policy — only the trigger predicate.
+    const definition = {
+      kind: "activity_event",
+      eventType: "jobs.job.completed",
+    } as const;
+    expect(triggerMatches(definition, manualTrigger())).toBe(true);
+    expect(
+      triggerMatches(definition, activityEventTrigger("jobs.job.completed")),
+    ).toBe(true);
+    expect(
+      triggerMatches(definition, activityEventTrigger("quotes.quote.sent")),
+    ).toBe(false);
+  });
+
+  it("non-manual triggers must match kind and event type", () => {
+    const definition = { kind: "record_state", observerId: "stale-jobs" } as const;
+    expect(triggerMatches(definition, observerTrigger("stale-jobs"))).toBe(true);
+    expect(triggerMatches(definition, observerTrigger("other"))).toBe(false);
+    expect(
+      triggerMatches(definition, activityEventTrigger("jobs.job.completed")),
+    ).toBe(false);
   });
 });

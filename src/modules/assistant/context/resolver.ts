@@ -335,7 +335,7 @@ export async function resolveContext(opts: {
         );
         c.add(
           fact(
-            `${cost.laborHours} labor hour(s) logged, amounting to ${cost.laborAmount.toFixed(2)}`,
+            `${cost.laborHours} labor hour(s) logged, amounting to ${formatCents(cost.laborAmountCents)}`,
             "verified_fact",
             [ref("jobs", "job", cost.jobId)],
             { value: cost.laborHours, unit: "hours" },

@@ -25,7 +25,7 @@ export {
   type LineItemCategory,
   type LineItemInput,
 } from "./data/schemas";
-export { computeTotals, lineTotal, round2 } from "./data/totals";
+export { computeTotals, lineTotal } from "./data/totals";
 export {
   useQuote,
   useQuotes,

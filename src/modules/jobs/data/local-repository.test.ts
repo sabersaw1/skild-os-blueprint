@@ -205,17 +205,20 @@ describe("JobsRepository — labor", () => {
     await repo.addLabor(j.id, {
       description: "Diagnostic",
       hours: 0.5,
-      rate: 120,
+      rateCents: 12000,
     });
     await repo.addLabor(j.id, {
       description: "Install pads",
       hours: 1.5,
-      rate: 120,
+      rateCents: 12000,
     });
     const entries = await repo.listLabor(j.id);
     expect(entries).toHaveLength(2);
-    const total = entries.reduce((s, e) => s + e.hours * e.rate, 0);
-    expect(total).toBe(0.5 * 120 + 1.5 * 120);
+    const totalCents = entries.reduce(
+      (s, e) => s + Math.round(e.hours * e.rateCents),
+      0,
+    );
+    expect(totalCents).toBe(Math.round(0.5 * 12000) + Math.round(1.5 * 12000));
 
     const types = spy.mock.calls.map(
       (c: unknown[]) => (c[0] as { type: string }).type,
@@ -227,16 +230,16 @@ describe("JobsRepository — labor", () => {
     const repo = fresh();
     const j = await repo.create(baseInput);
     await expect(
-      repo.addLabor(j.id, { description: "", hours: 1, rate: 100 }),
+      repo.addLabor(j.id, { description: "", hours: 1, rateCents: 10000 }),
     ).rejects.toThrow(/description/);
     await expect(
-      repo.addLabor(j.id, { description: "x", hours: -1, rate: 100 }),
+      repo.addLabor(j.id, { description: "x", hours: -1, rateCents: 10000 }),
     ).rejects.toThrow(/hours/);
     await expect(
-      repo.addLabor(j.id, { description: "x", hours: 1, rate: -1 }),
-    ).rejects.toThrow(/rate/);
+      repo.addLabor(j.id, { description: "x", hours: 1, rateCents: -1 }),
+    ).rejects.toThrow(/rateCents/);
     await expect(
-      repo.addLabor("nope", { description: "x", hours: 1, rate: 1 }),
+      repo.addLabor("nope", { description: "x", hours: 1, rateCents: 1 }),
     ).rejects.toThrow(/not found/);
   });
 });
@@ -403,7 +406,7 @@ describe("Jobs — full Customer → Vehicle → Inspection → Quote → Job fl
     await repo.addLabor(job.id, {
       description: "Install pads",
       hours: 1.25,
-      rate: 120,
+      rateCents: 12000,
     });
     await repo.addNote(job.id, { body: "Rotors within spec." });
     const finished = await repo.changeStatus(job.id, "completed");

@@ -19,19 +19,21 @@ export interface LineItem {
   description: string;
   category: LineItemCategory;
   quantity: number;
-  unitPrice: number;
+  /** Unit price in INTEGER CENTS (USD). See @/core/money. */
+  unitPriceCents: number;
   laborHours?: number;
   /** Free-form reference (SKU, catalog #). No Parts module coupling in Phase 5. */
   partReference?: string;
-  /** Computed line total: quantity * unitPrice (rounded to 2 dp). */
-  total: number;
+  /** Computed line total in integer cents: round(quantity * unitPriceCents). */
+  totalCents: number;
 }
 
 export interface LineItemInput {
   description: string;
   category: LineItemCategory;
   quantity: number;
-  unitPrice: number;
+  /** Unit price in INTEGER CENTS (USD). */
+  unitPriceCents: number;
   laborHours?: number;
   partReference?: string;
 }
@@ -69,14 +71,14 @@ export interface Quote {
   title: string;
   status: QuoteStatus;
   lineItems: LineItem[];
-  /** Sum of line item totals. */
-  subtotal: number;
-  /** Absolute currency discount applied after subtotal. */
-  discount: number;
-  /** Absolute currency tax applied after discount. */
-  tax: number;
-  /** subtotal - discount + tax (rounded to 2 dp). */
-  total: number;
+  /** Sum of line item totals, in integer cents. */
+  subtotalCents: number;
+  /** Absolute discount applied after subtotal, in integer cents. */
+  discountCents: number;
+  /** Absolute tax applied after discount, in integer cents. */
+  taxCents: number;
+  /** subtotal - discount + tax, in integer cents (never below zero). */
+  totalCents: number;
   notes: string;
   /** Append-only trail; also emitted as activity events. */
   statusHistory: QuoteStatusChange[];
@@ -93,8 +95,8 @@ export interface QuoteCreateInput {
   inspectionId?: string;
   title: string;
   lineItems?: LineItemInput[];
-  discount?: number;
-  tax?: number;
+  discountCents?: number;
+  taxCents?: number;
   notes?: string;
 }
 
@@ -102,8 +104,8 @@ export interface QuoteUpdateInput {
   title?: string;
   inspectionId?: string | null;
   lineItems?: LineItemInput[];
-  discount?: number;
-  tax?: number;
+  discountCents?: number;
+  taxCents?: number;
   notes?: string;
   /** Required when calling update — versioning is mandatory on edit. */
   changeReason: string;
@@ -136,10 +138,10 @@ export interface QuoteSnapshot {
   title: string;
   status: QuoteStatus;
   lineItems: LineItem[];
-  subtotal: number;
-  discount: number;
-  tax: number;
-  total: number;
+  subtotalCents: number;
+  discountCents: number;
+  taxCents: number;
+  totalCents: number;
   notes: string;
 }
 
@@ -156,8 +158,8 @@ export interface QuoteVersion {
 // ---- Totals -------------------------------------------------------------
 
 export interface QuoteTotals {
-  subtotal: number;
-  discount: number;
-  tax: number;
-  total: number;
+  subtotalCents: number;
+  discountCents: number;
+  taxCents: number;
+  totalCents: number;
 }

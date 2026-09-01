@@ -4,12 +4,17 @@
 // Storage keys (versioned envelopes — see ./storage.ts):
 //   skildos.jobs.jobs.v1
 //   skildos.jobs.status-history.v1
-//   skildos.jobs.labor.v1
+//   skildos.jobs.labor.v2
 //   skildos.jobs.notes.v1
 //
 // Mutation ordering rule: validate → persist → emit → return.
 
 import { newId } from "@/core/ids";
+import { isCents, laborTotalCents, toCents } from "@/core/money";
+import { verifyReferences } from "@/core/data/references";
+import { CRM_CUSTOMER_REPOSITORY } from "@/modules/crm/data/repository";
+import { VEHICLES_REPOSITORY } from "@/modules/vehicles/data/repository";
+import { QUOTES_REPOSITORY } from "@/modules/quotes/data/repository";
 import { getIdentity } from "@/core/auth/identity";
 import { emit } from "@/core/activity/emitter";
 import { JOB_EVENTS } from "../activity";
@@ -41,7 +46,8 @@ import { withCapabilityEnforcement } from "@/core/auth/authorize";
 
 const K_JOBS = "skildos.jobs.jobs.v1";
 const K_STATUS = "skildos.jobs.status-history.v1";
-const K_LABOR = "skildos.jobs.labor.v1";
+// v2 (Phase 13.5): hourly rate moved from float dollars to integer cents.
+const K_LABOR = "skildos.jobs.labor.v2";
 const K_NOTES = "skildos.jobs.notes.v1";
 
 // Register versioned keys + migration hooks BEFORE any read/write.
@@ -59,8 +65,18 @@ registerVersionedKey<JobStatusHistory>({
 });
 registerVersionedKey<LaborEntry>({
   key: K_LABOR,
-  currentVersion: 1,
-  migrations: { 0: (records) => records as LaborEntry[] },
+  currentVersion: 2,
+  migrations: {
+    0: (records) => records as LaborEntry[],
+    1: (records) =>
+      (records as Array<Record<string, unknown>>).map((r) => {
+        const { rate, ...rest } = r;
+        return {
+          ...(rest as unknown as LaborEntry),
+          rateCents: toCents(typeof rate === "number" ? rate : 0),
+        };
+      }),
+  },
 });
 registerVersionedKey<JobNote>({
   key: K_NOTES,
@@ -109,8 +125,10 @@ function validateLabor(input: LaborInput): void {
   if (!Number.isFinite(input.hours) || input.hours < 0) {
     throw new Error("Labor hours must be >= 0.");
   }
-  if (!Number.isFinite(input.rate) || input.rate < 0) {
-    throw new Error("Labor rate must be >= 0.");
+  if (!isCents(input.rateCents)) {
+    throw new Error(
+      "Labor rateCents must be a non-negative integer number of cents.",
+    );
   }
 }
 
@@ -202,6 +220,31 @@ export function createLocalJobsRepository(): JobsRepository {
 
     async create(input) {
       validateCreate(input);
+      // Referential integrity through the Data Registry — never a direct
+      // import of another module's repository.
+      await verifyReferences([
+        {
+          repository: CRM_CUSTOMER_REPOSITORY,
+          field: "customerId",
+          id: input.customerId,
+          entity: "Customer",
+          required: true,
+        },
+        {
+          repository: VEHICLES_REPOSITORY,
+          field: "vehicleId",
+          id: input.vehicleId,
+          entity: "Vehicle",
+        },
+        {
+          repository: QUOTES_REPOSITORY,
+          field: "quoteId",
+          id: input.quoteId,
+          entity: "Quote",
+          lookup: (repo, id) =>
+            (repo as { getQuote(id: string): Promise<unknown> }).getQuote(id),
+        },
+      ]);
       const now = Date.now();
       const priority: JobPriority = input.priority ?? "normal";
       const job: Job = {
@@ -344,7 +387,7 @@ export function createLocalJobsRepository(): JobsRepository {
         jobId,
         description: input.description.trim(),
         hours: input.hours,
-        rate: input.rate,
+        rateCents: input.rateCents,
         createdAt: Date.now(),
         createdBy: getIdentity().id,
       };
@@ -364,8 +407,8 @@ export function createLocalJobsRepository(): JobsRepository {
           jobId,
           laborId: entry.id,
           hours: entry.hours,
-          rate: entry.rate,
-          total: entry.hours * entry.rate,
+          rateCents: entry.rateCents,
+          totalCents: laborTotalCents(entry.hours, entry.rateCents),
         },
       });
       return entry;

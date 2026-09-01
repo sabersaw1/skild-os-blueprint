@@ -58,7 +58,7 @@ function EditQuote() {
     description: li.description,
     category: li.category,
     quantity: li.quantity,
-    unitPrice: li.unitPrice,
+    unitPriceCents: li.unitPriceCents,
     laborHours: li.laborHours,
     partReference: li.partReference,
   }));
@@ -80,8 +80,8 @@ function EditQuote() {
           inspectionId: quote.inspectionId,
           title: quote.title,
           lineItems: initialLineItems,
-          discount: quote.discount,
-          tax: quote.tax,
+          discountCents: quote.discountCents,
+          taxCents: quote.taxCents,
           notes: quote.notes,
         }}
         onCancel={() =>
@@ -92,8 +92,8 @@ function EditQuote() {
             title: values.title,
             inspectionId: values.inspectionId ?? null,
             lineItems: values.lineItems,
-            discount: values.discount,
-            tax: values.tax,
+            discountCents: values.discountCents,
+            taxCents: values.taxCents,
             notes: values.notes,
             changeReason,
           });

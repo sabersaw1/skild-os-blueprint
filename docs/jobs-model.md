@@ -79,3 +79,14 @@ automatic behavior in Phase 6.
 - Labor: `description` non-empty, `hours >= 0`, `rate >= 0`.
 - Notes: `body` non-empty after trim.
 - Status transitions: see [jobs-status.md](../jobs-status.md).
+
+## Money (Phase 13.5)
+
+`LaborEntry.rate` became `LaborEntry.rateCents` — an integer number of cents,
+matching Parts and Finance. Totals use `laborTotalCents(hours, rateCents)`
+from `@/core/money`, which rounds the fractional-hours product half-up
+deterministically.
+
+Storage key moved to `skildos.jobs.labor.v2` with a registered `1 → 2`
+migration converting stored float rates to cents. The
+`jobs.job.laborAdded` event payload now carries `rateCents` / `totalCents`.

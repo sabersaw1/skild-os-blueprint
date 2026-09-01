@@ -28,6 +28,11 @@ import {
   type LineItem,
   type LineItemInput,
 } from "./schemas";
+import { assertCents, isCents, toCents } from "@/core/money";
+import { verifyReferences } from "@/core/data/references";
+import { CRM_CUSTOMER_REPOSITORY } from "@/modules/crm/data/repository";
+import { VEHICLES_REPOSITORY } from "@/modules/vehicles/data/repository";
+import { INSPECTIONS_REPOSITORY } from "@/modules/inspections/data/repository";
 import { computeTotals, materializeLineItems } from "./totals";
 import type { QuotesRepository } from "./repository";
 import {
@@ -38,22 +43,82 @@ import {
 import { assertPersisted } from "@/core/storage/persistence";
 import { withCapabilityEnforcement } from "@/core/auth/authorize";
 
-const K_QUOTES = "skildos.quotes.quotes.v1";
-const K_VERSIONS = "skildos.quotes.versions.v1";
+// v2 (Phase 13.5): every monetary field moved from float dollars to
+// integer cents. The key suffix is bumped so old data is migrated
+// explicitly and never silently reinterpreted.
+const K_QUOTES = "skildos.quotes.quotes.v2";
+const K_VERSIONS = "skildos.quotes.versions.v2";
 
 // Register versioned keys + migration hooks BEFORE any read/write.
 // v0 (legacy bare array) → v1 (envelope). Pass-through migrations reserve
 // the hook path for future schema changes.
 registerVersionedKey<Quote>({
   key: K_QUOTES,
-  currentVersion: 1,
-  migrations: { 0: (records) => records as Quote[] },
+  currentVersion: 2,
+  migrations: {
+    0: (records) => records as Quote[],
+    1: (records) => (records as LegacyQuote[]).map(migrateQuoteToCents),
+  },
 });
 registerVersionedKey<QuoteVersion>({
   key: K_VERSIONS,
-  currentVersion: 1,
-  migrations: { 0: (records) => records as QuoteVersion[] },
+  currentVersion: 2,
+  migrations: {
+    0: (records) => records as QuoteVersion[],
+    1: (records) =>
+      (records as Array<QuoteVersion & { snapshot: LegacyQuote }>).map((v) => ({
+        ...v,
+        snapshot: migrateQuoteToCents(v.snapshot) as QuoteSnapshot,
+      })),
+  },
 });
+
+// ---- v1 → v2 money migration (float dollars → integer cents) -----------
+// Explicit and lossless-by-rounding: 149.99 → 14999. Nothing is guessed;
+// a value that is already an integer-cent field is left untouched because
+// legacy records never carried the *Cents names.
+
+interface LegacyQuote {
+  lineItems?: Array<Record<string, unknown>>;
+  subtotal?: number;
+  discount?: number;
+  tax?: number;
+  total?: number;
+  [k: string]: unknown;
+}
+
+function dollarsToCents(v: unknown): number {
+  return toCents(typeof v === "number" ? v : 0);
+}
+
+function migrateQuoteToCents(legacy: LegacyQuote): Quote {
+  const {
+    subtotal,
+    discount,
+    tax,
+    total,
+    lineItems,
+    ...rest
+  } = legacy;
+  return {
+    ...(rest as unknown as Quote),
+    lineItems: (lineItems ?? []).map((li) => {
+      const { unitPrice, total: liTotal, ...liRest } = li as Record<
+        string,
+        unknown
+      >;
+      return {
+        ...(liRest as unknown as LineItem),
+        unitPriceCents: dollarsToCents(unitPrice),
+        totalCents: dollarsToCents(liTotal),
+      };
+    }),
+    subtotalCents: dollarsToCents(subtotal),
+    discountCents: dollarsToCents(discount),
+    taxCents: dollarsToCents(tax),
+    totalCents: dollarsToCents(total),
+  };
+}
 
 // ---- Validation ---------------------------------------------------------
 
@@ -69,8 +134,10 @@ function validateLineItems(items: LineItemInput[] | undefined): void {
     if (!Number.isFinite(li.quantity) || li.quantity < 0) {
       throw new Error(`Line item #${idx + 1} quantity must be >= 0.`);
     }
-    if (!Number.isFinite(li.unitPrice) || li.unitPrice < 0) {
-      throw new Error(`Line item #${idx + 1} unitPrice must be >= 0.`);
+    if (!isCents(li.unitPriceCents)) {
+      throw new Error(
+        `Line item #${idx + 1} unitPriceCents must be a non-negative integer number of cents.`,
+      );
     }
     if (
       li.laborHours !== undefined &&
@@ -85,12 +152,8 @@ function validateCreate(input: QuoteCreateInput): void {
   if (!input.customerId?.trim()) throw new Error("customerId is required.");
   if (!input.vehicleId?.trim()) throw new Error("vehicleId is required.");
   if (!input.title?.trim()) throw new Error("Quote title is required.");
-  if (input.discount !== undefined && input.discount < 0) {
-    throw new Error("discount must be >= 0.");
-  }
-  if (input.tax !== undefined && input.tax < 0) {
-    throw new Error("tax must be >= 0.");
-  }
+  assertCents(input.discountCents, "discountCents");
+  assertCents(input.taxCents, "taxCents");
   validateLineItems(input.lineItems);
 }
 
@@ -101,12 +164,8 @@ function validateUpdate(patch: QuoteUpdateInput): void {
   if (patch.title !== undefined && !patch.title.trim()) {
     throw new Error("title cannot be empty.");
   }
-  if (patch.discount !== undefined && patch.discount < 0) {
-    throw new Error("discount must be >= 0.");
-  }
-  if (patch.tax !== undefined && patch.tax < 0) {
-    throw new Error("tax must be >= 0.");
-  }
+  assertCents(patch.discountCents, "discountCents");
+  assertCents(patch.taxCents, "taxCents");
   validateLineItems(patch.lineItems);
 }
 
@@ -121,10 +180,10 @@ function snapshotOf(q: Quote): QuoteSnapshot {
     title: q.title,
     status: q.status,
     lineItems: q.lineItems.map((li) => ({ ...li })),
-    subtotal: q.subtotal,
-    discount: q.discount,
-    tax: q.tax,
-    total: q.total,
+    subtotalCents: q.subtotalCents,
+    discountCents: q.discountCents,
+    taxCents: q.taxCents,
+    totalCents: q.totalCents,
     notes: q.notes,
   };
 }
@@ -244,11 +303,40 @@ export function createLocalQuotesRepository(): QuotesRepository {
 
     async createQuote(input) {
       validateCreate(input);
+      // Cross-module ids are verified through the Data Registry before any
+      // write, so a quote can never point at a deleted customer/vehicle.
+      await verifyReferences([
+        {
+          repository: CRM_CUSTOMER_REPOSITORY,
+          field: "customerId",
+          id: input.customerId,
+          entity: "Customer",
+          required: true,
+        },
+        {
+          repository: VEHICLES_REPOSITORY,
+          field: "vehicleId",
+          id: input.vehicleId,
+          entity: "Vehicle",
+        },
+        {
+          repository: INSPECTIONS_REPOSITORY,
+          field: "inspectionId",
+          id: input.inspectionId,
+          entity: "Inspection",
+          lookup: (repo, id) =>
+            (repo as { getInspection(id: string): Promise<unknown> }).getInspection(id),
+        },
+      ]);
       const lineItems: LineItem[] = materializeLineItems(
         input.lineItems ?? [],
         newId,
       );
-      const totals = computeTotals(lineItems, input.discount, input.tax);
+      const totals = computeTotals(
+        lineItems,
+        input.discountCents,
+        input.taxCents,
+      );
       const now = Date.now();
       const quote: Quote = {
         id: newId(),
@@ -258,10 +346,10 @@ export function createLocalQuotesRepository(): QuotesRepository {
         title: input.title.trim(),
         status: "draft",
         lineItems,
-        subtotal: totals.subtotal,
-        discount: totals.discount,
-        tax: totals.tax,
-        total: totals.total,
+        subtotalCents: totals.subtotalCents,
+        discountCents: totals.discountCents,
+        taxCents: totals.taxCents,
+        totalCents: totals.totalCents,
         notes: input.notes?.trim() ?? "",
         statusHistory: [],
         currentVersion: 1,
@@ -283,7 +371,7 @@ export function createLocalQuotesRepository(): QuotesRepository {
           customerId: quote.customerId,
           vehicleId: quote.vehicleId,
           inspectionId: quote.inspectionId,
-          total: quote.total,
+          totalCents: quote.totalCents,
         },
       });
       emit({
@@ -312,8 +400,11 @@ export function createLocalQuotesRepository(): QuotesRepository {
         ? materializeLineItems(patch.lineItems, newId)
         : existing.lineItems;
       const nextDiscount =
-        patch.discount !== undefined ? patch.discount : existing.discount;
-      const nextTax = patch.tax !== undefined ? patch.tax : existing.tax;
+        patch.discountCents !== undefined
+          ? patch.discountCents
+          : existing.discountCents;
+      const nextTax =
+        patch.taxCents !== undefined ? patch.taxCents : existing.taxCents;
       const totals = computeTotals(nextLineItems, nextDiscount, nextTax);
       const nextVersionNumber = existing.currentVersion + 1;
       const next: Quote = {
@@ -326,10 +417,10 @@ export function createLocalQuotesRepository(): QuotesRepository {
               ? patch.inspectionId
               : existing.inspectionId,
         lineItems: nextLineItems,
-        subtotal: totals.subtotal,
-        discount: totals.discount,
-        tax: totals.tax,
-        total: totals.total,
+        subtotalCents: totals.subtotalCents,
+        discountCents: totals.discountCents,
+        taxCents: totals.taxCents,
+        totalCents: totals.totalCents,
         notes: patch.notes !== undefined ? patch.notes : existing.notes,
         currentVersion: nextVersionNumber,
         updatedAt: Date.now(),

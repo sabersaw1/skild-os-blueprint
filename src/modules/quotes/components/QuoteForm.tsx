@@ -22,8 +22,8 @@ export interface QuoteFormValues {
   inspectionId?: string;
   title: string;
   lineItems: LineItemInput[];
-  discount: number;
-  tax: number;
+  discountCents: number;
+  taxCents: number;
   notes: string;
 }
 
@@ -56,8 +56,10 @@ export function QuoteForm({
   const [lineItems, setLineItems] = useState<LineItemInput[]>(
     initial?.lineItems ?? [],
   );
-  const [discount, setDiscount] = useState<number>(initial?.discount ?? 0);
-  const [tax, setTax] = useState<number>(initial?.tax ?? 0);
+  const [discountCents, setDiscountCents] = useState<number>(
+    initial?.discountCents ?? 0,
+  );
+  const [taxCents, setTaxCents] = useState<number>(initial?.taxCents ?? 0);
   const [notes, setNotes] = useState(initial?.notes ?? "");
   const [changeReason, setChangeReason] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -119,8 +121,8 @@ export function QuoteForm({
               inspectionId: inspectionId || undefined,
               title: title.trim(),
               lineItems,
-              discount,
-              tax,
+              discountCents,
+              taxCents,
               notes,
             },
             changeReason.trim(),
@@ -212,11 +214,11 @@ export function QuoteForm({
 
       <LineItemsEditor
         items={lineItems}
-        discount={discount}
-        tax={tax}
+        discountCents={discountCents}
+        taxCents={taxCents}
         onItemsChange={setLineItems}
-        onDiscountChange={setDiscount}
-        onTaxChange={setTax}
+        onDiscountChange={setDiscountCents}
+        onTaxChange={setTaxCents}
       />
 
       <div>

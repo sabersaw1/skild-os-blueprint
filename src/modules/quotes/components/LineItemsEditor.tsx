@@ -14,30 +14,28 @@ import {
   type LineItemInput,
 } from "../data/schemas";
 import { computeTotals, lineTotal } from "../data/totals";
+import { formatCents, toCents, toDollars } from "@/core/money";
 
-const money = (n: number) =>
-  n.toLocaleString(undefined, {
-    style: "currency",
-    currency: "USD",
-    minimumFractionDigits: 2,
-  });
+// Money crosses this boundary as INTEGER CENTS. Dollars exist only inside
+// the number inputs below, where a human types them.
+const money = formatCents;
 
 export function LineItemsEditor({
   items,
-  discount,
-  tax,
+  discountCents,
+  taxCents,
   onItemsChange,
   onDiscountChange,
   onTaxChange,
 }: {
   items: LineItemInput[];
-  discount: number;
-  tax: number;
+  discountCents: number;
+  taxCents: number;
   onItemsChange: (next: LineItemInput[]) => void;
   onDiscountChange: (n: number) => void;
   onTaxChange: (n: number) => void;
 }) {
-  const totals = computeTotals(items, discount, tax);
+  const totals = computeTotals(items, discountCents, taxCents);
 
   const update = (idx: number, patch: Partial<LineItemInput>) => {
     onItemsChange(items.map((it, i) => (i === idx ? { ...it, ...patch } : it)));
@@ -48,7 +46,7 @@ export function LineItemsEditor({
   const add = () => {
     onItemsChange([
       ...items,
-      { description: "", category: "labor", quantity: 1, unitPrice: 0 },
+      { description: "", category: "labor", quantity: 1, unitPriceCents: 0 },
     ]);
   };
 
@@ -111,9 +109,9 @@ export function LineItemsEditor({
                 type="number"
                 min={0}
                 step="0.01"
-                value={it.unitPrice}
+                value={toDollars(it.unitPriceCents)}
                 onChange={(e) =>
-                  update(idx, { unitPrice: Number(e.target.value) })
+                  update(idx, { unitPriceCents: toCents(e.target.value) })
                 }
                 aria-label="Unit price"
               />
@@ -180,8 +178,8 @@ export function LineItemsEditor({
           type="number"
           min={0}
           step="0.01"
-          value={discount}
-          onChange={(e) => onDiscountChange(Number(e.target.value) || 0)}
+          value={toDollars(discountCents)}
+          onChange={(e) => onDiscountChange(toCents(e.target.value))}
         />
         <Label htmlFor="q-tax" className="self-center">
           Tax
@@ -191,20 +189,20 @@ export function LineItemsEditor({
           type="number"
           min={0}
           step="0.01"
-          value={tax}
-          onChange={(e) => onTaxChange(Number(e.target.value) || 0)}
+          value={toDollars(taxCents)}
+          onChange={(e) => onTaxChange(toCents(e.target.value))}
         />
       </div>
 
       <dl className="ml-auto grid max-w-sm grid-cols-2 gap-1 text-sm">
         <dt className="text-muted-foreground">Subtotal</dt>
-        <dd className="text-right">{money(totals.subtotal)}</dd>
+        <dd className="text-right">{money(totals.subtotalCents)}</dd>
         <dt className="text-muted-foreground">Discount</dt>
-        <dd className="text-right">−{money(totals.discount)}</dd>
+        <dd className="text-right">−{money(totals.discountCents)}</dd>
         <dt className="text-muted-foreground">Tax</dt>
-        <dd className="text-right">{money(totals.tax)}</dd>
+        <dd className="text-right">{money(totals.taxCents)}</dd>
         <dt className="font-semibold">Total</dt>
-        <dd className="text-right font-semibold">{money(totals.total)}</dd>
+        <dd className="text-right font-semibold">{money(totals.totalCents)}</dd>
       </dl>
     </div>
   );

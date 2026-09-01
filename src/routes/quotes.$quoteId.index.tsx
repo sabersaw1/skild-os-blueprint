@@ -1,3 +1,4 @@
+import { formatCents as money } from "@/core/money";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { Pencil } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -14,12 +15,7 @@ export const Route = createModuleRoute("/quotes/$quoteId/")({
   component: QuoteDetail,
 });
 
-const money = (n: number) =>
-  n.toLocaleString(undefined, {
-    style: "currency",
-    currency: "USD",
-    minimumFractionDigits: 2,
-  });
+
 
 function QuoteDetail() {
   const { quoteId } = Route.useParams();
@@ -134,8 +130,8 @@ function QuoteDetail() {
                   <td className="py-1">{li.description}</td>
                   <td className="py-1 text-muted-foreground">{li.category}</td>
                   <td className="py-1 text-right">{li.quantity}</td>
-                  <td className="py-1 text-right">{money(li.unitPrice)}</td>
-                  <td className="py-1 text-right">{money(li.total)}</td>
+                  <td className="py-1 text-right">{money(li.unitPriceCents)}</td>
+                  <td className="py-1 text-right">{money(li.totalCents)}</td>
                 </tr>
               ))}
             </tbody>
@@ -143,13 +139,13 @@ function QuoteDetail() {
         )}
         <dl className="ml-auto mt-3 grid max-w-sm grid-cols-2 gap-1 text-sm">
           <dt className="text-muted-foreground">Subtotal</dt>
-          <dd className="text-right">{money(quote.subtotal)}</dd>
+          <dd className="text-right">{money(quote.subtotalCents)}</dd>
           <dt className="text-muted-foreground">Discount</dt>
-          <dd className="text-right">−{money(quote.discount)}</dd>
+          <dd className="text-right">−{money(quote.discountCents)}</dd>
           <dt className="text-muted-foreground">Tax</dt>
-          <dd className="text-right">{money(quote.tax)}</dd>
+          <dd className="text-right">{money(quote.taxCents)}</dd>
           <dt className="font-semibold">Total</dt>
-          <dd className="text-right font-semibold">{money(quote.total)}</dd>
+          <dd className="text-right font-semibold">{money(quote.totalCents)}</dd>
         </dl>
       </section>
 

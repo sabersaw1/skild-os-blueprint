@@ -1,11 +1,7 @@
+import { formatCents as money } from "@/core/money";
 import type { QuoteVersion } from "../data/schemas";
 
-const money = (n: number) =>
-  n.toLocaleString(undefined, {
-    style: "currency",
-    currency: "USD",
-    minimumFractionDigits: 2,
-  });
+
 
 export function VersionHistory({ versions }: { versions: QuoteVersion[] }) {
   if (versions.length === 0) {
@@ -35,7 +31,7 @@ export function VersionHistory({ versions }: { versions: QuoteVersion[] }) {
             <p className="text-xs">
               {v.snapshot.lineItems.length} item
               {v.snapshot.lineItems.length === 1 ? "" : "s"} ·{" "}
-              {money(v.snapshot.total)}
+              {money(v.snapshot.totalCents)}
             </p>
           </li>
         ))}

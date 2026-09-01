@@ -1,47 +1,58 @@
-// Pure totals math for the Quotes module. Exported so tests and UI can
-// preview totals without going through the repository.
+// Pure totals math for the Quotes module — INTEGER CENTS (Phase 13.5).
+//
+// Quotes stored float dollars until Phase 13.5. Every monetary field is now
+// an integer number of cents, computed with `@/core/money` — the same
+// implementation Finance and Parts already use — so revenue, parts cost and
+// labor cost can be subtracted from one another without mixing units.
+// Floating-point dollars exist only at the UI edge (see the form components).
 
+import { assertCents, lineTotalCents } from "@/core/money";
 import type { LineItem, LineItemInput, QuoteTotals } from "./schemas";
 
-/** Round to 2 decimal places using banker-safe half-up. */
-export function round2(n: number): number {
-  if (!Number.isFinite(n)) return 0;
-  return Math.round((n + Number.EPSILON) * 100) / 100;
-}
-
-export function lineTotal(item: Pick<LineItem, "quantity" | "unitPrice">): number {
-  return round2((item.quantity || 0) * (item.unitPrice || 0));
+/** Line total in cents: quantity (possibly fractional) × unit price. */
+export function lineTotal(
+  item: Pick<LineItem, "quantity" | "unitPriceCents">,
+): number {
+  return lineTotalCents(item.quantity || 0, item.unitPriceCents || 0);
 }
 
 export function computeTotals(
-  lineItems: Array<Pick<LineItem, "quantity" | "unitPrice">>,
-  discount = 0,
-  tax = 0,
+  lineItems: Array<Pick<LineItem, "quantity" | "unitPriceCents">>,
+  discountCents = 0,
+  taxCents = 0,
 ): QuoteTotals {
-  const subtotal = round2(
-    lineItems.reduce((sum, li) => sum + lineTotal(li), 0),
-  );
-  const safeDiscount = round2(Math.max(0, discount));
-  const safeTax = round2(Math.max(0, tax));
-  const total = round2(subtotal - safeDiscount + safeTax);
-  return { subtotal, discount: safeDiscount, tax: safeTax, total };
+  const subtotal = lineItems.reduce((sum, li) => sum + lineTotal(li), 0);
+  const discount = Math.max(0, Math.trunc(discountCents || 0));
+  const tax = Math.max(0, Math.trunc(taxCents || 0));
+  return {
+    subtotalCents: subtotal,
+    discountCents: discount,
+    taxCents: tax,
+    // A discount larger than the subtotal must not invent negative revenue.
+    totalCents: Math.max(0, subtotal - discount + tax),
+  };
 }
 
 export function materializeLineItems(
   items: LineItemInput[],
   makeId: () => string,
 ): LineItem[] {
-  return items.map((li) => ({
-    id: makeId(),
-    description: li.description.trim(),
-    category: li.category,
-    quantity: Number(li.quantity) || 0,
-    unitPrice: Number(li.unitPrice) || 0,
-    laborHours:
-      typeof li.laborHours === "number" && Number.isFinite(li.laborHours)
-        ? li.laborHours
-        : undefined,
-    partReference: li.partReference?.trim() || undefined,
-    total: lineTotal({ quantity: li.quantity, unitPrice: li.unitPrice }),
-  }));
+  return items.map((li, idx) => {
+    assertCents(li.unitPriceCents, `Line item #${idx + 1} unitPriceCents`);
+    const quantity = Number(li.quantity) || 0;
+    const unitPriceCents = Math.trunc(Number(li.unitPriceCents) || 0);
+    return {
+      id: makeId(),
+      description: li.description.trim(),
+      category: li.category,
+      quantity,
+      unitPriceCents,
+      laborHours:
+        typeof li.laborHours === "number" && Number.isFinite(li.laborHours)
+          ? li.laborHours
+          : undefined,
+      partReference: li.partReference?.trim() || undefined,
+      totalCents: lineTotalCents(quantity, unitPriceCents),
+    };
+  });
 }

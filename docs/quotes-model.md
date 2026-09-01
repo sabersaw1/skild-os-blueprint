@@ -85,3 +85,17 @@ approved / declined / expired  (terminal)
 
 Illegal transitions (`draft → approved`, `approved → sent`, etc.) throw.
 Editing is only permitted while `status === "draft"`.
+
+## Money (Phase 13.5)
+
+Every monetary field on a Quote, QuoteSnapshot, and LineItem is an
+**integer number of cents**, named with an explicit `Cents` suffix:
+`unitPriceCents`, `totalCents`, `subtotalCents`, `discountCents`, `taxCents`.
+Float dollars exist only inside number inputs, converted at the edge with
+`toCents()` / `toDollars()` from `@/core/money`.
+
+Storage keys moved to `skildos.quotes.quotes.v2` and
+`skildos.quotes.versions.v2`. The registered `1 → 2` migration converts
+legacy float-dollar records (and every historical snapshot) with
+`Math.round(dollars * 100)`; nothing is guessed and no field is reinterpreted
+in place.

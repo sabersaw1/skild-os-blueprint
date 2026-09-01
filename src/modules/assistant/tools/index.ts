@@ -10,6 +10,7 @@
 //  4. A missing repository is a RepositoryUnavailableError, which becomes
 //     declared uncertainty. A tool NEVER fabricates a record.
 
+import { laborTotalCents } from "@/core/money";
 import { getRepository, hasRepository } from "@/core/data/registry";
 import {
   CRM_CUSTOMER_REPOSITORY,
@@ -125,7 +126,8 @@ export interface JobCostBreakdown {
   partsCostCents: number;
   /** Labor is stored by the Jobs module in currency units, not cents. */
   laborHours: number;
-  laborAmount: number;
+  /** Labor amount in INTEGER CENTS. */
+  laborAmountCents: number;
   usageCount: number;
   laborEntries: LaborEntry[];
   /** Integer cents, from issued invoices linked to this job. */
@@ -283,7 +285,10 @@ export function createJarvisTools(can: CapabilityCheck): JarvisTools {
       if (!job) return undefined;
       const laborEntries = await jobs().listLabor(jobId);
       const laborHours = laborEntries.reduce((s, l) => s + l.hours, 0);
-      const laborAmount = laborEntries.reduce((s, l) => s + l.hours * l.rate, 0);
+      const laborAmountCents = laborEntries.reduce(
+        (s, l) => s + laborTotalCents(l.hours, l.rateCents),
+        0,
+      );
 
       let partsCostCents = 0;
       let usageCount = 0;
@@ -306,7 +311,7 @@ export function createJarvisTools(can: CapabilityCheck): JarvisTools {
         jobId,
         partsCostCents,
         laborHours,
-        laborAmount,
+        laborAmountCents,
         usageCount,
         laborEntries,
         invoicedTotalCents,
