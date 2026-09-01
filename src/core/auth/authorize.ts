@@ -99,7 +99,15 @@ export function withCapabilityEnforcement<T extends object>(
     const ids = Array.isArray(required) ? required : [required];
     const fn = value as (...args: unknown[]) => unknown;
     guarded[name] = (...args: unknown[]) => {
-      for (const id of ids) requireCapability(id, name);
+      // Repository mutations are async, so a denial is surfaced as a
+      // REJECTED PROMISE rather than a synchronous throw — callers using
+      // `await` / `.catch()` must not have to also wrap the call in
+      // try/catch. Synchronous methods are never mapped.
+      try {
+        for (const id of ids) requireCapability(id, name);
+      } catch (err) {
+        return Promise.reject(err);
+      }
       return fn.apply(impl, args);
     };
   }
