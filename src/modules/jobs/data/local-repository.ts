@@ -4,12 +4,13 @@
 // Storage keys (versioned envelopes — see ./storage.ts):
 //   skildos.jobs.jobs.v1
 //   skildos.jobs.status-history.v1
-//   skildos.jobs.labor.v1
+//   skildos.jobs.labor.v2
 //   skildos.jobs.notes.v1
 //
 // Mutation ordering rule: validate → persist → emit → return.
 
 import { newId } from "@/core/ids";
+import { isCents, laborTotalCents, toCents } from "@/core/money";
 import { getIdentity } from "@/core/auth/identity";
 import { emit } from "@/core/activity/emitter";
 import { JOB_EVENTS } from "../activity";

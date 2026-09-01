@@ -48,3 +48,11 @@ export function assertCents(value: unknown, field: string): void {
     );
   }
 }
+
+/**
+ * Labor total in cents: fractional hours × integer hourly rate, rounded
+ * half-up. Same determinism guarantee as lineTotalCents.
+ */
+export function laborTotalCents(hours: number, rateCents: number): number {
+  return lineTotalCents(hours, rateCents);
+}

@@ -5,20 +5,17 @@ import { Label } from "@/components/ui/label";
 import { useHasCapability } from "@/core/roles/hooks";
 import { useJobsRepository } from "../hooks";
 import type { LaborEntry } from "../data/schemas";
+import { formatCents, laborTotalCents, toCents, toDollars } from "@/core/money";
 
-const money = (n: number) =>
-  n.toLocaleString(undefined, {
-    style: "currency",
-    currency: "USD",
-    minimumFractionDigits: 2,
-  });
+// Rates are held in INTEGER CENTS; dollars exist only inside the input.
+const money = formatCents;
 
 export function LaborForm({ jobId }: { jobId: string }) {
   const repo = useJobsRepository();
   const canWrite = useHasCapability("jobs.labor.write");
   const [description, setDescription] = useState("");
   const [hours, setHours] = useState<number>(0.5);
-  const [rate, setRate] = useState<number>(120);
+  const [rateCents, setRateCents] = useState<number>(12000);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -32,7 +29,7 @@ export function LaborForm({ jobId }: { jobId: string }) {
         setError(null);
         setSaving(true);
         try {
-          await repo.addLabor(jobId, { description, hours, rate });
+          await repo.addLabor(jobId, { description, hours, rateCents });
           setDescription("");
           setHours(0.5);
         } catch (err) {
@@ -75,8 +72,8 @@ export function LaborForm({ jobId }: { jobId: string }) {
           type="number"
           min={0}
           step="0.01"
-          value={rate}
-          onChange={(e) => setRate(Number(e.target.value))}
+          value={toDollars(rateCents)}
+          onChange={(e) => setRateCents(toCents(e.target.value))}
         />
       </div>
       <div className="flex items-end sm:col-span-2">
@@ -106,7 +103,10 @@ export function LaborList({ entries }: { entries: LaborEntry[] }) {
       <p className="text-xs text-muted-foreground">No labor logged yet.</p>
     );
   }
-  const total = entries.reduce((s, e) => s + e.hours * e.rate, 0);
+  const totalCents = entries.reduce(
+    (s, e) => s + laborTotalCents(e.hours, e.rateCents),
+    0,
+  );
   const totalHours = entries.reduce((s, e) => s + e.hours, 0);
   return (
     <div>
@@ -119,17 +119,17 @@ export function LaborList({ entries }: { entries: LaborEntry[] }) {
             <span className="truncate">
               {e.description}{" "}
               <span className="text-xs text-muted-foreground">
-                · {e.hours}h @ {money(e.rate)}
+                · {e.hours}h @ {money(e.rateCents)}
               </span>
             </span>
             <span className="whitespace-nowrap text-xs text-muted-foreground">
-              {money(e.hours * e.rate)}
+              {money(laborTotalCents(e.hours, e.rateCents))}
             </span>
           </li>
         ))}
       </ul>
       <p className="mt-2 text-right text-xs font-medium">
-        {totalHours}h · {money(total)}
+        {totalHours}h · {money(totalCents)}
       </p>
     </div>
   );
