@@ -102,7 +102,7 @@ export async function resolveContext(opts: {
 
   const wanted = new Set<IntentType>([intent.type]);
   if (intent.type === "brief.daily") {
-    ["operational.today", "leads.new", "leads.follow_up", "quotes.pending", "jobs.awaiting_parts", "finance.unpaid"].forEach(
+    ["operational.today", "leads.new", "leads.follow_up", "quotes.pending", "jobs.awaiting_parts", "finance.unpaid", "intelligence.overview"].forEach(
       (t) => wanted.add(t as IntentType),
     );
   }
@@ -528,6 +528,90 @@ export async function resolveContext(opts: {
       if (runs.length === 0) {
         c.uncertainty.push(
           "No agent has run yet, so there is no automation history to report.",
+        );
+      }
+    }
+  }
+
+  if (wanted.has("intelligence.overview")) {
+    const overview = await c.run("Business overview", () =>
+      tools.getBusinessOverview(undefined, now),
+    );
+    if (overview) {
+      for (const m of overview.metrics) {
+        if (m.completeness === "unavailable") continue;
+        const rendered =
+          m.unit === "cents"
+            ? formatCents(m.value)
+            : m.unit === "ratio"
+              ? `${(m.value * 100).toFixed(1)}%`
+              : String(m.value);
+        c.add(
+          fact(
+            `${m.metricId} for the last 30 days is ${rendered}`,
+            "system_derived",
+            [],
+            { value: m.value, unit: m.unit === "cents" ? "cents" : "count" },
+          ),
+        );
+        if (m.completeness === "partial" && m.limitation) {
+          c.uncertainty.push(m.limitation);
+        }
+      }
+      for (const l of overview.funnel.limitations) c.uncertainty.push(l);
+      for (const l of overview.profitability.limitations) c.uncertainty.push(l);
+      if (overview.unavailableModules.length > 0) {
+        c.uncertainty.push(
+          `These modules were unavailable, so the figures exclude them: ${overview.unavailableModules.join(", ")}.`,
+        );
+      }
+      if (overview.metrics.every((m) => m.completeness === "unavailable")) {
+        c.uncertainty.push(
+          "No business records exist for this period, so no performance can be measured.",
+        );
+      }
+    }
+  }
+
+  if (wanted.has("intelligence.findings")) {
+    const findings = await c.run("Optimization findings", () =>
+      tools.getIntelligenceFindings(),
+    );
+    if (findings) {
+      for (const o of findings.observations) {
+        c.add(
+          fact(`${o.title}: ${o.description}`, "system_derived", [
+            ref("intelligence", "observation", o.id),
+          ]),
+        );
+      }
+      for (const o of findings.opportunities) {
+        c.add(
+          fact(
+            o.expectedImpactCents === undefined
+              ? `${o.title} (no impact figure — the records do not support one)`
+              : `${o.title} (estimated impact ${formatCents(o.expectedImpactCents)})`,
+            "system_derived",
+            [ref("intelligence", "opportunity", o.id)],
+          ),
+        );
+      }
+      for (const r of findings.recommendations) {
+        c.add(
+          fact(
+            `Proposed: ${r.title} — ${r.reason}. A person must carry this out.`,
+            "system_derived",
+            [ref("intelligence", "recommendation", r.id)],
+          ),
+        );
+      }
+      const total =
+        findings.observations.length +
+        findings.opportunities.length +
+        findings.recommendations.length;
+      if (total === 0) {
+        c.uncertainty.push(
+          "No findings have been recorded yet. Run the optimization analysis on the Intelligence page to generate them.",
         );
       }
     }

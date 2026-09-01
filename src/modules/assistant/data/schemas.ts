@@ -296,6 +296,8 @@ export type IntentType =
   | "marketing.opportunities"
   | "knowledge.lookup"
   | "automation.status"
+  | "intelligence.overview"
+  | "intelligence.findings"
   | "brief.daily"
   | "unknown";
 

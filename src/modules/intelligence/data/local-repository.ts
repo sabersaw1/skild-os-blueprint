@@ -29,6 +29,7 @@ import { INTELLIGENCE_EVENTS } from "../activity";
 import { readEnvelope, registerVersionedKey } from "./storage";
 import {
   calculateAttention,
+  calculateComparison,
   calculateExpectedVsActual,
   calculateFunnel,
   calculateMetrics,
@@ -36,6 +37,7 @@ import {
   calculateServicePerformance,
   calculateSourcePerformance,
   findMetricCalculator,
+  previousPeriod,
   METRIC_DEFINITIONS,
 } from "./calculations";
 import { loadDataset } from "./read-models";
@@ -47,6 +49,7 @@ import {
   OPPORTUNITY_TYPES,
   RECOMMENDATION_TYPES,
   type AttentionItem,
+  type ComparisonReport,
   type Evidence,
   type ExpectedVsActualRow,
   type FunnelReport,
@@ -375,6 +378,21 @@ export function createLocalIntelligenceRepository(): IntelligenceRepository {
     async getExpectedVsActual(period: Period): Promise<ExpectedVsActualRow[]> {
       assertPeriod(period);
       return calculateExpectedVsActual(await loadDataset(period));
+    },
+
+    async getComparison(period: Period, metricIds?: string[]): Promise<ComparisonReport> {
+      assertPeriod(period);
+      if (metricIds) {
+        for (const id of metricIds) {
+          if (!findMetricCalculator(id)) throw new Error(`Unknown metric "${id}".`);
+        }
+      }
+      const prev = previousPeriod(period);
+      const [currentDs, previousDs] = await Promise.all([
+        loadDataset(period),
+        loadDataset(prev),
+      ]);
+      return calculateComparison(currentDs, previousDs, metricIds);
     },
 
     async getAttention(

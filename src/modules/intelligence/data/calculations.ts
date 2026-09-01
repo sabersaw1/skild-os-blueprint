@@ -15,7 +15,9 @@ import type { PartUsage } from "@/modules/parts/data/schemas";
 import { laborTotalCents } from "@/core/money";
 import type {
   AttentionItem,
+  ComparisonReport,
   DataCompleteness,
+  MetricComparisonRow,
   Evidence,
   ExpectedVsActualRow,
   FunnelReport,
@@ -1245,4 +1247,81 @@ export function calculateAttention(
   }
 
   return items.sort((a, b) => b.ageDays - a.ageDays);
+}
+
+// ---- Historical comparison ---------------------------------------------
+
+/** True when the dataset holds at least one source record inside its period. */
+export function datasetHasRecords(ds: IntelligenceDataset): boolean {
+  return (
+    ds.leads.some((l) => inPeriod(l.createdAt, ds.period)) ||
+    ds.quotes.some((q) => inPeriod(q.createdAt, ds.period)) ||
+    ds.jobs.some((j) => inPeriod(j.createdAt, ds.period)) ||
+    ds.invoices.some((i) => inPeriod(i.issuedAt ?? i.createdAt, ds.period))
+  );
+}
+
+/** The immediately preceding window of identical length. */
+export function previousPeriod(period: Period): Period {
+  const span = period.end - period.start;
+  return { start: period.start - span, end: period.start };
+}
+
+/**
+ * Current vs previous period, metric by metric.
+ *
+ * When the previous window has no records the row reports
+ * `baselineAvailable: false` with null deltas — a missing baseline is stated,
+ * never substituted with zero or an estimate.
+ */
+export function calculateComparison(
+  current: IntelligenceDataset,
+  previous: IntelligenceDataset,
+  metricIds?: string[],
+): ComparisonReport {
+  const currentMetrics = calculateMetrics(current, metricIds);
+  const hasBaseline = datasetHasRecords(previous);
+  const previousMetrics = hasBaseline ? calculateMetrics(previous, metricIds) : [];
+  const prevById = new Map(previousMetrics.map((m) => [m.metricId, m]));
+
+  const rows: MetricComparisonRow[] = currentMetrics.map((m) => {
+    const def = findMetricCalculator(m.metricId)!.definition;
+    const prev = prevById.get(m.metricId);
+    const row: MetricComparisonRow = {
+      metricId: m.metricId,
+      name: def.name,
+      unit: m.unit,
+      currentValue: m.value,
+      previousValue: prev ? prev.value : null,
+      changeAbsolute: prev ? m.value - prev.value : null,
+      changeRatio: prev && prev.value !== 0 ? (m.value - prev.value) / prev.value : null,
+      baselineAvailable: hasBaseline,
+      completeness: m.completeness,
+    };
+    if (!hasBaseline) {
+      row.baselineReason =
+        "The preceding period contains no records, so there is no baseline to compare against.";
+    }
+    return row;
+  });
+
+  const limitations: string[] = [];
+  if (!hasBaseline) {
+    limitations.push(
+      "No historical baseline: the previous period of equal length holds no leads, quotes, jobs or invoices.",
+    );
+  }
+  if (previous.unavailableModules.length) {
+    limitations.push(
+      `Baseline is partial — unavailable modules: ${previous.unavailableModules.join(", ")}.`,
+    );
+  }
+
+  return {
+    period: current.period,
+    previousPeriod: previous.period,
+    rows,
+    baselineAvailable: hasBaseline,
+    limitations,
+  };
 }

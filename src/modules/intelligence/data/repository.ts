@@ -8,6 +8,7 @@
 
 import type {
   AttentionItem,
+  ComparisonReport,
   ExpectedVsActualRow,
   FunnelReport,
   IntelligenceOpportunity,
@@ -47,6 +48,12 @@ export interface IntelligenceRepository {
   getServicePerformance(period: Period): Promise<ServicePerformanceRow[]>;
   getSourcePerformance(period: Period): Promise<SourcePerformanceRow[]>;
   getExpectedVsActual(period: Period): Promise<ExpectedVsActualRow[]>;
+  /**
+   * Current period vs the immediately preceding equal-length period.
+   * Returns `baselineAvailable: false` — never a fabricated baseline —
+   * when the previous window holds no records.
+   */
+  getComparison(period: Period, metricIds?: string[]): Promise<ComparisonReport>;
   getAttention(now?: number, thresholds?: Partial<OptimizationThresholds>): Promise<AttentionItem[]>;
 
   // ---- Metric snapshots (durable measurement history) -------------------

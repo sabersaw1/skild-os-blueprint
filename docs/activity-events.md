@@ -167,7 +167,23 @@ activity log alone.
 Shell/system events (`shell.navigation.*`, `settings.value.updated`,
 `identity.session.started`) remain as defined in Phase 1.
 
+## Intelligence (Phase 14)
+
+```
+intelligence.metric.calculated
+intelligence.observation.created | .acknowledged | .dismissed | .resolved
+intelligence.opportunity.created | .acknowledged | .dismissed
+intelligence.recommendation.created | .accepted | .dismissed | .completed
+intelligence.optimization.run
+```
+
+Payloads carry metric ids, finding ids, enums, counts and metric values only.
+A recommendation event records that an action was *proposed* or that a human
+accepted it — never that Skild OS carried it out; the intelligence module has
+no execute capability. See `docs/modules/intelligence.md`.
+
 ## Consumer guidance
+
 
 - Modules emit events from repository methods after the write succeeds.
 - Consumers subscribe via `activityEmitter.subscribe(listener)`.
