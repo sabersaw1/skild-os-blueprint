@@ -177,7 +177,7 @@ export function createLocalIntelligenceRepository(): IntelligenceRepository {
     recommendations = commitRecords(K_RECOMMENDATIONS, next);
   };
 
-  const actor = () => getIdentity().userId;
+  const actor = () => getIdentity().id;
 
   const requireObservation = (id: string): Observation => {
     const found = observations.find((o) => o.id === id);
