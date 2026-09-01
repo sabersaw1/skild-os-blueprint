@@ -10,7 +10,7 @@ import {
 } from "@/modules/automation/hooks";
 import { runAutomationRule } from "@/modules/automation/engine/executor";
 import { manualTrigger } from "@/modules/automation/engine/triggers";
-import { describeActionPolicy } from "@/modules/automation/data/policy";
+import { decideActionPolicy } from "@/modules/automation/data/policy";
 
 export const Route = createModuleRoute("/automation/")({
   moduleId: "automation",
@@ -134,7 +134,12 @@ function AutomationAgents() {
                             {rule.description}
                           </p>
                           <p className="mt-1 text-xs text-muted-foreground">
-                            {describeActionPolicy(rule.proposedActionType)}
+                            {
+                              decideActionPolicy(
+                                rule.proposedActionType,
+                                rule.approvalPolicy,
+                              ).reason
+                            }
                           </p>
                         </div>
                         <Badge variant={rule.enabled ? "secondary" : "outline"}>
