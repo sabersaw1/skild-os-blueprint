@@ -11,6 +11,10 @@
 
 import { newId } from "@/core/ids";
 import { isCents, laborTotalCents, toCents } from "@/core/money";
+import { verifyReferences } from "@/core/data/references";
+import { CRM_CUSTOMER_REPOSITORY } from "@/modules/crm/data/repository";
+import { VEHICLES_REPOSITORY } from "@/modules/vehicles/data/repository";
+import { QUOTES_REPOSITORY } from "@/modules/quotes/data/repository";
 import { getIdentity } from "@/core/auth/identity";
 import { emit } from "@/core/activity/emitter";
 import { JOB_EVENTS } from "../activity";
@@ -216,6 +220,31 @@ export function createLocalJobsRepository(): JobsRepository {
 
     async create(input) {
       validateCreate(input);
+      // Referential integrity through the Data Registry — never a direct
+      // import of another module's repository.
+      await verifyReferences([
+        {
+          repository: CRM_CUSTOMER_REPOSITORY,
+          field: "customerId",
+          id: input.customerId,
+          entity: "Customer",
+          required: true,
+        },
+        {
+          repository: VEHICLES_REPOSITORY,
+          field: "vehicleId",
+          id: input.vehicleId,
+          entity: "Vehicle",
+        },
+        {
+          repository: QUOTES_REPOSITORY,
+          field: "quoteId",
+          id: input.quoteId,
+          entity: "Quote",
+          lookup: (repo, id) =>
+            (repo as { getQuote(id: string): Promise<unknown> }).getQuote(id),
+        },
+      ]);
       const now = Date.now();
       const priority: JobPriority = input.priority ?? "normal";
       const job: Job = {

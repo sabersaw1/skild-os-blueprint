@@ -29,6 +29,10 @@ import {
   type LineItemInput,
 } from "./schemas";
 import { assertCents, isCents, toCents } from "@/core/money";
+import { verifyReferences } from "@/core/data/references";
+import { CRM_CUSTOMER_REPOSITORY } from "@/modules/crm/data/repository";
+import { VEHICLES_REPOSITORY } from "@/modules/vehicles/data/repository";
+import { INSPECTIONS_REPOSITORY } from "@/modules/inspections/data/repository";
 import { computeTotals, materializeLineItems } from "./totals";
 import type { QuotesRepository } from "./repository";
 import {
@@ -299,6 +303,31 @@ export function createLocalQuotesRepository(): QuotesRepository {
 
     async createQuote(input) {
       validateCreate(input);
+      // Cross-module ids are verified through the Data Registry before any
+      // write, so a quote can never point at a deleted customer/vehicle.
+      await verifyReferences([
+        {
+          repository: CRM_CUSTOMER_REPOSITORY,
+          field: "customerId",
+          id: input.customerId,
+          entity: "Customer",
+          required: true,
+        },
+        {
+          repository: VEHICLES_REPOSITORY,
+          field: "vehicleId",
+          id: input.vehicleId,
+          entity: "Vehicle",
+        },
+        {
+          repository: INSPECTIONS_REPOSITORY,
+          field: "inspectionId",
+          id: input.inspectionId,
+          entity: "Inspection",
+          lookup: (repo, id) =>
+            (repo as { getInspection(id: string): Promise<unknown> }).getInspection(id),
+        },
+      ]);
       const lineItems: LineItem[] = materializeLineItems(
         input.lineItems ?? [],
         newId,
