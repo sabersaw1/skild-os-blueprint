@@ -92,3 +92,9 @@ opportunity · retention opportunity · marketing opportunity.
 - The only execution state a proposal can reach is `executed_by_human`.
 - Activity payloads carry intents, counts, ids, and enums — never question
   text, customer details, or credentials.
+
+## Money (Phase 13.5)
+
+`getJobCost` now reports `laborAmountCents` (integer cents), consistent with
+`partsCostCents` and `invoicedTotalCents`. Jarvis narration formats it with
+`formatCents()`; no float dollars cross the tool boundary.

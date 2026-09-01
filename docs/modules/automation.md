@@ -100,3 +100,21 @@ cannot execute anything.
 - Observers are read-only and local; a server-side worker arrives with
   server-backed storage.
 - `jarvis.execute` remains declared and unused.
+
+## Manual trigger behaviour (Phase 13.5)
+
+`triggerMatches(definition, actual)` returns `true` for ANY rule when the
+actual trigger kind is `manual`. A human pressing "Run now" is an explicit
+authorization event, so the trigger predicate is bypassed on purpose.
+
+What the manual path does **not** bypass:
+
+- capability enforcement (`agents.run`, and the capability of each action),
+- the approval policy (`AUTO_EXECUTE` / `APPROVAL_REQUIRED` / `BLOCKED`),
+- idempotency (the same correlation key still de-duplicates),
+- the action cap (`maxActions`).
+
+Non-manual triggers must agree on `kind`, plus `eventType` / `observerId`
+when the rule names one. Covered by
+`src/modules/automation/data/local-repository.test.ts`
+("triggerMatches — manual bypass").
