@@ -60,7 +60,7 @@ holds however the implementation is obtained.
 
 | Module | Guarded capabilities |
 | --- | --- |
-| Finance | `finance.invoice.write`, `finance.invoice.issue`, `finance.payment.record`, `finance.invoice.void` |
+| Finance | `finance.invoice.write`, `finance.invoice.issue`, `finance.payment.write`, `finance.invoice.void` |
 | Communication | `communication.write`, `communication.approve`, `communication.send` |
 | Marketing | `leads.write`, `marketing.write`, `marketing.approve`, `marketing.publish` |
 | Quotes | `quotes.write`, `quotes.approve` |
