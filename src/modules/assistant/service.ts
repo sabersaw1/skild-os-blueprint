@@ -93,16 +93,10 @@ export async function getDailyBrief(opts: JarvisServiceOptions): Promise<DailyBr
     attentionCount: attention.length,
     displayName: opts.displayName,
   });
-  emit({
-    type: ASSISTANT_EVENTS.briefGenerated,
-    moduleId: "assistant",
-    summary: "Daily brief generated",
-    payload: {
-      sectionCount: brief.sections.length,
-      attentionCount: brief.attentionCount,
-      omittedCount: brief.omitted.length,
-    },
-  });
+  // NOTE: the brief is rendered on every visit. Emitting an activity event
+  // per render would flood the log with noise, so `assistant.brief.generated`
+  // is reserved for an explicitly requested brief (a command or a schedule),
+  // not for passive rendering.
   return brief;
 }
 
