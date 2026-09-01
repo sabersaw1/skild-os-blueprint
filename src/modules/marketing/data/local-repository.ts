@@ -70,7 +70,9 @@ import {
   type SourcePerformance,
 } from "./schemas";
 import type { MarketingRepository } from "./repository";
-import { readEnvelope, registerVersionedKey, writeEnvelope } from "./storage";
+import { readEnvelope, registerVersionedKey } from "./storage";
+import { commitRecords } from "@/core/storage/persistence";
+import { withCapabilityEnforcement } from "@/core/auth/authorize";
 
 const K_LEADS = "skildos.marketing.leads.v1";
 const K_OPPORTUNITIES = "skildos.marketing.opportunities.v1";
@@ -298,10 +300,17 @@ export function createLocalMarketingRepository(): MarketingRepository {
   const listeners = new Set<() => void>();
   const notify = () => listeners.forEach((l) => l());
 
-  const persistLeads = () => writeEnvelope(K_LEADS, leads);
-  const persistOpportunities = () =>
-    writeEnvelope(K_OPPORTUNITIES, opportunities);
-  const persistActions = () => writeEnvelope(K_ACTIONS, actions);
+  // Persistence commit: in-memory state advances ONLY on a durable write.
+  // A failure throws PersistenceError before any emit() runs.
+  const persistLeads = (next: Lead[]) => {
+    leads = commitRecords(K_LEADS, next);
+  };
+  const persistOpportunities = (next: MarketingOpportunity[]) => {
+    opportunities = commitRecords(K_OPPORTUNITIES, next);
+  };
+  const persistActions = (next: MarketingAction[]) => {
+    actions = commitRecords(K_ACTIONS, next);
+  };
 
   const requireLead = (id: string): Lead => {
     const found = leads.find((l) => l.id === id);
@@ -329,22 +338,21 @@ export function createLocalMarketingRepository(): MarketingRepository {
 
   const saveLead = (next: Lead): Lead => {
     const scored = rescore(next);
-    leads = leads.map((l) => (l.id === scored.id ? scored : l));
-    persistLeads();
+    persistLeads(leads.map((l) => (l.id === scored.id ? scored : l)));
     return scored;
   };
 
   const replaceOpportunity = (next: MarketingOpportunity) => {
-    opportunities = opportunities.map((o) => (o.id === next.id ? next : o));
-    persistOpportunities();
+    persistOpportunities(
+      opportunities.map((o) => (o.id === next.id ? next : o)),
+    );
   };
 
   const replaceAction = (next: MarketingAction) => {
-    actions = actions.map((a) => (a.id === next.id ? next : a));
-    persistActions();
+    persistActions(actions.map((a) => (a.id === next.id ? next : a)));
   };
 
-  return {
+  const impl: MarketingRepository = {
     // ---- Leads ----------------------------------------------------------
     async listLeads(query?: LeadListQuery) {
       const q = query ?? {};
@@ -488,8 +496,7 @@ export function createLocalMarketingRepository(): MarketingRepository {
       const lead: Lead = { ...base, score, scoreReasons: reasons };
 
       // ---- persist
-      leads = [lead, ...leads];
-      persistLeads();
+      persistLeads([lead, ...leads]);
 
       // ---- emit
       emit({
@@ -1016,8 +1023,7 @@ export function createLocalMarketingRepository(): MarketingRepository {
         createdAt: now,
         updatedAt: now,
       };
-      opportunities = [opportunity, ...opportunities];
-      persistOpportunities();
+      persistOpportunities([opportunity, ...opportunities]);
       emit({
         type: MARKETING_EVENTS.opportunityCreated,
         moduleId: "marketing",
@@ -1197,8 +1203,7 @@ export function createLocalMarketingRepository(): MarketingRepository {
         createdAt: now,
         updatedAt: now,
       };
-      actions = [action, ...actions];
-      persistActions();
+      persistActions([action, ...actions]);
       if (opportunityId) {
         const opp = requireOpportunity(opportunityId);
         replaceOpportunity({
@@ -1365,8 +1370,10 @@ export function createLocalMarketingRepository(): MarketingRepository {
         id: newId(),
         recordedAt: Date.now(),
       };
-      pagePerformance = [record, ...pagePerformance];
-      writeEnvelope(K_PAGE_PERFORMANCE, pagePerformance);
+      pagePerformance = commitRecords(K_PAGE_PERFORMANCE, [
+        record,
+        ...pagePerformance,
+      ]);
       emit({
         type: MARKETING_EVENTS.pagePerformanceRecorded,
         moduleId: "marketing",
@@ -1437,8 +1444,10 @@ export function createLocalMarketingRepository(): MarketingRepository {
         status: input.status ?? "identified",
         recordedAt: Date.now(),
       };
-      searchOpportunities = [record, ...searchOpportunities];
-      writeEnvelope(K_SEARCH_OPPORTUNITIES, searchOpportunities);
+      searchOpportunities = commitRecords(K_SEARCH_OPPORTUNITIES, [
+        record,
+        ...searchOpportunities,
+      ]);
       emit({
         type: MARKETING_EVENTS.searchOpportunityRecorded,
         moduleId: "marketing",
@@ -1497,8 +1506,10 @@ export function createLocalMarketingRepository(): MarketingRepository {
         id: newId(),
         recordedAt: Date.now(),
       };
-      localVisibility = [record, ...localVisibility];
-      writeEnvelope(K_LOCAL_VISIBILITY, localVisibility);
+      localVisibility = commitRecords(K_LOCAL_VISIBILITY, [
+        record,
+        ...localVisibility,
+      ]);
       emit({
         type: MARKETING_EVENTS.localVisibilityRecorded,
         moduleId: "marketing",
@@ -1514,6 +1525,35 @@ export function createLocalMarketingRepository(): MarketingRepository {
       return () => listeners.delete(listener);
     },
   };
+
+  // Authorization boundary — see src/core/auth/authorize.ts. `approve` and
+  // `publish` stay separate from `write` so a future agent can prepare
+  // marketing work without being able to approve or publish any of it.
+  return withCapabilityEnforcement(impl, {
+    createLead: "leads.write",
+    updateLead: "leads.write",
+    setLeadStatus: "leads.write",
+    recordContact: "leads.write",
+    setQualification: "leads.write",
+    scheduleFollowUp: "leads.write",
+    recordConversion: "leads.write",
+    markLost: "leads.write",
+    recordTouch: "leads.write",
+    createOpportunity: "marketing.write",
+    updateOpportunity: "marketing.write",
+    reviewOpportunity: "marketing.write",
+    approveOpportunity: "marketing.approve",
+    dismissOpportunity: "marketing.write",
+    createAction: "marketing.write",
+    reviewAction: "marketing.write",
+    approveAction: "marketing.approve",
+    markActionExecuted: "marketing.publish",
+    measureAction: "marketing.write",
+    rejectAction: "marketing.write",
+    recordPagePerformance: "marketing.write",
+    recordSearchOpportunity: "marketing.write",
+    recordLocalVisibility: "marketing.write",
+  });
 
   // ---- Local helpers (closure over `actions`) ---------------------------
 
