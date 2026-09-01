@@ -61,7 +61,7 @@ function period(days = 30): Period {
 
 const evidence: Evidence[] = [
   {
-    kind: "record_count",
+    kind: "system_derived",
     statement: "3 quotes were sent and none were answered.",
     sources: [{ module: "quotes", entity: "quote", id: "q1" }],
   },
@@ -149,10 +149,10 @@ describe("snapshots", () => {
 
 describe("observations", () => {
   it("records an observation with evidence and emits an immutable event", async () => {
-    const spy = vi.spyOn(emitter, "emitActivity");
+    const spy = vi.spyOn(emitter, "emit");
     const obs = await repo.createObservation({
-      type: "conversion_drop",
-      severity: "warning",
+      type: "quote_conversion",
+      severity: "medium",
       title: "Quotes are not converting",
       description: "3 sent quotes have had no response.",
       evidence,
@@ -161,15 +161,15 @@ describe("observations", () => {
     expect(isUuidV4(obs.id)).toBe(true);
     expect(obs.status).toBe("open");
     expect(spy).toHaveBeenCalledWith(
-      expect.objectContaining({ type: INTELLIGENCE_EVENTS.observationRecorded }),
+      expect.objectContaining({ type: INTELLIGENCE_EVENTS.observationCreated }),
     );
   });
 
   it("refuses an observation with no evidence", async () => {
     await expect(
       repo.createObservation({
-        type: "conversion_drop",
-        severity: "warning",
+        type: "quote_conversion",
+        severity: "medium",
         title: "Gut feeling",
         description: "Feels slow.",
         evidence: [],
@@ -180,10 +180,10 @@ describe("observations", () => {
 
   it("requires intelligence.recommend, emitting nothing when denied", async () => {
     denyOnly("intelligence.recommend");
-    const spy = vi.spyOn(emitter, "emitActivity");
+    const spy = vi.spyOn(emitter, "emit");
     await expect(
       repo.createObservation({
-        type: "conversion_drop",
+        type: "quote_conversion",
         severity: "info",
         title: "x",
         description: "y",
@@ -197,7 +197,7 @@ describe("observations", () => {
 
   it("records a human acknowledgement as a status change", async () => {
     const obs = await repo.createObservation({
-      type: "conversion_drop",
+      type: "quote_conversion",
       severity: "info",
       title: "x",
       description: "y",
@@ -211,7 +211,7 @@ describe("observations", () => {
 
   it("requires intelligence.dismiss to reject a finding", async () => {
     const obs = await repo.createObservation({
-      type: "conversion_drop",
+      type: "quote_conversion",
       severity: "info",
       title: "x",
       description: "y",
@@ -229,7 +229,7 @@ describe("observations", () => {
 describe("recommendations", () => {
   it("accepting a recommendation performs no action — it only records the decision", async () => {
     const rec = await repo.createRecommendation({
-      recommendationType: "follow_up",
+      recommendationType: "follow_up_leads",
       title: "Follow up on 3 quotes",
       reason: "They were sent over 7 days ago with no response.",
       evidence,
@@ -279,7 +279,7 @@ describe("subscriptions", () => {
     const listener = vi.fn();
     const unsub = repo.subscribe(listener);
     await repo.createObservation({
-      type: "conversion_drop",
+      type: "quote_conversion",
       severity: "info",
       title: "x",
       description: "y",
