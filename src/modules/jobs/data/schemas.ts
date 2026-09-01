@@ -65,8 +65,8 @@ export interface LaborEntry {
   description: string;
   /** Hours worked (>= 0). */
   hours: number;
-  /** Hourly rate at the time the entry was logged. */
-  rate: number;
+  /** Hourly rate at the time the entry was logged, in INTEGER CENTS. */
+  rateCents: number;
   createdAt: number;
   createdBy: string;
 }
@@ -113,7 +113,8 @@ export interface JobStatusInput {
 export interface LaborInput {
   description: string;
   hours: number;
-  rate: number;
+  /** Hourly rate in INTEGER CENTS. See @/core/money. */
+  rateCents: number;
 }
 
 export interface NoteInput {

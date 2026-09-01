@@ -109,8 +109,10 @@ function validateLabor(input: LaborInput): void {
   if (!Number.isFinite(input.hours) || input.hours < 0) {
     throw new Error("Labor hours must be >= 0.");
   }
-  if (!Number.isFinite(input.rate) || input.rate < 0) {
-    throw new Error("Labor rate must be >= 0.");
+  if (!isCents(input.rateCents)) {
+    throw new Error(
+      "Labor rateCents must be a non-negative integer number of cents.",
+    );
   }
 }
 
@@ -344,7 +346,7 @@ export function createLocalJobsRepository(): JobsRepository {
         jobId,
         description: input.description.trim(),
         hours: input.hours,
-        rate: input.rate,
+        rateCents: input.rateCents,
         createdAt: Date.now(),
         createdBy: getIdentity().id,
       };
@@ -364,8 +366,8 @@ export function createLocalJobsRepository(): JobsRepository {
           jobId,
           laborId: entry.id,
           hours: entry.hours,
-          rate: entry.rate,
-          total: entry.hours * entry.rate,
+          rateCents: entry.rateCents,
+          totalCents: laborTotalCents(entry.hours, entry.rateCents),
         },
       });
       return entry;
