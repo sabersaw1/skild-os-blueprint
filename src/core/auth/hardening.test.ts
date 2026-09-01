@@ -82,9 +82,9 @@ registerRole({
 function actAs(roleId: string) {
   const identity: Identity = {
     id: "test-actor",
-    name: "Test Actor",
+    displayName: "Test Actor",
     roleId,
-  } as Identity;
+  };
   setIdentityProvider({
     kind: "test",
     get: () => identity,
@@ -142,7 +142,10 @@ describe("repository authorization boundary", () => {
       comms.createConversation({ customerId: "cust-1", channel: "email" }),
     ).rejects.toBeInstanceOf(CapabilityDeniedError);
     await expect(
-      marketing.createLead({ source: "website", name: "Jane" }),
+      marketing.createLead({
+        channel: "website",
+        attribution: { source: "website" },
+      }),
     ).rejects.toBeInstanceOf(CapabilityDeniedError);
   });
 
@@ -152,7 +155,11 @@ describe("repository authorization boundary", () => {
     actAs(READER_ROLE_ID);
 
     await expect(
-      quotes.createQuote({ customerId: "cust-1", vehicleId: "veh-1" }),
+      quotes.createQuote({
+        customerId: "cust-1",
+        vehicleId: "veh-1",
+        title: "Brake service",
+      }),
     ).rejects.toBeInstanceOf(CapabilityDeniedError);
     await expect(
       jobs.create({ customerId: "cust-1", vehicleId: "veh-1", title: "Brakes" }),
