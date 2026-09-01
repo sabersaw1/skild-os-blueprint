@@ -38,6 +38,9 @@ const RULES: Rule[] = [
   { type: "marketing.performance", groups: [["marketing", "service", "services", "demand", "source", "sources", "channel"], ["performance", "generating", "working", "best", "converting", "demand"]], weight: 3 },
   { type: "automation.status", groups: [["agent", "agents", "automation", "automations", "bot", "bots"], ["status", "doing", "done", "running", "ran", "run", "waiting", "approval", "approvals", "failed", "blocked"]], weight: 4 },
   { type: "automation.status", groups: [["automation", "agents"]], weight: 3 },
+  { type: "intelligence.overview", groups: [["business", "shop", "we", "overall"], ["performing", "performance", "doing", "health", "trend", "trending", "compared", "growth", "funnel", "conversion", "margin", "profitability"]], weight: 4 },
+  { type: "intelligence.overview", groups: [["funnel", "conversion rate", "close rate", "gross margin", "profitability"]], weight: 4 },
+  { type: "intelligence.findings", groups: [["observation", "observations", "finding", "findings", "recommendation", "recommendations", "improve", "optimise", "optimize"], ["business", "shop", "we", "should", "what"]], weight: 4 },
   { type: "knowledge.lookup", groups: [["policy", "sop", "procedure", "process", "rule", "rules", "standard", "how do we", "what is our"]], weight: 3 },
 ];
 
