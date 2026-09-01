@@ -18,6 +18,7 @@ import { Route as MarketingRouteImport } from './routes/marketing'
 import { Route as LeadsRouteImport } from './routes/leads'
 import { Route as KnowledgeRouteImport } from './routes/knowledge'
 import { Route as JobsRouteImport } from './routes/jobs'
+import { Route as JarvisRouteImport } from './routes/jarvis'
 import { Route as InvoicesRouteImport } from './routes/invoices'
 import { Route as InspectionsRouteImport } from './routes/inspections'
 import { Route as CustomersRouteImport } from './routes/customers'
@@ -33,6 +34,7 @@ import { Route as MarketingIndexRouteImport } from './routes/marketing.index'
 import { Route as LeadsIndexRouteImport } from './routes/leads.index'
 import { Route as KnowledgeIndexRouteImport } from './routes/knowledge.index'
 import { Route as JobsIndexRouteImport } from './routes/jobs.index'
+import { Route as JarvisIndexRouteImport } from './routes/jarvis.index'
 import { Route as InvoicesIndexRouteImport } from './routes/invoices.index'
 import { Route as InspectionsIndexRouteImport } from './routes/inspections.index'
 import { Route as CustomersIndexRouteImport } from './routes/customers.index'
@@ -57,6 +59,8 @@ import { Route as KnowledgeNewRouteImport } from './routes/knowledge.new'
 import { Route as KnowledgeKnowledgeIdRouteImport } from './routes/knowledge.$knowledgeId'
 import { Route as JobsNewRouteImport } from './routes/jobs.new'
 import { Route as JobsJobIdRouteImport } from './routes/jobs.$jobId'
+import { Route as JarvisProposalsRouteImport } from './routes/jarvis.proposals'
+import { Route as JarvisAttentionRouteImport } from './routes/jarvis.attention'
 import { Route as InvoicesNewRouteImport } from './routes/invoices.new'
 import { Route as InvoicesInvoiceIdRouteImport } from './routes/invoices.$invoiceId'
 import { Route as InspectionsNewRouteImport } from './routes/inspections.new'
@@ -130,6 +134,11 @@ const KnowledgeRoute = KnowledgeRouteImport.update({
 const JobsRoute = JobsRouteImport.update({
   id: '/jobs',
   path: '/jobs',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const JarvisRoute = JarvisRouteImport.update({
+  id: '/jarvis',
+  path: '/jarvis',
   getParentRoute: () => rootRouteImport,
 } as any)
 const InvoicesRoute = InvoicesRouteImport.update({
@@ -206,6 +215,11 @@ const JobsIndexRoute = JobsIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => JobsRoute,
+} as any)
+const JarvisIndexRoute = JarvisIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => JarvisRoute,
 } as any)
 const InvoicesIndexRoute = InvoicesIndexRouteImport.update({
   id: '/',
@@ -326,6 +340,16 @@ const JobsJobIdRoute = JobsJobIdRouteImport.update({
   id: '/$jobId',
   path: '/$jobId',
   getParentRoute: () => JobsRoute,
+} as any)
+const JarvisProposalsRoute = JarvisProposalsRouteImport.update({
+  id: '/proposals',
+  path: '/proposals',
+  getParentRoute: () => JarvisRoute,
+} as any)
+const JarvisAttentionRoute = JarvisAttentionRouteImport.update({
+  id: '/attention',
+  path: '/attention',
+  getParentRoute: () => JarvisRoute,
 } as any)
 const InvoicesNewRoute = InvoicesNewRouteImport.update({
   id: '/new',
@@ -488,6 +512,7 @@ export interface FileRoutesByFullPath {
   '/customers': typeof CustomersRouteWithChildren
   '/inspections': typeof InspectionsRouteWithChildren
   '/invoices': typeof InvoicesRouteWithChildren
+  '/jarvis': typeof JarvisRouteWithChildren
   '/jobs': typeof JobsRouteWithChildren
   '/knowledge': typeof KnowledgeRouteWithChildren
   '/leads': typeof LeadsRouteWithChildren
@@ -505,6 +530,8 @@ export interface FileRoutesByFullPath {
   '/inspections/new': typeof InspectionsNewRoute
   '/invoices/$invoiceId': typeof InvoicesInvoiceIdRouteWithChildren
   '/invoices/new': typeof InvoicesNewRoute
+  '/jarvis/attention': typeof JarvisAttentionRoute
+  '/jarvis/proposals': typeof JarvisProposalsRoute
   '/jobs/$jobId': typeof JobsJobIdRouteWithChildren
   '/jobs/new': typeof JobsNewRoute
   '/knowledge/$knowledgeId': typeof KnowledgeKnowledgeIdRouteWithChildren
@@ -529,6 +556,7 @@ export interface FileRoutesByFullPath {
   '/customers/': typeof CustomersIndexRoute
   '/inspections/': typeof InspectionsIndexRoute
   '/invoices/': typeof InvoicesIndexRoute
+  '/jarvis/': typeof JarvisIndexRoute
   '/jobs/': typeof JobsIndexRoute
   '/knowledge/': typeof KnowledgeIndexRoute
   '/leads/': typeof LeadsIndexRoute
@@ -568,6 +596,8 @@ export interface FileRoutesByTo {
   '/customers/new': typeof CustomersNewRoute
   '/inspections/new': typeof InspectionsNewRoute
   '/invoices/new': typeof InvoicesNewRoute
+  '/jarvis/attention': typeof JarvisAttentionRoute
+  '/jarvis/proposals': typeof JarvisProposalsRoute
   '/jobs/new': typeof JobsNewRoute
   '/knowledge/new': typeof KnowledgeNewRoute
   '/leads/$leadId': typeof LeadsLeadIdRoute
@@ -587,6 +617,7 @@ export interface FileRoutesByTo {
   '/customers': typeof CustomersIndexRoute
   '/inspections': typeof InspectionsIndexRoute
   '/invoices': typeof InvoicesIndexRoute
+  '/jarvis': typeof JarvisIndexRoute
   '/jobs': typeof JobsIndexRoute
   '/knowledge': typeof KnowledgeIndexRoute
   '/leads': typeof LeadsIndexRoute
@@ -626,6 +657,7 @@ export interface FileRoutesById {
   '/customers': typeof CustomersRouteWithChildren
   '/inspections': typeof InspectionsRouteWithChildren
   '/invoices': typeof InvoicesRouteWithChildren
+  '/jarvis': typeof JarvisRouteWithChildren
   '/jobs': typeof JobsRouteWithChildren
   '/knowledge': typeof KnowledgeRouteWithChildren
   '/leads': typeof LeadsRouteWithChildren
@@ -643,6 +675,8 @@ export interface FileRoutesById {
   '/inspections/new': typeof InspectionsNewRoute
   '/invoices/$invoiceId': typeof InvoicesInvoiceIdRouteWithChildren
   '/invoices/new': typeof InvoicesNewRoute
+  '/jarvis/attention': typeof JarvisAttentionRoute
+  '/jarvis/proposals': typeof JarvisProposalsRoute
   '/jobs/$jobId': typeof JobsJobIdRouteWithChildren
   '/jobs/new': typeof JobsNewRoute
   '/knowledge/$knowledgeId': typeof KnowledgeKnowledgeIdRouteWithChildren
@@ -667,6 +701,7 @@ export interface FileRoutesById {
   '/customers/': typeof CustomersIndexRoute
   '/inspections/': typeof InspectionsIndexRoute
   '/invoices/': typeof InvoicesIndexRoute
+  '/jarvis/': typeof JarvisIndexRoute
   '/jobs/': typeof JobsIndexRoute
   '/knowledge/': typeof KnowledgeIndexRoute
   '/leads/': typeof LeadsIndexRoute
@@ -707,6 +742,7 @@ export interface FileRouteTypes {
     | '/customers'
     | '/inspections'
     | '/invoices'
+    | '/jarvis'
     | '/jobs'
     | '/knowledge'
     | '/leads'
@@ -724,6 +760,8 @@ export interface FileRouteTypes {
     | '/inspections/new'
     | '/invoices/$invoiceId'
     | '/invoices/new'
+    | '/jarvis/attention'
+    | '/jarvis/proposals'
     | '/jobs/$jobId'
     | '/jobs/new'
     | '/knowledge/$knowledgeId'
@@ -748,6 +786,7 @@ export interface FileRouteTypes {
     | '/customers/'
     | '/inspections/'
     | '/invoices/'
+    | '/jarvis/'
     | '/jobs/'
     | '/knowledge/'
     | '/leads/'
@@ -787,6 +826,8 @@ export interface FileRouteTypes {
     | '/customers/new'
     | '/inspections/new'
     | '/invoices/new'
+    | '/jarvis/attention'
+    | '/jarvis/proposals'
     | '/jobs/new'
     | '/knowledge/new'
     | '/leads/$leadId'
@@ -806,6 +847,7 @@ export interface FileRouteTypes {
     | '/customers'
     | '/inspections'
     | '/invoices'
+    | '/jarvis'
     | '/jobs'
     | '/knowledge'
     | '/leads'
@@ -844,6 +886,7 @@ export interface FileRouteTypes {
     | '/customers'
     | '/inspections'
     | '/invoices'
+    | '/jarvis'
     | '/jobs'
     | '/knowledge'
     | '/leads'
@@ -861,6 +904,8 @@ export interface FileRouteTypes {
     | '/inspections/new'
     | '/invoices/$invoiceId'
     | '/invoices/new'
+    | '/jarvis/attention'
+    | '/jarvis/proposals'
     | '/jobs/$jobId'
     | '/jobs/new'
     | '/knowledge/$knowledgeId'
@@ -885,6 +930,7 @@ export interface FileRouteTypes {
     | '/customers/'
     | '/inspections/'
     | '/invoices/'
+    | '/jarvis/'
     | '/jobs/'
     | '/knowledge/'
     | '/leads/'
@@ -924,6 +970,7 @@ export interface RootRouteChildren {
   CustomersRoute: typeof CustomersRouteWithChildren
   InspectionsRoute: typeof InspectionsRouteWithChildren
   InvoicesRoute: typeof InvoicesRouteWithChildren
+  JarvisRoute: typeof JarvisRouteWithChildren
   JobsRoute: typeof JobsRouteWithChildren
   KnowledgeRoute: typeof KnowledgeRouteWithChildren
   LeadsRoute: typeof LeadsRouteWithChildren
@@ -1004,6 +1051,13 @@ declare module '@tanstack/react-router' {
       path: '/jobs'
       fullPath: '/jobs'
       preLoaderRoute: typeof JobsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/jarvis': {
+      id: '/jarvis'
+      path: '/jarvis'
+      fullPath: '/jarvis'
+      preLoaderRoute: typeof JarvisRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/invoices': {
@@ -1110,6 +1164,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/jobs/'
       preLoaderRoute: typeof JobsIndexRouteImport
       parentRoute: typeof JobsRoute
+    }
+    '/jarvis/': {
+      id: '/jarvis/'
+      path: '/'
+      fullPath: '/jarvis/'
+      preLoaderRoute: typeof JarvisIndexRouteImport
+      parentRoute: typeof JarvisRoute
     }
     '/invoices/': {
       id: '/invoices/'
@@ -1278,6 +1339,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/jobs/$jobId'
       preLoaderRoute: typeof JobsJobIdRouteImport
       parentRoute: typeof JobsRoute
+    }
+    '/jarvis/proposals': {
+      id: '/jarvis/proposals'
+      path: '/proposals'
+      fullPath: '/jarvis/proposals'
+      preLoaderRoute: typeof JarvisProposalsRouteImport
+      parentRoute: typeof JarvisRoute
+    }
+    '/jarvis/attention': {
+      id: '/jarvis/attention'
+      path: '/attention'
+      fullPath: '/jarvis/attention'
+      preLoaderRoute: typeof JarvisAttentionRouteImport
+      parentRoute: typeof JarvisRoute
     }
     '/invoices/new': {
       id: '/invoices/new'
@@ -1591,6 +1666,21 @@ const InvoicesRouteWithChildren = InvoicesRoute._addFileChildren(
   InvoicesRouteChildren,
 )
 
+interface JarvisRouteChildren {
+  JarvisAttentionRoute: typeof JarvisAttentionRoute
+  JarvisProposalsRoute: typeof JarvisProposalsRoute
+  JarvisIndexRoute: typeof JarvisIndexRoute
+}
+
+const JarvisRouteChildren: JarvisRouteChildren = {
+  JarvisAttentionRoute: JarvisAttentionRoute,
+  JarvisProposalsRoute: JarvisProposalsRoute,
+  JarvisIndexRoute: JarvisIndexRoute,
+}
+
+const JarvisRouteWithChildren =
+  JarvisRoute._addFileChildren(JarvisRouteChildren)
+
 interface JobsJobIdRouteChildren {
   JobsJobIdEditRoute: typeof JobsJobIdEditRoute
   JobsJobIdIndexRoute: typeof JobsJobIdIndexRoute
@@ -1805,6 +1895,7 @@ const rootRouteChildren: RootRouteChildren = {
   CustomersRoute: CustomersRouteWithChildren,
   InspectionsRoute: InspectionsRouteWithChildren,
   InvoicesRoute: InvoicesRouteWithChildren,
+  JarvisRoute: JarvisRouteWithChildren,
   JobsRoute: JobsRouteWithChildren,
   KnowledgeRoute: KnowledgeRouteWithChildren,
   LeadsRoute: LeadsRouteWithChildren,

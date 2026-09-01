@@ -123,6 +123,24 @@ and safe messages ONLY — never credentials, tokens, or raw provider payloads.
 Marketing payloads carry ids, enums, counts, and rule-derived scores ONLY —
 never customer contact details or message content.
 
+## Jarvis / AI Assistant (Phase 12)
+
+| Event | Payload |
+| --- | --- |
+| `assistant.query.executed` | `{ intent, intentConfidence, factCount, recommendationCount, uncertaintyCount, blockedCount, providerId }` |
+| `assistant.recommendation.created` | `{ count, intent }` |
+| `assistant.proposal.created` | `{ proposalId, actionType, risk, requiredCapabilityId, targetCount }` |
+| `assistant.proposal.approved` | `{ proposalId, actionType, risk, requiredCapabilityId }` |
+| `assistant.proposal.rejected` | `{ proposalId, actionType }` |
+| `assistant.proposal.expired` | `{ proposalId, actionType }` |
+| `assistant.proposal.executed` | `{ proposalId, actionType }` (recorded human action only) |
+| `assistant.attention.acknowledged` | `{ attentionId, status }` |
+| `assistant.attention.dismissed` | `{ attentionId, status }` |
+| `assistant.brief.generated` | `{ sectionCount, attentionCount, omittedCount }` — reserved for an explicitly requested brief; passive rendering emits nothing |
+
+Assistant payloads carry intents, ids, enums, and counts ONLY — never the
+question text, answer text, customer details, or model credentials.
+
 Shell/system events (`shell.navigation.*`, `settings.value.updated`,
 `identity.session.started`) remain as defined in Phase 1.
 
