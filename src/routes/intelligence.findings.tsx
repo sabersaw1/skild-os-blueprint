@@ -106,11 +106,15 @@ function FindingsPage() {
                     {o.severity}
                   </Badge>
                 </div>
-                <p className="mt-1 text-xs text-muted-foreground">{o.detail}</p>
-                <p className="mt-1 text-[11px] text-muted-foreground">
-                  Evidence: {o.evidence.kind} ·{" "}
-                  {o.evidence.sources.length} record(s)
-                </p>
+                <p className="mt-1 text-xs text-muted-foreground">{o.description}</p>
+                <ul className="mt-1 space-y-0.5">
+                  {o.evidence.map((e, i) => (
+                    <li key={i} className="text-[11px] text-muted-foreground">
+                      {e.statement} ({e.sources.length} record
+                      {e.sources.length === 1 ? "" : "s"})
+                    </li>
+                  ))}
+                </ul>
               </li>
             ))}
           </ul>
@@ -130,16 +134,23 @@ function FindingsPage() {
                 <div className="flex items-start justify-between gap-2">
                   <span className="text-sm font-medium">{o.title}</span>
                   <span className="text-xs tabular-nums text-muted-foreground">
-                    {o.estimatedValueCents === null
-                      ? "value unknown"
-                      : formatCents(o.estimatedValueCents)}
+                    {o.expectedImpactCents === undefined
+                      ? "impact unknown"
+                      : formatCents(o.expectedImpactCents)}
                   </span>
                 </div>
-                <p className="mt-1 text-xs text-muted-foreground">{o.detail}</p>
-                {o.estimatedValueCents === null && (
+                <p className="mt-1 text-xs text-muted-foreground">{o.description}</p>
+                {o.expectedImpactCents === undefined ? (
                   <p className="mt-1 text-[11px] text-muted-foreground">
-                    No value is shown because the records do not support one.
+                    No impact figure is shown because the records do not
+                    support one.
                   </p>
+                ) : (
+                  o.impactBasis && (
+                    <p className="mt-1 text-[11px] text-muted-foreground">
+                      {o.impactBasis}
+                    </p>
+                  )
                 )}
               </li>
             ))}
@@ -167,10 +178,11 @@ function FindingsPage() {
                     {r.status}
                   </Badge>
                 </div>
-                <p className="mt-1 text-xs text-muted-foreground">{r.rationale}</p>
+                <p className="mt-1 text-xs text-muted-foreground">{r.reason}</p>
                 <p className="mt-1 text-[11px] text-muted-foreground">
-                  Suggested action: {r.suggestedAction} — a person must carry
-                  this out; Skild OS will not.
+                  Proposed action: {r.proposedAction} — a person must carry
+                  this out; Skild OS will not. Approval:{" "}
+                  {r.approvalRequirement}.
                 </p>
               </li>
             ))}
