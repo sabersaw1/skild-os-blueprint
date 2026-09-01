@@ -28,6 +28,8 @@ const RULES: Rule[] = [
   { type: "leads.new", groups: [["new", "came in", "recent", "fresh"], ["lead", "leads", "inquiry", "inquiries", "enquiry"]], weight: 3 },
   { type: "quotes.pending", groups: [["quote", "quotes", "estimate", "estimates"], ["waiting", "pending", "awaiting", "outstanding", "converted", "convert", "response", "open"]], weight: 4 },
   { type: "finance.unpaid", groups: [["invoice", "invoices"], ["unpaid", "outstanding", "owed", "owing", "overdue", "balance"]], weight: 4 },
+  // Phrasings that name no document: "who owes us money?", "what's overdue?"
+  { type: "finance.unpaid", groups: [["owes", "owe", "owed", "unpaid", "outstanding", "overdue", "chase", "collect"]], weight: 3 },
   { type: "finance.revenue", groups: [["revenue", "income", "collected", "made", "paid us", "profit", "profitable"]], weight: 3 },
   { type: "parts.job_cost", groups: [["cost", "costs", "cost us", "spend", "spent", "parts used", "profit"], ["job", "repair", "part", "parts"]], weight: 3 },
   { type: "customer.history", groups: [["customer", "client"], ["history", "past", "previous", "record", "records", "show me"]], weight: 3 },
