@@ -20,6 +20,7 @@ import { Route as KnowledgeRouteImport } from './routes/knowledge'
 import { Route as JobsRouteImport } from './routes/jobs'
 import { Route as JarvisRouteImport } from './routes/jarvis'
 import { Route as InvoicesRouteImport } from './routes/invoices'
+import { Route as IntelligenceRouteImport } from './routes/intelligence'
 import { Route as InspectionsRouteImport } from './routes/inspections'
 import { Route as CustomersRouteImport } from './routes/customers'
 import { Route as ConversationsRouteImport } from './routes/conversations'
@@ -148,6 +149,11 @@ const JarvisRoute = JarvisRouteImport.update({
 const InvoicesRoute = InvoicesRouteImport.update({
   id: '/invoices',
   path: '/invoices',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const IntelligenceRoute = IntelligenceRouteImport.update({
+  id: '/intelligence',
+  path: '/intelligence',
   getParentRoute: () => rootRouteImport,
 } as any)
 const InspectionsRoute = InspectionsRouteImport.update({
@@ -536,6 +542,7 @@ export interface FileRoutesByFullPath {
   '/conversations': typeof ConversationsRouteWithChildren
   '/customers': typeof CustomersRouteWithChildren
   '/inspections': typeof InspectionsRouteWithChildren
+  '/intelligence': typeof IntelligenceRoute
   '/invoices': typeof InvoicesRouteWithChildren
   '/jarvis': typeof JarvisRouteWithChildren
   '/jobs': typeof JobsRouteWithChildren
@@ -619,6 +626,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/activity': typeof ActivityRoute
+  '/intelligence': typeof IntelligenceRoute
   '/automation/approvals': typeof AutomationApprovalsRoute
   '/automation/runs': typeof AutomationRunsRoute
   '/conversations/$conversationId': typeof ConversationsConversationIdRoute
@@ -688,6 +696,7 @@ export interface FileRoutesById {
   '/conversations': typeof ConversationsRouteWithChildren
   '/customers': typeof CustomersRouteWithChildren
   '/inspections': typeof InspectionsRouteWithChildren
+  '/intelligence': typeof IntelligenceRoute
   '/invoices': typeof InvoicesRouteWithChildren
   '/jarvis': typeof JarvisRouteWithChildren
   '/jobs': typeof JobsRouteWithChildren
@@ -777,6 +786,7 @@ export interface FileRouteTypes {
     | '/conversations'
     | '/customers'
     | '/inspections'
+    | '/intelligence'
     | '/invoices'
     | '/jarvis'
     | '/jobs'
@@ -860,6 +870,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/activity'
+    | '/intelligence'
     | '/automation/approvals'
     | '/automation/runs'
     | '/conversations/$conversationId'
@@ -928,6 +939,7 @@ export interface FileRouteTypes {
     | '/conversations'
     | '/customers'
     | '/inspections'
+    | '/intelligence'
     | '/invoices'
     | '/jarvis'
     | '/jobs'
@@ -1016,6 +1028,7 @@ export interface RootRouteChildren {
   ConversationsRoute: typeof ConversationsRouteWithChildren
   CustomersRoute: typeof CustomersRouteWithChildren
   InspectionsRoute: typeof InspectionsRouteWithChildren
+  IntelligenceRoute: typeof IntelligenceRoute
   InvoicesRoute: typeof InvoicesRouteWithChildren
   JarvisRoute: typeof JarvisRouteWithChildren
   JobsRoute: typeof JobsRouteWithChildren
@@ -1112,6 +1125,13 @@ declare module '@tanstack/react-router' {
       path: '/invoices'
       fullPath: '/invoices'
       preLoaderRoute: typeof InvoicesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/intelligence': {
+      id: '/intelligence'
+      path: '/intelligence'
+      fullPath: '/intelligence'
+      preLoaderRoute: typeof IntelligenceRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/inspections': {
@@ -1986,6 +2006,7 @@ const rootRouteChildren: RootRouteChildren = {
   ConversationsRoute: ConversationsRouteWithChildren,
   CustomersRoute: CustomersRouteWithChildren,
   InspectionsRoute: InspectionsRouteWithChildren,
+  IntelligenceRoute: IntelligenceRoute,
   InvoicesRoute: InvoicesRouteWithChildren,
   JarvisRoute: JarvisRouteWithChildren,
   JobsRoute: JobsRouteWithChildren,
