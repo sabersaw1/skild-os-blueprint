@@ -15,7 +15,9 @@ import type { PartUsage } from "@/modules/parts/data/schemas";
 import { laborTotalCents } from "@/core/money";
 import type {
   AttentionItem,
+  ComparisonReport,
   DataCompleteness,
+  MetricComparisonRow,
   Evidence,
   ExpectedVsActualRow,
   FunnelReport,
