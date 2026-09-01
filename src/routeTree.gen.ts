@@ -14,6 +14,7 @@ import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as RequestsRouteImport } from './routes/requests'
 import { Route as QuotesRouteImport } from './routes/quotes'
 import { Route as PartsRouteImport } from './routes/parts'
+import { Route as MarketingRouteImport } from './routes/marketing'
 import { Route as LeadsRouteImport } from './routes/leads'
 import { Route as KnowledgeRouteImport } from './routes/knowledge'
 import { Route as JobsRouteImport } from './routes/jobs'
@@ -106,6 +107,11 @@ const QuotesRoute = QuotesRouteImport.update({
 const PartsRoute = PartsRouteImport.update({
   id: '/parts',
   path: '/parts',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MarketingRoute = MarketingRouteImport.update({
+  id: '/marketing',
+  path: '/marketing',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LeadsRoute = LeadsRouteImport.update({
@@ -467,6 +473,7 @@ export interface FileRoutesByFullPath {
   '/jobs': typeof JobsRouteWithChildren
   '/knowledge': typeof KnowledgeRouteWithChildren
   '/leads': typeof LeadsRouteWithChildren
+  '/marketing': typeof MarketingRoute
   '/parts': typeof PartsRouteWithChildren
   '/quotes': typeof QuotesRouteWithChildren
   '/requests': typeof RequestsRouteWithChildren
@@ -535,6 +542,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/activity': typeof ActivityRoute
+  '/marketing': typeof MarketingRoute
   '/conversations/$conversationId': typeof ConversationsConversationIdRoute
   '/conversations/new': typeof ConversationsNewRoute
   '/customers/new': typeof CustomersNewRoute
@@ -598,6 +606,7 @@ export interface FileRoutesById {
   '/jobs': typeof JobsRouteWithChildren
   '/knowledge': typeof KnowledgeRouteWithChildren
   '/leads': typeof LeadsRouteWithChildren
+  '/marketing': typeof MarketingRoute
   '/parts': typeof PartsRouteWithChildren
   '/quotes': typeof QuotesRouteWithChildren
   '/requests': typeof RequestsRouteWithChildren
@@ -675,6 +684,7 @@ export interface FileRouteTypes {
     | '/jobs'
     | '/knowledge'
     | '/leads'
+    | '/marketing'
     | '/parts'
     | '/quotes'
     | '/requests'
@@ -743,6 +753,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/activity'
+    | '/marketing'
     | '/conversations/$conversationId'
     | '/conversations/new'
     | '/customers/new'
@@ -805,6 +816,7 @@ export interface FileRouteTypes {
     | '/jobs'
     | '/knowledge'
     | '/leads'
+    | '/marketing'
     | '/parts'
     | '/quotes'
     | '/requests'
@@ -881,6 +893,7 @@ export interface RootRouteChildren {
   JobsRoute: typeof JobsRouteWithChildren
   KnowledgeRoute: typeof KnowledgeRouteWithChildren
   LeadsRoute: typeof LeadsRouteWithChildren
+  MarketingRoute: typeof MarketingRoute
   PartsRoute: typeof PartsRouteWithChildren
   QuotesRoute: typeof QuotesRouteWithChildren
   RequestsRoute: typeof RequestsRouteWithChildren
@@ -929,6 +942,13 @@ declare module '@tanstack/react-router' {
       path: '/parts'
       fullPath: '/parts'
       preLoaderRoute: typeof PartsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/marketing': {
+      id: '/marketing'
+      path: '/marketing'
+      fullPath: '/marketing'
+      preLoaderRoute: typeof MarketingRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/leads': {
@@ -1717,6 +1737,7 @@ const rootRouteChildren: RootRouteChildren = {
   JobsRoute: JobsRouteWithChildren,
   KnowledgeRoute: KnowledgeRouteWithChildren,
   LeadsRoute: LeadsRouteWithChildren,
+  MarketingRoute: MarketingRoute,
   PartsRoute: PartsRouteWithChildren,
   QuotesRoute: QuotesRouteWithChildren,
   RequestsRoute: RequestsRouteWithChildren,
