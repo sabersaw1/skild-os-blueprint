@@ -11,7 +11,11 @@ export const ASSISTANT_EVENTS = {
   proposalCreated: "assistant.proposal.created",
   proposalApproved: "assistant.proposal.approved",
   proposalRejected: "assistant.proposal.rejected",
+  proposalExpired: "assistant.proposal.expired",
+  proposalExecuted: "assistant.proposal.executed",
   attentionAcknowledged: "assistant.attention.acknowledged",
+  attentionDismissed: "assistant.attention.dismissed",
+  briefGenerated: "assistant.brief.generated",
 } as const;
 
 export type AssistantEventType =
