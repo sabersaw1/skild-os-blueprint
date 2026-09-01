@@ -38,6 +38,7 @@ import { Route as KnowledgeIndexRouteImport } from './routes/knowledge.index'
 import { Route as JobsIndexRouteImport } from './routes/jobs.index'
 import { Route as JarvisIndexRouteImport } from './routes/jarvis.index'
 import { Route as InvoicesIndexRouteImport } from './routes/invoices.index'
+import { Route as IntelligenceIndexRouteImport } from './routes/intelligence.index'
 import { Route as InspectionsIndexRouteImport } from './routes/inspections.index'
 import { Route as CustomersIndexRouteImport } from './routes/customers.index'
 import { Route as ConversationsIndexRouteImport } from './routes/conversations.index'
@@ -240,6 +241,11 @@ const InvoicesIndexRoute = InvoicesIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => InvoicesRoute,
+} as any)
+const IntelligenceIndexRoute = IntelligenceIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => IntelligenceRoute,
 } as any)
 const InspectionsIndexRoute = InspectionsIndexRouteImport.update({
   id: '/',
@@ -542,7 +548,7 @@ export interface FileRoutesByFullPath {
   '/conversations': typeof ConversationsRouteWithChildren
   '/customers': typeof CustomersRouteWithChildren
   '/inspections': typeof InspectionsRouteWithChildren
-  '/intelligence': typeof IntelligenceRoute
+  '/intelligence': typeof IntelligenceRouteWithChildren
   '/invoices': typeof InvoicesRouteWithChildren
   '/jarvis': typeof JarvisRouteWithChildren
   '/jobs': typeof JobsRouteWithChildren
@@ -590,6 +596,7 @@ export interface FileRoutesByFullPath {
   '/conversations/': typeof ConversationsIndexRoute
   '/customers/': typeof CustomersIndexRoute
   '/inspections/': typeof InspectionsIndexRoute
+  '/intelligence/': typeof IntelligenceIndexRoute
   '/invoices/': typeof InvoicesIndexRoute
   '/jarvis/': typeof JarvisIndexRoute
   '/jobs/': typeof JobsIndexRoute
@@ -626,7 +633,6 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/activity': typeof ActivityRoute
-  '/intelligence': typeof IntelligenceRoute
   '/automation/approvals': typeof AutomationApprovalsRoute
   '/automation/runs': typeof AutomationRunsRoute
   '/conversations/$conversationId': typeof ConversationsConversationIdRoute
@@ -655,6 +661,7 @@ export interface FileRoutesByTo {
   '/conversations': typeof ConversationsIndexRoute
   '/customers': typeof CustomersIndexRoute
   '/inspections': typeof InspectionsIndexRoute
+  '/intelligence': typeof IntelligenceIndexRoute
   '/invoices': typeof InvoicesIndexRoute
   '/jarvis': typeof JarvisIndexRoute
   '/jobs': typeof JobsIndexRoute
@@ -696,7 +703,7 @@ export interface FileRoutesById {
   '/conversations': typeof ConversationsRouteWithChildren
   '/customers': typeof CustomersRouteWithChildren
   '/inspections': typeof InspectionsRouteWithChildren
-  '/intelligence': typeof IntelligenceRoute
+  '/intelligence': typeof IntelligenceRouteWithChildren
   '/invoices': typeof InvoicesRouteWithChildren
   '/jarvis': typeof JarvisRouteWithChildren
   '/jobs': typeof JobsRouteWithChildren
@@ -744,6 +751,7 @@ export interface FileRoutesById {
   '/conversations/': typeof ConversationsIndexRoute
   '/customers/': typeof CustomersIndexRoute
   '/inspections/': typeof InspectionsIndexRoute
+  '/intelligence/': typeof IntelligenceIndexRoute
   '/invoices/': typeof InvoicesIndexRoute
   '/jarvis/': typeof JarvisIndexRoute
   '/jobs/': typeof JobsIndexRoute
@@ -834,6 +842,7 @@ export interface FileRouteTypes {
     | '/conversations/'
     | '/customers/'
     | '/inspections/'
+    | '/intelligence/'
     | '/invoices/'
     | '/jarvis/'
     | '/jobs/'
@@ -870,7 +879,6 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/activity'
-    | '/intelligence'
     | '/automation/approvals'
     | '/automation/runs'
     | '/conversations/$conversationId'
@@ -899,6 +907,7 @@ export interface FileRouteTypes {
     | '/conversations'
     | '/customers'
     | '/inspections'
+    | '/intelligence'
     | '/invoices'
     | '/jarvis'
     | '/jobs'
@@ -987,6 +996,7 @@ export interface FileRouteTypes {
     | '/conversations/'
     | '/customers/'
     | '/inspections/'
+    | '/intelligence/'
     | '/invoices/'
     | '/jarvis/'
     | '/jobs/'
@@ -1028,7 +1038,7 @@ export interface RootRouteChildren {
   ConversationsRoute: typeof ConversationsRouteWithChildren
   CustomersRoute: typeof CustomersRouteWithChildren
   InspectionsRoute: typeof InspectionsRouteWithChildren
-  IntelligenceRoute: typeof IntelligenceRoute
+  IntelligenceRoute: typeof IntelligenceRouteWithChildren
   InvoicesRoute: typeof InvoicesRouteWithChildren
   JarvisRoute: typeof JarvisRouteWithChildren
   JobsRoute: typeof JobsRouteWithChildren
@@ -1252,6 +1262,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/invoices/'
       preLoaderRoute: typeof InvoicesIndexRouteImport
       parentRoute: typeof InvoicesRoute
+    }
+    '/intelligence/': {
+      id: '/intelligence/'
+      path: '/'
+      fullPath: '/intelligence/'
+      preLoaderRoute: typeof IntelligenceIndexRouteImport
+      parentRoute: typeof IntelligenceRoute
     }
     '/inspections/': {
       id: '/inspections/'
@@ -1748,6 +1765,18 @@ const InspectionsRouteWithChildren = InspectionsRoute._addFileChildren(
   InspectionsRouteChildren,
 )
 
+interface IntelligenceRouteChildren {
+  IntelligenceIndexRoute: typeof IntelligenceIndexRoute
+}
+
+const IntelligenceRouteChildren: IntelligenceRouteChildren = {
+  IntelligenceIndexRoute: IntelligenceIndexRoute,
+}
+
+const IntelligenceRouteWithChildren = IntelligenceRoute._addFileChildren(
+  IntelligenceRouteChildren,
+)
+
 interface InvoicesInvoiceIdRouteChildren {
   InvoicesInvoiceIdEditRoute: typeof InvoicesInvoiceIdEditRoute
   InvoicesInvoiceIdIndexRoute: typeof InvoicesInvoiceIdIndexRoute
@@ -2006,7 +2035,7 @@ const rootRouteChildren: RootRouteChildren = {
   ConversationsRoute: ConversationsRouteWithChildren,
   CustomersRoute: CustomersRouteWithChildren,
   InspectionsRoute: InspectionsRouteWithChildren,
-  IntelligenceRoute: IntelligenceRoute,
+  IntelligenceRoute: IntelligenceRouteWithChildren,
   InvoicesRoute: InvoicesRouteWithChildren,
   JarvisRoute: JarvisRouteWithChildren,
   JobsRoute: JobsRouteWithChildren,
