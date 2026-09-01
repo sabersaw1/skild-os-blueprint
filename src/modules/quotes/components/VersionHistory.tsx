@@ -35,7 +35,7 @@ export function VersionHistory({ versions }: { versions: QuoteVersion[] }) {
             <p className="text-xs">
               {v.snapshot.lineItems.length} item
               {v.snapshot.lineItems.length === 1 ? "" : "s"} ·{" "}
-              {money(v.snapshot.total)}
+              {money(v.snapshot.totalCents)}
             </p>
           </li>
         ))}

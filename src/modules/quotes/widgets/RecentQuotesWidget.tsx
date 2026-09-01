@@ -34,7 +34,7 @@ export function RecentQuotesWidget() {
                 {q.title}
               </Link>
               <span className="whitespace-nowrap text-xs text-muted-foreground">
-                {q.status} · {money(q.total)}
+                {q.status} · {money(q.totalCents)}
               </span>
             </li>
           ))}

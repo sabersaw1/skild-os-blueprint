@@ -42,7 +42,7 @@ export function QuoteListItem({
             {STATUS_LABEL[quote.status]}
           </span>
           <span className="ml-auto whitespace-nowrap text-xs font-medium">
-            {money(quote.total)}
+            {money(quote.totalCents)}
           </span>
         </span>
         <span className="mt-0.5 block truncate text-xs text-muted-foreground">

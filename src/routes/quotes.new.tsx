@@ -45,8 +45,8 @@ function NewQuote() {
               inspectionId: values.inspectionId,
               title: values.title,
               lineItems: values.lineItems,
-              discount: values.discount,
-              tax: values.tax,
+              discountCents: values.discountCents,
+              taxCents: values.taxCents,
               notes: values.notes,
             });
             navigate({
