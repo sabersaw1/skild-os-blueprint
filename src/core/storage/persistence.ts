@@ -45,3 +45,16 @@ export function commitRecords<T>(key: string, records: T[]): T[] {
   if (!writeEnvelope(key, records)) throw new PersistenceError(key);
   return records;
 }
+
+/**
+ * Assert that a `writeEnvelope` / `writeJson` call succeeded.
+ *
+ * Used by repositories whose persist helpers already hold the mutated
+ * collection: the write result is checked so a failure throws before the
+ * activity event is emitted. (`commitRecords` is preferred where the caller
+ * can pass the next collection, because it also keeps in-memory state from
+ * advancing on a failed write.)
+ */
+export function assertPersisted(key: string, ok: boolean): void {
+  if (!ok) throw new PersistenceError(key);
+}

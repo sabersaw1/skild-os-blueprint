@@ -45,6 +45,7 @@ import {
 import { computePurchaseTotals, lineTotalCents } from "./money";
 import type { PartsRepository } from "./repository";
 import { readEnvelope, registerVersionedKey, writeEnvelope } from "./storage";
+import { assertPersisted } from "@/core/storage/persistence";
 
 const K_PARTS = "skildos.parts.parts.v1";
 const K_SUPPLIERS = "skildos.parts.suppliers.v1";
@@ -154,12 +155,12 @@ export function createLocalPartsRepository(): PartsRepository {
   const listeners = new Set<() => void>();
   const notify = () => listeners.forEach((l) => l());
 
-  const persistParts = () => writeEnvelope(K_PARTS, parts);
-  const persistSuppliers = () => writeEnvelope(K_SUPPLIERS, suppliers);
-  const persistPurchases = () => writeEnvelope(K_PURCHASES, purchases);
-  const persistLines = () => writeEnvelope(K_LINES, lines);
-  const persistUsage = () => writeEnvelope(K_USAGE, usage);
-  const persistVehicleRefs = () => writeEnvelope(K_VEHICLE_REFS, vehicleRefs);
+  const persistParts = () => assertPersisted(K_PARTS, writeEnvelope(K_PARTS, parts));
+  const persistSuppliers = () => assertPersisted(K_SUPPLIERS, writeEnvelope(K_SUPPLIERS, suppliers));
+  const persistPurchases = () => assertPersisted(K_PURCHASES, writeEnvelope(K_PURCHASES, purchases));
+  const persistLines = () => assertPersisted(K_LINES, writeEnvelope(K_LINES, lines));
+  const persistUsage = () => assertPersisted(K_USAGE, writeEnvelope(K_USAGE, usage));
+  const persistVehicleRefs = () => assertPersisted(K_VEHICLE_REFS, writeEnvelope(K_VEHICLE_REFS, vehicleRefs));
 
   /** Recompute + persist a purchase's derived totals from its lines. */
   function recalcPurchase(purchaseId: string): Purchase {

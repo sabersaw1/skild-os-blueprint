@@ -32,6 +32,7 @@ import {
   registerVersionedKey,
   writeEnvelope,
 } from "./storage";
+import { assertPersisted } from "@/core/storage/persistence";
 
 const K_DOCUMENTS = "skildos.knowledge.documents.v1";
 const K_VERSIONS = "skildos.knowledge.versions.v1";
@@ -112,9 +113,9 @@ export function createLocalKnowledgeRepository(): KnowledgeRepository {
   const listeners = new Set<() => void>();
   const notify = () => listeners.forEach((l) => l());
 
-  const persistDocuments = () => writeEnvelope(K_DOCUMENTS, documents);
-  const persistVersions = () => writeEnvelope(K_VERSIONS, versions);
-  const persistLinks = () => writeEnvelope(K_LINKS, links);
+  const persistDocuments = () => assertPersisted(K_DOCUMENTS, writeEnvelope(K_DOCUMENTS, documents));
+  const persistVersions = () => assertPersisted(K_VERSIONS, writeEnvelope(K_VERSIONS, versions));
+  const persistLinks = () => assertPersisted(K_LINKS, writeEnvelope(K_LINKS, links));
 
   const findDoc = (id: string) => documents.find((d) => d.id === id);
 
