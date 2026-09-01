@@ -316,11 +316,14 @@ export async function resolveContext(opts: {
         "No job was identified in the question, so no cost breakdown could be produced. Open the job and ask again from there.",
       );
     } else {
+      const blockedBefore = c.blocked.length;
       const cost = await c.run("Job cost", () => tools.getJobCost(ids.jobId!));
       if (!cost) {
-        c.uncertainty.push(
-          "No cost breakdown could be produced for that job id — no such job record exists.",
-        );
+        if (c.blocked.length === blockedBefore) {
+          c.uncertainty.push(
+            "No cost breakdown could be produced for that job id — no such job record exists.",
+          );
+        }
       } else {
         c.add(
           fact(
@@ -360,9 +363,12 @@ export async function resolveContext(opts: {
         "No customer was identified in the question. Open the customer record and ask again from there.",
       );
     } else {
+      const blockedBefore = c.blocked.length;
       const history = await c.run("Customer history", () => tools.getCustomerHistory(ids.customerId!));
       if (!history) {
-        c.uncertainty.push("That customer could not be found in the CRM.");
+        if (c.blocked.length === blockedBefore) {
+          c.uncertainty.push("That customer could not be found in the CRM.");
+        }
       } else {
         const src = [ref("crm", "customer", history.customer.id)];
         c.add(fact(`Customer is ${history.customer.displayName}`, "verified_fact", src));
@@ -387,6 +393,7 @@ export async function resolveContext(opts: {
         "No vehicle was identified in the question. Open the vehicle record and ask again from there.",
       );
     } else {
+      const blockedBefore = c.blocked.length;
       const history = await c.run("Vehicle history", () => tools.getVehicleHistory(ids.vehicleId!));
       if (history) {
         const v = history.vehicle;
@@ -404,7 +411,7 @@ export async function resolveContext(opts: {
             [ref("vehicles", "vehicle", v.id), ...history.jobs.map((j) => ref("jobs", "job", j.id))],
           ),
         );
-      } else {
+      } else if (c.blocked.length === blockedBefore) {
         c.uncertainty.push("That vehicle could not be found.");
       }
     }
