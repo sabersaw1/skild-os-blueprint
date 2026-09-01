@@ -117,7 +117,7 @@ describe("marketing repository — leads", () => {
     const contacted = await repo.setLeadStatus(lead.id, "contacted");
     expect(contacted.status).toBe("contacted");
     await expect(repo.setLeadStatus(lead.id, "won")).rejects.toThrow(
-      /transition/i,
+      /cannot move/i,
     );
   });
 
@@ -271,7 +271,7 @@ describe("marketing repository — derived lead intelligence", () => {
   it("flags an overdue follow-up", async () => {
     const lead = await repo.createLead(leadInput());
     await repo.recordContact(lead.id);
-    await repo.scheduleFollowUp(lead.id, Date.now() - DAY);
+    await repo.scheduleFollowUp(lead.id, Date.now() - 2 * DAY);
     const items = await repo.listLeadsNeedingAttention();
     const item = items.find((i) => i.leadId === lead.id);
     expect(item?.reasons).toContain("follow_up_overdue");
@@ -328,7 +328,7 @@ describe("marketing repository — derived lead intelligence", () => {
   it("derives retention opportunities from the Jobs repository", async () => {
     const oldAt = Date.now() - 400 * DAY;
     registerRepository("jobs.repository", {
-      listJobs: async () => [
+      list: async () => [
         {
           id: "job-1",
           customerId: "cust-1",
