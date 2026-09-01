@@ -96,7 +96,7 @@ export const observeStaleQuotes: Observer = async (ctx) => {
 export const observeAwaitingResponse: Observer = async (ctx) => {
   if (!hasRepository(COMMUNICATION_REPOSITORY)) return [];
   const repo = getRepository<CommunicationRepository>(COMMUNICATION_REPOSITORY);
-  const conversations = await repo.listConversations({ awaiting: "skild" });
+  const conversations = await repo.listConversations({ awaitingParty: "skild" });
   return conversations
     .filter((c) => ctx.now - c.updatedAt >= ctx.staleAfterMs)
     .slice(0, ctx.limit)
