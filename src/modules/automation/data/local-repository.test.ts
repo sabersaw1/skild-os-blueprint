@@ -468,3 +468,33 @@ describe("Automation — records and identifiers", () => {
     expect(overview).toHaveProperty("failedRuns");
   });
 });
+
+// ---- Phase 13.5: manual trigger bypass -------------------------------
+describe("triggerMatches — manual bypass", () => {
+  it("a manual trigger runs any rule regardless of its trigger definition", () => {
+    // A human pressing "Run now" is an explicit authorization event; it is
+    // intentionally allowed to run a rule whose automatic trigger has not
+    // fired. This does NOT bypass capability checks or the approval
+    // policy — only the trigger predicate.
+    const definition = {
+      kind: "activity_event",
+      eventType: "jobs.job.completed",
+    } as const;
+    expect(triggerMatches(definition, manualTrigger())).toBe(true);
+    expect(
+      triggerMatches(definition, activityEventTrigger("jobs.job.completed")),
+    ).toBe(true);
+    expect(
+      triggerMatches(definition, activityEventTrigger("quotes.quote.sent")),
+    ).toBe(false);
+  });
+
+  it("non-manual triggers must match kind and event type", () => {
+    const definition = { kind: "record_state", observerId: "stale-jobs" } as const;
+    expect(triggerMatches(definition, observerTrigger("stale-jobs"))).toBe(true);
+    expect(triggerMatches(definition, observerTrigger("other"))).toBe(false);
+    expect(
+      triggerMatches(definition, activityEventTrigger("jobs.job.completed")),
+    ).toBe(false);
+  });
+});
