@@ -598,7 +598,7 @@ class LocalAutomationRepository implements AutomationRepository {
         );
       }
     }
-    text(input.rationale, "an action rationale");
+    const rationale = text(input.rationale, "an action rationale");
     const idempotencyKey = text(input.idempotencyKey, "an idempotency key");
 
     const agent = this.agents().find((a) => a.id === run.agentId);
@@ -682,6 +682,7 @@ class LocalAutomationRepository implements AutomationRepository {
       policyDecision: decision,
       policyReason: reason,
       targets: input.targets.map((t) => ({ ...t })),
+      rationale,
       requestedCapabilityIds: verdict.capabilityIds,
       approvalState:
         decision === "approval_required" ? "pending" : "not_required",

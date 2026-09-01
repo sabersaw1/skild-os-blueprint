@@ -245,6 +245,11 @@ export interface AgentAction {
   /** Why the policy decided what it decided. Human-readable, no PII. */
   policyReason: string;
   targets: EntityRef[];
+  /**
+   * Why the agent wants this. AI/heuristic SUGGESTION — never verified
+   * business truth, and never promoted to knowledge by any code path.
+   */
+  rationale: string;
   requestedCapabilityIds: string[];
   approvalState: ApprovalState;
   approvalId?: string;
