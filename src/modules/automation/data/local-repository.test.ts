@@ -45,9 +45,9 @@ import {
   ASSISTANT_REPOSITORY,
   type AssistantRepository,
 } from "@/modules/assistant/data/repository";
-import { createLocalAssistantRepository } from "@/modules/assistant/data/local-repository";
+import { LocalAssistantRepository } from "@/modules/assistant/data/local-repository";
 import { registerRole } from "@/core/roles/roles";
-import { setIdentityProvider } from "@/core/auth/identity";
+import { setIdentityProvider } from "@/core/auth/provider";
 import { isUuidV4 } from "@/core/ids";
 import type { AgentActionType } from "./schemas";
 
@@ -65,22 +65,16 @@ registerRole({
 
 function asOwner() {
   setIdentityProvider({
-    getIdentity: () => ({
-      id: "owner-1",
-      displayName: "Owner",
-      roleId: "owner",
-    }),
+    kind: "test",
+    get: () => ({ id: "owner-1", displayName: "Owner", roleId: "owner" }),
     subscribe: () => () => {},
   });
 }
 
 function asObserver() {
   setIdentityProvider({
-    getIdentity: () => ({
-      id: "observer-1",
-      displayName: "Observer",
-      roleId: "observer",
-    }),
+    kind: "test",
+    get: () => ({ id: "observer-1", displayName: "Observer", roleId: "observer" }),
     subscribe: () => () => {},
   });
 }
@@ -91,7 +85,7 @@ function fresh(): AutomationRepository {
   asOwner();
   const repo = createLocalAutomationRepository();
   registerRepository(AUTOMATION_REPOSITORY, repo);
-  registerRepository(ASSISTANT_REPOSITORY, createLocalAssistantRepository());
+  registerRepository(ASSISTANT_REPOSITORY, new LocalAssistantRepository());
   return repo;
 }
 
@@ -199,7 +193,8 @@ describe("Automation — authorization", () => {
     const pending = report.actions.find((a) => a.approvalState === "pending");
     registerRole({ id: "runner", name: "Runner", capabilityIds: ["agents.read", "agents.run"] });
     setIdentityProvider({
-      getIdentity: () => ({ id: "r", displayName: "R", roleId: "runner" }),
+      kind: "test",
+      get: () => ({ id: "r", displayName: "R", roleId: "runner" }),
       subscribe: () => () => {},
     });
     if (pending) {
@@ -446,7 +441,7 @@ describe("Automation — records and identifiers", () => {
     await runAutomationRule(rule.id);
     const types = spy.mock.calls.map((c) => c[0].type);
     expect(types).toContain(AUTOMATION_EVENTS.runStarted);
-    expect(types).toContain(AUTOMATION_EVENTS.runCompleted);
+    expect(types).toContain(AUTOMATION_EVENTS.runSucceeded);
     spy.mockRestore();
   });
 
