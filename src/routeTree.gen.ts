@@ -40,6 +40,7 @@ import { Route as InvoicesIndexRouteImport } from './routes/invoices.index'
 import { Route as InspectionsIndexRouteImport } from './routes/inspections.index'
 import { Route as CustomersIndexRouteImport } from './routes/customers.index'
 import { Route as ConversationsIndexRouteImport } from './routes/conversations.index'
+import { Route as AutomationIndexRouteImport } from './routes/automation.index'
 import { Route as VehiclesNewRouteImport } from './routes/vehicles.new'
 import { Route as VehiclesVehicleIdRouteImport } from './routes/vehicles.$vehicleId'
 import { Route as SuppliersPartsRouteImport } from './routes/suppliers.parts'
@@ -246,6 +247,11 @@ const ConversationsIndexRoute = ConversationsIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => ConversationsRoute,
+} as any)
+const AutomationIndexRoute = AutomationIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AutomationRoute,
 } as any)
 const VehiclesNewRoute = VehiclesNewRouteImport.update({
   id: '/new',
@@ -514,7 +520,7 @@ const CustomersCustomerIdEditRoute = CustomersCustomerIdEditRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/activity': typeof ActivityRoute
-  '/automation': typeof AutomationRoute
+  '/automation': typeof AutomationRouteWithChildren
   '/conversations': typeof ConversationsRouteWithChildren
   '/customers': typeof CustomersRouteWithChildren
   '/inspections': typeof InspectionsRouteWithChildren
@@ -559,6 +565,7 @@ export interface FileRoutesByFullPath {
   '/suppliers/parts': typeof SuppliersPartsRoute
   '/vehicles/$vehicleId': typeof VehiclesVehicleIdRouteWithChildren
   '/vehicles/new': typeof VehiclesNewRoute
+  '/automation/': typeof AutomationIndexRoute
   '/conversations/': typeof ConversationsIndexRoute
   '/customers/': typeof CustomersIndexRoute
   '/inspections/': typeof InspectionsIndexRoute
@@ -598,7 +605,6 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/activity': typeof ActivityRoute
-  '/automation': typeof AutomationRoute
   '/conversations/$conversationId': typeof ConversationsConversationIdRoute
   '/conversations/new': typeof ConversationsNewRoute
   '/customers/new': typeof CustomersNewRoute
@@ -621,6 +627,7 @@ export interface FileRoutesByTo {
   '/settings/profile': typeof SettingsProfileRoute
   '/suppliers/parts': typeof SuppliersPartsRoute
   '/vehicles/new': typeof VehiclesNewRoute
+  '/automation': typeof AutomationIndexRoute
   '/conversations': typeof ConversationsIndexRoute
   '/customers': typeof CustomersIndexRoute
   '/inspections': typeof InspectionsIndexRoute
@@ -661,7 +668,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/activity': typeof ActivityRoute
-  '/automation': typeof AutomationRoute
+  '/automation': typeof AutomationRouteWithChildren
   '/conversations': typeof ConversationsRouteWithChildren
   '/customers': typeof CustomersRouteWithChildren
   '/inspections': typeof InspectionsRouteWithChildren
@@ -706,6 +713,7 @@ export interface FileRoutesById {
   '/suppliers/parts': typeof SuppliersPartsRoute
   '/vehicles/$vehicleId': typeof VehiclesVehicleIdRouteWithChildren
   '/vehicles/new': typeof VehiclesNewRoute
+  '/automation/': typeof AutomationIndexRoute
   '/conversations/': typeof ConversationsIndexRoute
   '/customers/': typeof CustomersIndexRoute
   '/inspections/': typeof InspectionsIndexRoute
@@ -792,6 +800,7 @@ export interface FileRouteTypes {
     | '/suppliers/parts'
     | '/vehicles/$vehicleId'
     | '/vehicles/new'
+    | '/automation/'
     | '/conversations/'
     | '/customers/'
     | '/inspections/'
@@ -831,7 +840,6 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/activity'
-    | '/automation'
     | '/conversations/$conversationId'
     | '/conversations/new'
     | '/customers/new'
@@ -854,6 +862,7 @@ export interface FileRouteTypes {
     | '/settings/profile'
     | '/suppliers/parts'
     | '/vehicles/new'
+    | '/automation'
     | '/conversations'
     | '/customers'
     | '/inspections'
@@ -938,6 +947,7 @@ export interface FileRouteTypes {
     | '/suppliers/parts'
     | '/vehicles/$vehicleId'
     | '/vehicles/new'
+    | '/automation/'
     | '/conversations/'
     | '/customers/'
     | '/inspections/'
@@ -978,7 +988,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ActivityRoute: typeof ActivityRoute
-  AutomationRoute: typeof AutomationRoute
+  AutomationRoute: typeof AutomationRouteWithChildren
   ConversationsRoute: typeof ConversationsRouteWithChildren
   CustomersRoute: typeof CustomersRouteWithChildren
   InspectionsRoute: typeof InspectionsRouteWithChildren
@@ -1219,6 +1229,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/conversations/'
       preLoaderRoute: typeof ConversationsIndexRouteImport
       parentRoute: typeof ConversationsRoute
+    }
+    '/automation/': {
+      id: '/automation/'
+      path: '/'
+      fullPath: '/automation/'
+      preLoaderRoute: typeof AutomationIndexRouteImport
+      parentRoute: typeof AutomationRoute
     }
     '/vehicles/new': {
       id: '/vehicles/new'
@@ -1580,6 +1597,18 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface AutomationRouteChildren {
+  AutomationIndexRoute: typeof AutomationIndexRoute
+}
+
+const AutomationRouteChildren: AutomationRouteChildren = {
+  AutomationIndexRoute: AutomationIndexRoute,
+}
+
+const AutomationRouteWithChildren = AutomationRoute._addFileChildren(
+  AutomationRouteChildren,
+)
+
 interface ConversationsRouteChildren {
   ConversationsConversationIdRoute: typeof ConversationsConversationIdRoute
   ConversationsNewRoute: typeof ConversationsNewRoute
@@ -1911,7 +1940,7 @@ const VehiclesRouteWithChildren = VehiclesRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ActivityRoute: ActivityRoute,
-  AutomationRoute: AutomationRoute,
+  AutomationRoute: AutomationRouteWithChildren,
   ConversationsRoute: ConversationsRouteWithChildren,
   CustomersRoute: CustomersRouteWithChildren,
   InspectionsRoute: InspectionsRouteWithChildren,
