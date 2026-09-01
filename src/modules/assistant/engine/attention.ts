@@ -225,7 +225,7 @@ export async function buildAttentionItems(opts: {
 
   const opportunities = await safe(() => tools.getMarketingOpportunities());
   for (const o of opportunities ?? []) {
-    if (o.status !== "new" && o.status !== "reviewed") continue;
+    if (o.status !== "identified" && o.status !== "reviewing") continue;
     items.push(
       make(
         "marketing_opportunity",
