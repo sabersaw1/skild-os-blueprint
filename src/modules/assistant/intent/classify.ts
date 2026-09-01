@@ -36,6 +36,8 @@ const RULES: Rule[] = [
   { type: "vehicle.history", groups: [["vehicle", "truck", "car", "vin", "plate"], ["history", "work", "done", "service", "serviced"]], weight: 3 },
   { type: "marketing.opportunities", groups: [["marketing", "seo", "content", "reviews"], ["opportunity", "opportunities", "ideas", "should we"]], weight: 3 },
   { type: "marketing.performance", groups: [["marketing", "service", "services", "demand", "source", "sources", "channel"], ["performance", "generating", "working", "best", "converting", "demand"]], weight: 3 },
+  { type: "automation.status", groups: [["agent", "agents", "automation", "automations", "bot", "bots"], ["status", "doing", "done", "running", "ran", "run", "waiting", "approval", "approvals", "failed", "blocked"]], weight: 4 },
+  { type: "automation.status", groups: [["automation", "agents"]], weight: 3 },
   { type: "knowledge.lookup", groups: [["policy", "sop", "procedure", "process", "rule", "rules", "standard", "how do we", "what is our"]], weight: 3 },
 ];
 
