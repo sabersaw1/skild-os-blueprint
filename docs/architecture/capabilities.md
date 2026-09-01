@@ -26,6 +26,7 @@ Skild OS checks **capabilities**, never role names (ADR-003). Capabilities are
 | Jobs | `jobs.*` |
 | Parts | `parts.*` |
 | Finance | `finance.read`, `finance.invoice.write`, `finance.invoice.issue`, `finance.invoice.void`, `finance.payment.write` |
+| Marketing | `leads.read`, `leads.write`, `marketing.read`, `marketing.write`, `marketing.approve`, `marketing.publish` |
 | Integrations | `integrations.read`, `integrations.write`, `integrations.connect`, `integrations.disconnect`, `integrations.sync` |
 
 ## Integration capabilities are provider-agnostic
@@ -39,4 +40,6 @@ scoped authority instead of raw provider credentials.
 
 Consequential future actions — customer messaging, public publishing,
 purchasing, payments, refunds — each require their own capability and an
-approval step before implementation. Phase 9 implements none of them.
+approval step before implementation. Phase 11 implements the *boundary*
+(`marketing.approve`, `marketing.publish`) but performs no outbound action:
+an action's `executed` state only records what a human did.
