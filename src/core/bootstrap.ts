@@ -18,6 +18,7 @@ import { registerJobsModule } from "@/modules/jobs";
 import { registerPartsModule } from "@/modules/parts";
 import { registerFinanceModule } from "@/modules/finance";
 import { registerCommunicationModule } from "@/modules/communication";
+import { registerMarketingModule } from "@/modules/marketing";
 import { registerIntegrationsModule } from "./integrations/module";
 
 let bootstrapped = false;
@@ -153,6 +154,7 @@ export function bootstrapPhase1() {
 
   // Product modules (Phase 10).
   registerCommunicationModule();
+  registerMarketingModule();
 
   // Core integration layer (Phase 9).
   registerIntegrationsModule();
