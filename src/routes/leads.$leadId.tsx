@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate, useParams } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -42,7 +42,7 @@ const selectClass =
   "h-9 rounded-md border border-input bg-background px-2 text-sm";
 
 function LeadDetail() {
-  const { leadId } = useParams({ from: "/leads/$leadId" });
+  const { leadId } = Route.useParams();
   const navigate = useNavigate();
   const repo = useMarketingRepository();
   const { data: lead, loading, refresh } = useLead(leadId);
