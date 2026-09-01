@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import { clearRepository, registerRepository } from "@/core/data/registry";
-import { clearActivity, useActivity } from "@/core/activity/emitter";
+import { clearActivity } from "@/core/activity/emitter";
+import { getActivityStore } from "@/core/activity/store-adapter";
 import { LocalAssistantRepository } from "./local-repository";
 import { ASSISTANT_REPOSITORY } from "./repository";
 import { classifyIntent } from "../intent/classify";
@@ -247,16 +248,24 @@ describe("askJarvis", () => {
 });
 
 describe("activity emission", () => {
-  it("emits a proposal event carrying ids and enums only", async () => {
-    const r = repo();
-    await r.createProposal({
+  it("emits an id/enum-only payload for a new proposal", async () => {
+    const before = getActivityStore().list().length;
+    await repo().createProposal({
       actionType: "follow_up_lead",
       title: "Follow up",
       targets: target,
       reason: "stale",
     });
-    // Read the log through the public store snapshot.
-    const events = (useActivity as unknown as () => never) && null;
-    expect(events).toBeNull();
+    const events = getActivityStore().list();
+    expect(events.length).toBe(before + 1);
+    const evt = events[0]!;
+    expect(evt.type).toBe("assistant.proposal.created");
+    expect(Object.keys(evt.payload ?? {}).sort()).toEqual([
+      "actionType",
+      "proposalId",
+      "requiredCapabilityId",
+      "risk",
+      "targetCount",
+    ]);
   });
 });
