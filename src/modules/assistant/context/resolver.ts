@@ -317,10 +317,10 @@ export async function resolveContext(opts: {
       );
     } else {
       const cost = await c.run("Job cost", () => tools.getJobCost(ids.jobId!));
-      if (cost === undefined) {
-        // capability/repo handled by collector
-      } else if (cost === null) {
-        c.uncertainty.push("That job could not be found.");
+      if (!cost) {
+        c.uncertainty.push(
+          "No cost breakdown could be produced for that job id — no such job record exists.",
+        );
       } else {
         c.add(
           fact(
@@ -361,9 +361,7 @@ export async function resolveContext(opts: {
       );
     } else {
       const history = await c.run("Customer history", () => tools.getCustomerHistory(ids.customerId!));
-      if (history === undefined) {
-        // handled
-      } else if (!history) {
+      if (!history) {
         c.uncertainty.push("That customer could not be found in the CRM.");
       } else {
         const src = [ref("crm", "customer", history.customer.id)];
@@ -406,7 +404,7 @@ export async function resolveContext(opts: {
             [ref("vehicles", "vehicle", v.id), ...history.jobs.map((j) => ref("jobs", "job", j.id))],
           ),
         );
-      } else if (history === null) {
+      } else {
         c.uncertainty.push("That vehicle could not be found.");
       }
     }
