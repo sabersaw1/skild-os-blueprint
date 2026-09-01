@@ -46,9 +46,12 @@ const DEFAULT_LOCAL: Identity = {
 };
 
 function loadLocal(): Identity {
-  if (typeof window === "undefined") return DEFAULT_LOCAL;
+  // Phase 15: routed through the StorageDriver seam so a non-browser host
+  // (test worker, future server bootstrap) resolves an identity too.
+  const driver = getStorageDriver();
+  if (!driver.available()) return DEFAULT_LOCAL;
   try {
-    const raw = window.localStorage.getItem(LOCAL_KEY);
+    const raw = driver.read(LOCAL_KEY);
     if (!raw) return DEFAULT_LOCAL;
     const parsed = JSON.parse(raw);
     if (parsed && typeof parsed.displayName === "string") {
@@ -61,13 +64,11 @@ function loadLocal(): Identity {
 }
 
 function persistLocal(identity: Identity) {
-  if (typeof window === "undefined") return;
-  try {
-    window.localStorage.setItem(LOCAL_KEY, JSON.stringify(identity));
-  } catch {
-    /* ignore */
-  }
+  const driver = getStorageDriver();
+  if (!driver.available()) return;
+  driver.write(LOCAL_KEY, JSON.stringify(identity));
 }
+
 
 export function createLocalIdentityProvider(): IdentityProvider {
   const store = createStore<Identity>(loadLocal());
