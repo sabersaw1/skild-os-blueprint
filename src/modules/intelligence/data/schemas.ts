@@ -565,3 +565,37 @@ export interface OptimizationResult {
   /** Rules that ran but produced nothing, with the reason. */
   skipped: Array<{ rule: string; reason: string }>;
 }
+
+// ---- Historical comparison ---------------------------------------------
+
+/**
+ * One metric measured over the current period next to the immediately
+ * preceding period of equal length.
+ *
+ * `baselineAvailable: false` means the previous window contains no records
+ * at all. In that case previousValue/change stay null — Skild OS never
+ * invents a baseline to make a trend look measurable.
+ */
+export interface MetricComparisonRow {
+  metricId: string;
+  name: string;
+  unit: MetricUnit;
+  currentValue: number;
+  previousValue: number | null;
+  changeAbsolute: number | null;
+  /** (current - previous) / previous. Null when previous is 0 or unknown. */
+  changeRatio: number | null;
+  baselineAvailable: boolean;
+  /** Why no baseline exists, when baselineAvailable is false. */
+  baselineReason?: string;
+  completeness: DataCompleteness;
+}
+
+export interface ComparisonReport {
+  period: Period;
+  previousPeriod: Period;
+  rows: MetricComparisonRow[];
+  /** False when the previous window holds no source records whatsoever. */
+  baselineAvailable: boolean;
+  limitations: string[];
+}
