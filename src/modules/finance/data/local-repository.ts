@@ -155,9 +155,17 @@ export function createLocalFinanceRepository(): FinanceRepository {
   const listeners = new Set<() => void>();
   const notify = () => listeners.forEach((l) => l());
 
-  const persistInvoices = () => writeEnvelope(K_INVOICES, invoices);
-  const persistSnapshots = () => writeEnvelope(K_SNAPSHOTS, snapshots);
-  const persistPayments = () => writeEnvelope(K_PAYMENTS, payments);
+  // Persistence commit: in-memory state advances ONLY on a durable write.
+  // A failure throws PersistenceError before any emit() runs.
+  const persistInvoices = (next: Invoice[]) => {
+    invoices = commitRecords(K_INVOICES, next);
+  };
+  const persistSnapshots = (next: InvoiceSnapshot[]) => {
+    snapshots = commitRecords(K_SNAPSHOTS, next);
+  };
+  const persistPayments = (next: Payment[]) => {
+    payments = commitRecords(K_PAYMENTS, next);
+  };
 
   const require = (id: string): Invoice => {
     const found = invoices.find((i) => i.id === id);
@@ -166,11 +174,10 @@ export function createLocalFinanceRepository(): FinanceRepository {
   };
 
   const replace = (next: Invoice) => {
-    invoices = invoices.map((i) => (i.id === next.id ? next : i));
-    persistInvoices();
+    persistInvoices(invoices.map((i) => (i.id === next.id ? next : i)));
   };
 
-  return {
+  const impl: FinanceRepository = {
     // ---- Invoices -------------------------------------------------------
     async listInvoices(query?: InvoiceListQuery): Promise<Invoice[]> {
       const q = query ?? {};
