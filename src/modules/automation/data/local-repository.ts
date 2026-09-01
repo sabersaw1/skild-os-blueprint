@@ -372,6 +372,11 @@ class LocalAutomationRepository implements AutomationRepository {
     const rows = this.rules();
     const idx = rows.findIndex((r) => r.id === id);
     if (idx === -1) throw new Error(`Automation: no rule with id "${id}".`);
+    if (enabled && rows[idx]!.approvalPolicy === "blocked") {
+      throw new Error(
+        `Automation: rule "${rows[idx]!.name}" proposes a blocked action and cannot be enabled.`,
+      );
+    }
     const next: AutomationRule = {
       ...rows[idx]!,
       enabled,
