@@ -20,6 +20,7 @@ import type {
   VehicleRepository,
 } from "./repository";
 import { assertPersisted } from "@/core/storage/persistence";
+import { withCapabilityEnforcement } from "@/core/auth/authorize";
 
 const K_VEHICLES = "skildos.vehicles.vehicles.v1";
 const K_OWNERSHIP = "skildos.vehicles.ownership.v1";
@@ -242,5 +243,12 @@ export function createLocalVehicleRepository(): VehicleRepository {
     },
   };
 
-  return repo;
+  // Phase 15: authorization at the mutation boundary, not only in the UI.
+  return withCapabilityEnforcement(repo, {
+    create: "vehicles.write",
+    update: "vehicles.write",
+    recordOdometer: "vehicles.write",
+    transferOwnership: "vehicles.transferOwnership",
+    queuePhoto: "vehicles.photos.write",
+  });
 }
