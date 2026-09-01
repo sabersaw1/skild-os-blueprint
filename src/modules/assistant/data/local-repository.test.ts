@@ -191,7 +191,8 @@ describe("LocalAssistantRepository — attention acknowledgements", () => {
 
 describe("intent classification", () => {
   it.each([
-    ["what's happening today?", "operational.today"],
+    ["what's happening today?", "brief.daily"],
+    ["what jobs are scheduled today?", "operational.today"],
     ["which leads need follow up?", "leads.follow_up"],
     ["who owes us money?", "finance.unpaid"],
     ["what quotes are waiting on a response?", "quotes.pending"],
@@ -239,14 +240,14 @@ describe("askJarvis", () => {
   });
 
   it("refuses without jarvis.read and says so", async () => {
-    const answer = await askJarvis("what's happening today?", { can: () => false });
+    const answer = await askJarvis("what jobs are scheduled today?", { can: () => false });
     expect(answer.blockedByCapabilities).toContain("jarvis.read");
     expect(answer.facts).toEqual([]);
     expect(answer.uncertainty.length).toBeGreaterThan(0);
   });
 
   it("declares missing module capabilities instead of reporting zero", async () => {
-    const answer = await askJarvis("what's happening today?", {
+    const answer = await askJarvis("what jobs are scheduled today?", {
       can: (id) => id === "jarvis.read",
     });
     expect(answer.blockedByCapabilities).toContain("jobs.read");
