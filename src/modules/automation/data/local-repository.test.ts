@@ -5,6 +5,12 @@
 // happens twice, and what happens when the underlying work fails.
 
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import {
+  activityEventTrigger,
+  manualTrigger,
+  observerTrigger,
+  triggerMatches,
+} from "../engine/triggers";
 
 class MemoryStorage {
   private store = new Map<string, string>();
