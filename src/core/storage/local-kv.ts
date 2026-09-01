@@ -35,10 +35,20 @@ export function readJson<T>(key: string, fallback: T): T {
   }
 }
 
-export function writeJson(key: string, value: unknown): void {
-  if (!hasStorage()) return;
+/**
+ * Persist `value` under `key`.
+ *
+ * Returns TRUE only when the value was durably written. A `false` return is
+ * the caller's signal that the mutation did NOT persist — repositories must
+ * treat it as a failure and emit no successful business event (see
+ * `@/core/storage/persistence`). The `system.storage.quotaExceeded` event is
+ * still emitted so the failure is visible to an operator.
+ */
+export function writeJson(key: string, value: unknown): boolean {
+  if (!hasStorage()) return false;
   try {
     window.localStorage.setItem(key, JSON.stringify(value));
+    return true;
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
     emit({
@@ -47,8 +57,10 @@ export function writeJson(key: string, value: unknown): void {
       summary: `Local storage write failed for ${key}`,
       payload: { key, message },
     });
+    return false;
   }
 }
+
 
 export function removeKey(key: string): void {
   if (!hasStorage()) return;
