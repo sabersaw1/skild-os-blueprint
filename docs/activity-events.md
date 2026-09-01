@@ -141,6 +141,29 @@ never customer contact details or message content.
 Assistant payloads carry intents, ids, enums, and counts ONLY — never the
 question text, answer text, customer details, or model credentials.
 
+## Automation / Agents (Phase 13)
+
+| Event | Payload |
+| --- | --- |
+| `automation.agent.created` / `.updated` | `{ agentId, status, allowedCapabilityCount }` |
+| `automation.agent.enabled` / `.disabled` | `{ agentId, status }` |
+| `automation.rule.created` / `.updated` | `{ ruleId, agentId, actionType, approvalPolicy, triggerKind }` |
+| `automation.rule.enabled` / `.disabled` | `{ ruleId, agentId, enabled }` |
+| `automation.run.started` | `{ runId, agentId, ruleId, correlationId, triggerKind, triggerSource }` |
+| `automation.run.succeeded` / `.failed` / `.blocked` / `.awaiting_approval` / `.cancelled` | `{ runId, agentId, correlationId, status, actionCount }` |
+| `automation.action.requested` | `{ actionId, runId, correlationId, actionType, policyDecision }` |
+| `automation.action.duplicate_suppressed` | `{ actionId, runId, actionType, idempotencyKey }` |
+| `automation.action.blocked` | `{ actionId, actionType, policyReason }` |
+| `automation.action.approval_requested` | `{ actionId, actionType, requestedCapabilityIds }` |
+| `automation.action.approved` / `.rejected` | `{ actionId, actionType, approvalState }` |
+| `automation.action.executed` | `{ actionId, actionType, attempt }` — emitted only after the real work succeeded |
+| `automation.action.failed` / `.retried` | `{ actionId, actionType, attempt, maxAttempts }` |
+
+Automation payloads carry ids, enums, counts and short reason codes only —
+never a rationale body, message text, or customer details. Every action shares
+its run's `correlationId`, so a full decision trail is reconstructable from the
+activity log alone.
+
 Shell/system events (`shell.navigation.*`, `settings.value.updated`,
 `identity.session.started`) remain as defined in Phase 1.
 
