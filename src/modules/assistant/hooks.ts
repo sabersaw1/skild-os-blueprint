@@ -4,7 +4,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { getRepository, subscribeRepository } from "@/core/data/registry";
-import { useCapabilities } from "@/core/roles/hooks";
+import { hasCapability } from "@/core/roles/roles";
 import { useIdentity } from "@/core/auth/identity";
 import {
   ASSISTANT_REPOSITORY,
@@ -47,8 +47,9 @@ function useRepoVersion(repo: AssistantRepository): number {
 
 /** Capability check bound to the current identity's capabilities. */
 function useCan(): (id: string) => boolean {
-  const { can } = useCapabilities();
-  return useCallback((id: string) => can(id), [can]);
+  const identity = useIdentity();
+  const roleId = identity.roleId;
+  return useCallback((id: string) => hasCapability(roleId, id), [roleId]);
 }
 
 export function useJarvisAttention() {
