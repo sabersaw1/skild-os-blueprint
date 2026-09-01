@@ -27,6 +27,7 @@ Skild OS checks **capabilities**, never role names (ADR-003). Capabilities are
 | Parts | `parts.*` |
 | Finance | `finance.read`, `finance.invoice.write`, `finance.invoice.issue`, `finance.invoice.void`, `finance.payment.write` |
 | Marketing | `leads.read`, `leads.write`, `marketing.read`, `marketing.write`, `marketing.approve`, `marketing.publish` |
+| Jarvis (assistant) | `jarvis.read`, `jarvis.recommend`, `jarvis.propose`, `jarvis.execute` (reserved, unused in Phase 12) |
 | Integrations | `integrations.read`, `integrations.write`, `integrations.connect`, `integrations.disconnect`, `integrations.sync` |
 
 ## Integration capabilities are provider-agnostic
