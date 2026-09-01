@@ -39,6 +39,7 @@ import {
   writeEnvelope,
 } from "./storage";
 import { assertPersisted } from "@/core/storage/persistence";
+import { withCapabilityEnforcement } from "@/core/auth/authorize";
 
 const K_TEMPLATES = "skildos.inspections.templates.v1";
 const K_INSPECTIONS = "skildos.inspections.inspections.v1";
@@ -438,5 +439,15 @@ export function createLocalInspectionsRepository(): InspectionsRepository {
     },
   };
 
-  return repo;
+    // Authorization boundary — see src/core/auth/authorize.ts. Enforced at the
+  // repository so a non-UI caller (agent, adapter, command) cannot bypass it.
+  return withCapabilityEnforcement(repo, {
+    createTemplate: "inspections.templates.write",
+    updateTemplate: "inspections.templates.write",
+    createInspection: "inspections.write",
+    updateInspection: "inspections.write",
+    createFinding: "inspections.write",
+    updateFinding: "inspections.write",
+    queuePhoto: "inspections.photos.write",
+  });
 }

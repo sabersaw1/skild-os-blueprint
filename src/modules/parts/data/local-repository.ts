@@ -46,6 +46,7 @@ import { computePurchaseTotals, lineTotalCents } from "./money";
 import type { PartsRepository } from "./repository";
 import { readEnvelope, registerVersionedKey, writeEnvelope } from "./storage";
 import { assertPersisted } from "@/core/storage/persistence";
+import { withCapabilityEnforcement } from "@/core/auth/authorize";
 
 const K_PARTS = "skildos.parts.parts.v1";
 const K_SUPPLIERS = "skildos.parts.suppliers.v1";
@@ -174,7 +175,7 @@ export function createLocalPartsRepository(): PartsRepository {
     return next;
   }
 
-  return {
+  const impl: PartsRepository = {
     // ---- Parts ----------------------------------------------------------
     async listParts(query?: PartListQuery): Promise<PartListResult> {
       const q = query ?? {};
@@ -706,4 +707,18 @@ export function createLocalPartsRepository(): PartsRepository {
       return () => listeners.delete(listener);
     },
   };
+
+  // Authorization boundary — see src/core/auth/authorize.ts.
+  return withCapabilityEnforcement(impl, {
+    createPart: "parts.write",
+    updatePart: "parts.write",
+    archivePart: "parts.write",
+    createSupplier: "parts.suppliers.write",
+    updateSupplier: "parts.suppliers.write",
+    createPurchase: "parts.purchase.write",
+    updatePurchase: "parts.purchase.write",
+    addPurchaseLine: "parts.purchase.write",
+    recordUsage: "parts.usage.write",
+    addVehicleReference: "parts.write",
+  });
 }

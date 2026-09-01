@@ -33,6 +33,7 @@ import {
   writeEnvelope,
 } from "./storage";
 import { assertPersisted } from "@/core/storage/persistence";
+import { withCapabilityEnforcement } from "@/core/auth/authorize";
 
 const K_DOCUMENTS = "skildos.knowledge.documents.v1";
 const K_VERSIONS = "skildos.knowledge.versions.v1";
@@ -353,5 +354,13 @@ export function createLocalKnowledgeRepository(): KnowledgeRepository {
     },
   };
 
-  return repo;
+    // Authorization boundary — see src/core/auth/authorize.ts. Enforced at the
+  // repository so a non-UI caller (agent, adapter, command) cannot bypass it.
+  return withCapabilityEnforcement(repo, {
+    createDocument: "knowledge.write",
+    updateDocument: "knowledge.write",
+    archiveDocument: "knowledge.write",
+    createLink: "knowledge.write",
+    removeLink: "knowledge.write",
+  });
 }

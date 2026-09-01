@@ -36,6 +36,7 @@ import {
   writeEnvelope,
 } from "./storage";
 import { assertPersisted } from "@/core/storage/persistence";
+import { withCapabilityEnforcement } from "@/core/auth/authorize";
 
 const K_QUOTES = "skildos.quotes.quotes.v1";
 const K_VERSIONS = "skildos.quotes.versions.v1";
@@ -392,5 +393,14 @@ export function createLocalQuotesRepository(): QuotesRepository {
     },
   };
 
-  return repo;
+    // Authorization boundary — see src/core/auth/authorize.ts. Enforced at the
+  // repository so a non-UI caller (agent, adapter, command) cannot bypass it.
+  return withCapabilityEnforcement(repo, {
+    createQuote: "quotes.write",
+    updateQuote: "quotes.write",
+    sendQuote: "quotes.write",
+    approveQuote: "quotes.approve",
+    declineQuote: "quotes.write",
+    expireQuote: "quotes.write",
+  });
 }

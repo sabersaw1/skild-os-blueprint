@@ -29,6 +29,7 @@ import {
 } from "./schemas";
 import type { AssistantRepository } from "./repository";
 import { readEnvelope, registerVersionedKey, writeEnvelope } from "./storage";
+import { assertPersisted } from "@/core/storage/persistence";
 
 const K_PROPOSALS = "skildos.assistant.proposals.v1";
 const K_ACKS = "skildos.assistant.attentionAcks.v1";
@@ -68,7 +69,7 @@ export class LocalAssistantRepository implements AssistantRepository {
   }
 
   private writeProposals(rows: AiActionProposal[]): void {
-    writeEnvelope(K_PROPOSALS, rows);
+    assertPersisted(K_PROPOSALS, writeEnvelope(K_PROPOSALS, rows));
     this.notify();
   }
 
@@ -77,7 +78,7 @@ export class LocalAssistantRepository implements AssistantRepository {
   }
 
   private writeAcks(rows: AttentionAcknowledgement[]): void {
-    writeEnvelope(K_ACKS, rows);
+    assertPersisted(K_ACKS, writeEnvelope(K_ACKS, rows));
     this.notify();
   }
 

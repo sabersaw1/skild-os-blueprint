@@ -37,6 +37,7 @@ import {
   writeEnvelope,
 } from "./storage";
 import { assertPersisted } from "@/core/storage/persistence";
+import { withCapabilityEnforcement } from "@/core/auth/authorize";
 
 const K_JOBS = "skildos.jobs.jobs.v1";
 const K_STATUS = "skildos.jobs.status-history.v1";
@@ -449,5 +450,14 @@ export function createLocalJobsRepository(): JobsRepository {
     },
   };
 
-  return repo;
+    // Authorization boundary — see src/core/auth/authorize.ts. Enforced at the
+  // repository so a non-UI caller (agent, adapter, command) cannot bypass it.
+  return withCapabilityEnforcement(repo, {
+    create: "jobs.write",
+    update: "jobs.write",
+    changeStatus: "jobs.status",
+    addLabor: "jobs.labor.write",
+    addNote: "jobs.notes.write",
+    assign: "jobs.assign",
+  });
 }
