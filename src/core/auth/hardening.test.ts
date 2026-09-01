@@ -378,3 +378,49 @@ describe("Jarvis execution boundary", () => {
     ).toBe(false);
   });
 });
+
+// ---------------------------------------------------------------------------
+// PHASE 15 — CRM + Vehicles were the last repositories without a mutation
+// boundary. They sit at the ROOT of the business data chain (customer →
+// vehicle → inspection → quote → job → invoice), so an unguarded write there
+// is the most consequential bypass in the system.
+// ---------------------------------------------------------------------------
+
+describe("CRM + Vehicles authorization boundary", () => {
+  it("denies a customer write to an actor without crm.write, and emits nothing", async () => {
+    const { createLocalCustomerRepository } = await import(
+      "@/modules/crm/data/local-repository"
+    );
+    const repo = createLocalCustomerRepository();
+    const spy = vi.spyOn(emitter, "emit");
+    actAs(READER_ROLE_ID);
+
+    await expect(
+      repo.create({ displayName: "Unauthorized Customer" }),
+    ).rejects.toBeInstanceOf(CapabilityDeniedError);
+
+    expect(spy).not.toHaveBeenCalled();
+    actAs(OWNER_ROLE_ID);
+    expect((await repo.list()).items).toHaveLength(0);
+  });
+
+  it("denies a vehicle write to an actor without vehicles.write", async () => {
+    const { createLocalVehicleRepository } = await import(
+      "@/modules/vehicles/data/local-repository"
+    );
+    const repo = createLocalVehicleRepository();
+    actAs(READER_ROLE_ID);
+
+    await expect(
+      repo.create({
+        customerId: "cust-1",
+        make: "Honda",
+        model: "CB500",
+        year: 2019,
+      }),
+    ).rejects.toBeInstanceOf(CapabilityDeniedError);
+
+    actAs(OWNER_ROLE_ID);
+    expect((await repo.list()).items).toHaveLength(0);
+  });
+});
