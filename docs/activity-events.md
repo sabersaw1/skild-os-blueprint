@@ -93,6 +93,36 @@ and safe messages ONLY — never credentials, tokens, or raw provider payloads.
 
 
 
+## Marketing + Lead Machine (Phase 11)
+
+| Event | Payload |
+| --- | --- |
+| `marketing.lead.created` | `{ leadId, channel, source, status }` |
+| `marketing.lead.updated` | `{ leadId, fields }` |
+| `marketing.lead.status.changed` | `{ leadId, from, to }` |
+| `marketing.lead.contacted` | `{ leadId, at }` |
+| `marketing.lead.qualified` | `{ leadId, qualification }` |
+| `marketing.lead.converted` | `{ leadId, quoteId?, appointmentId?, jobId?, invoiceId? }` |
+| `marketing.lead.lost` | `{ leadId, reason }` |
+| `marketing.lead.linked` | `{ leadId, customerId?, vehicleId?, conversationId? }` |
+| `marketing.lead.follow_up.scheduled` | `{ leadId, at }` |
+| `marketing.lead.attribution.updated` | `{ leadId, source }` |
+| `marketing.opportunity.created` | `{ opportunityId, type, evidenceSource, confidence }` |
+| `marketing.opportunity.reviewed` | `{ opportunityId }` |
+| `marketing.opportunity.approved` | `{ opportunityId }` |
+| `marketing.opportunity.dismissed` | `{ opportunityId, reason? }` |
+| `marketing.action.created` | `{ actionId, type, publicFacing }` |
+| `marketing.action.approved` | `{ actionId, approvedBy? }` |
+| `marketing.action.executed` | `{ actionId, publicFacing }` |
+| `marketing.action.measured` | `{ actionId }` |
+| `marketing.action.rejected` | `{ actionId, reason? }` |
+| `marketing.page_performance.recorded` | `{ recordId, page, evidenceSource }` |
+| `marketing.search_opportunity.recorded` | `{ recordId, query, opportunityScore }` |
+| `marketing.local_visibility.recorded` | `{ recordId, profile, evidenceSource }` |
+
+Marketing payloads carry ids, enums, counts, and rule-derived scores ONLY —
+never customer contact details or message content.
+
 Shell/system events (`shell.navigation.*`, `settings.value.updated`,
 `identity.session.started`) remain as defined in Phase 1.
 
