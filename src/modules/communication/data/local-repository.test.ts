@@ -787,7 +787,6 @@ describe("full lifecycle chain", () => {
       "invoice",
       "job",
       "quote",
-      "quote",
     ]);
     expect(ctx.reviewRequestIds).toEqual([review.id]);
 
