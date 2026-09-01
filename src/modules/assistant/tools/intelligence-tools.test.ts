@@ -148,7 +148,7 @@ describe("grounded answers", () => {
     });
     // No capability, so no measured facts are asserted — and nothing is
     // guessed to fill the gap.
-    expect(context.facts.every((f) => f.kind !== "ai_suggestion")).toBe(true);
+    expect(context.facts.every((f) => f.kind !== "ai_generated")).toBe(true);
     expect(context.uncertainty.length + context.blockedByCapabilities.length).toBeGreaterThan(0);
   });
 });
