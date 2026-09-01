@@ -14,6 +14,8 @@ import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as RequestsRouteImport } from './routes/requests'
 import { Route as QuotesRouteImport } from './routes/quotes'
 import { Route as PartsRouteImport } from './routes/parts'
+import { Route as MarketingRouteImport } from './routes/marketing'
+import { Route as LeadsRouteImport } from './routes/leads'
 import { Route as KnowledgeRouteImport } from './routes/knowledge'
 import { Route as JobsRouteImport } from './routes/jobs'
 import { Route as InvoicesRouteImport } from './routes/invoices'
@@ -27,6 +29,8 @@ import { Route as SettingsIndexRouteImport } from './routes/settings.index'
 import { Route as RequestsIndexRouteImport } from './routes/requests.index'
 import { Route as QuotesIndexRouteImport } from './routes/quotes.index'
 import { Route as PartsIndexRouteImport } from './routes/parts.index'
+import { Route as MarketingIndexRouteImport } from './routes/marketing.index'
+import { Route as LeadsIndexRouteImport } from './routes/leads.index'
 import { Route as KnowledgeIndexRouteImport } from './routes/knowledge.index'
 import { Route as JobsIndexRouteImport } from './routes/jobs.index'
 import { Route as InvoicesIndexRouteImport } from './routes/invoices.index'
@@ -45,6 +49,8 @@ import { Route as QuotesNewRouteImport } from './routes/quotes.new'
 import { Route as QuotesQuoteIdRouteImport } from './routes/quotes.$quoteId'
 import { Route as PartsNewRouteImport } from './routes/parts.new'
 import { Route as PartsPartIdRouteImport } from './routes/parts.$partId'
+import { Route as LeadsNewRouteImport } from './routes/leads.new'
+import { Route as LeadsLeadIdRouteImport } from './routes/leads.$leadId'
 import { Route as KnowledgeNewRouteImport } from './routes/knowledge.new'
 import { Route as KnowledgeKnowledgeIdRouteImport } from './routes/knowledge.$knowledgeId'
 import { Route as JobsNewRouteImport } from './routes/jobs.new'
@@ -102,6 +108,16 @@ const QuotesRoute = QuotesRouteImport.update({
 const PartsRoute = PartsRouteImport.update({
   id: '/parts',
   path: '/parts',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MarketingRoute = MarketingRouteImport.update({
+  id: '/marketing',
+  path: '/marketing',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LeadsRoute = LeadsRouteImport.update({
+  id: '/leads',
+  path: '/leads',
   getParentRoute: () => rootRouteImport,
 } as any)
 const KnowledgeRoute = KnowledgeRouteImport.update({
@@ -168,6 +184,16 @@ const PartsIndexRoute = PartsIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => PartsRoute,
+} as any)
+const MarketingIndexRoute = MarketingIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => MarketingRoute,
+} as any)
+const LeadsIndexRoute = LeadsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => LeadsRoute,
 } as any)
 const KnowledgeIndexRoute = KnowledgeIndexRouteImport.update({
   id: '/',
@@ -258,6 +284,16 @@ const PartsPartIdRoute = PartsPartIdRouteImport.update({
   id: '/$partId',
   path: '/$partId',
   getParentRoute: () => PartsRoute,
+} as any)
+const LeadsNewRoute = LeadsNewRouteImport.update({
+  id: '/new',
+  path: '/new',
+  getParentRoute: () => LeadsRoute,
+} as any)
+const LeadsLeadIdRoute = LeadsLeadIdRouteImport.update({
+  id: '/$leadId',
+  path: '/$leadId',
+  getParentRoute: () => LeadsRoute,
 } as any)
 const KnowledgeNewRoute = KnowledgeNewRouteImport.update({
   id: '/new',
@@ -442,6 +478,8 @@ export interface FileRoutesByFullPath {
   '/invoices': typeof InvoicesRouteWithChildren
   '/jobs': typeof JobsRouteWithChildren
   '/knowledge': typeof KnowledgeRouteWithChildren
+  '/leads': typeof LeadsRouteWithChildren
+  '/marketing': typeof MarketingRouteWithChildren
   '/parts': typeof PartsRouteWithChildren
   '/quotes': typeof QuotesRouteWithChildren
   '/requests': typeof RequestsRouteWithChildren
@@ -459,6 +497,8 @@ export interface FileRoutesByFullPath {
   '/jobs/new': typeof JobsNewRoute
   '/knowledge/$knowledgeId': typeof KnowledgeKnowledgeIdRouteWithChildren
   '/knowledge/new': typeof KnowledgeNewRoute
+  '/leads/$leadId': typeof LeadsLeadIdRoute
+  '/leads/new': typeof LeadsNewRoute
   '/parts/$partId': typeof PartsPartIdRouteWithChildren
   '/parts/new': typeof PartsNewRoute
   '/quotes/$quoteId': typeof QuotesQuoteIdRouteWithChildren
@@ -477,6 +517,8 @@ export interface FileRoutesByFullPath {
   '/invoices/': typeof InvoicesIndexRoute
   '/jobs/': typeof JobsIndexRoute
   '/knowledge/': typeof KnowledgeIndexRoute
+  '/leads/': typeof LeadsIndexRoute
+  '/marketing/': typeof MarketingIndexRoute
   '/parts/': typeof PartsIndexRoute
   '/quotes/': typeof QuotesIndexRoute
   '/requests/': typeof RequestsIndexRoute
@@ -514,6 +556,8 @@ export interface FileRoutesByTo {
   '/invoices/new': typeof InvoicesNewRoute
   '/jobs/new': typeof JobsNewRoute
   '/knowledge/new': typeof KnowledgeNewRoute
+  '/leads/$leadId': typeof LeadsLeadIdRoute
+  '/leads/new': typeof LeadsNewRoute
   '/parts/new': typeof PartsNewRoute
   '/quotes/new': typeof QuotesNewRoute
   '/requests/new': typeof RequestsNewRoute
@@ -529,6 +573,8 @@ export interface FileRoutesByTo {
   '/invoices': typeof InvoicesIndexRoute
   '/jobs': typeof JobsIndexRoute
   '/knowledge': typeof KnowledgeIndexRoute
+  '/leads': typeof LeadsIndexRoute
+  '/marketing': typeof MarketingIndexRoute
   '/parts': typeof PartsIndexRoute
   '/quotes': typeof QuotesIndexRoute
   '/requests': typeof RequestsIndexRoute
@@ -566,6 +612,8 @@ export interface FileRoutesById {
   '/invoices': typeof InvoicesRouteWithChildren
   '/jobs': typeof JobsRouteWithChildren
   '/knowledge': typeof KnowledgeRouteWithChildren
+  '/leads': typeof LeadsRouteWithChildren
+  '/marketing': typeof MarketingRouteWithChildren
   '/parts': typeof PartsRouteWithChildren
   '/quotes': typeof QuotesRouteWithChildren
   '/requests': typeof RequestsRouteWithChildren
@@ -583,6 +631,8 @@ export interface FileRoutesById {
   '/jobs/new': typeof JobsNewRoute
   '/knowledge/$knowledgeId': typeof KnowledgeKnowledgeIdRouteWithChildren
   '/knowledge/new': typeof KnowledgeNewRoute
+  '/leads/$leadId': typeof LeadsLeadIdRoute
+  '/leads/new': typeof LeadsNewRoute
   '/parts/$partId': typeof PartsPartIdRouteWithChildren
   '/parts/new': typeof PartsNewRoute
   '/quotes/$quoteId': typeof QuotesQuoteIdRouteWithChildren
@@ -601,6 +651,8 @@ export interface FileRoutesById {
   '/invoices/': typeof InvoicesIndexRoute
   '/jobs/': typeof JobsIndexRoute
   '/knowledge/': typeof KnowledgeIndexRoute
+  '/leads/': typeof LeadsIndexRoute
+  '/marketing/': typeof MarketingIndexRoute
   '/parts/': typeof PartsIndexRoute
   '/quotes/': typeof QuotesIndexRoute
   '/requests/': typeof RequestsIndexRoute
@@ -639,6 +691,8 @@ export interface FileRouteTypes {
     | '/invoices'
     | '/jobs'
     | '/knowledge'
+    | '/leads'
+    | '/marketing'
     | '/parts'
     | '/quotes'
     | '/requests'
@@ -656,6 +710,8 @@ export interface FileRouteTypes {
     | '/jobs/new'
     | '/knowledge/$knowledgeId'
     | '/knowledge/new'
+    | '/leads/$leadId'
+    | '/leads/new'
     | '/parts/$partId'
     | '/parts/new'
     | '/quotes/$quoteId'
@@ -674,6 +730,8 @@ export interface FileRouteTypes {
     | '/invoices/'
     | '/jobs/'
     | '/knowledge/'
+    | '/leads/'
+    | '/marketing/'
     | '/parts/'
     | '/quotes/'
     | '/requests/'
@@ -711,6 +769,8 @@ export interface FileRouteTypes {
     | '/invoices/new'
     | '/jobs/new'
     | '/knowledge/new'
+    | '/leads/$leadId'
+    | '/leads/new'
     | '/parts/new'
     | '/quotes/new'
     | '/requests/new'
@@ -726,6 +786,8 @@ export interface FileRouteTypes {
     | '/invoices'
     | '/jobs'
     | '/knowledge'
+    | '/leads'
+    | '/marketing'
     | '/parts'
     | '/quotes'
     | '/requests'
@@ -762,6 +824,8 @@ export interface FileRouteTypes {
     | '/invoices'
     | '/jobs'
     | '/knowledge'
+    | '/leads'
+    | '/marketing'
     | '/parts'
     | '/quotes'
     | '/requests'
@@ -779,6 +843,8 @@ export interface FileRouteTypes {
     | '/jobs/new'
     | '/knowledge/$knowledgeId'
     | '/knowledge/new'
+    | '/leads/$leadId'
+    | '/leads/new'
     | '/parts/$partId'
     | '/parts/new'
     | '/quotes/$quoteId'
@@ -797,6 +863,8 @@ export interface FileRouteTypes {
     | '/invoices/'
     | '/jobs/'
     | '/knowledge/'
+    | '/leads/'
+    | '/marketing/'
     | '/parts/'
     | '/quotes/'
     | '/requests/'
@@ -834,6 +902,8 @@ export interface RootRouteChildren {
   InvoicesRoute: typeof InvoicesRouteWithChildren
   JobsRoute: typeof JobsRouteWithChildren
   KnowledgeRoute: typeof KnowledgeRouteWithChildren
+  LeadsRoute: typeof LeadsRouteWithChildren
+  MarketingRoute: typeof MarketingRouteWithChildren
   PartsRoute: typeof PartsRouteWithChildren
   QuotesRoute: typeof QuotesRouteWithChildren
   RequestsRoute: typeof RequestsRouteWithChildren
@@ -882,6 +952,20 @@ declare module '@tanstack/react-router' {
       path: '/parts'
       fullPath: '/parts'
       preLoaderRoute: typeof PartsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/marketing': {
+      id: '/marketing'
+      path: '/marketing'
+      fullPath: '/marketing'
+      preLoaderRoute: typeof MarketingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/leads': {
+      id: '/leads'
+      path: '/leads'
+      fullPath: '/leads'
+      preLoaderRoute: typeof LeadsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/knowledge': {
@@ -974,6 +1058,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/parts/'
       preLoaderRoute: typeof PartsIndexRouteImport
       parentRoute: typeof PartsRoute
+    }
+    '/marketing/': {
+      id: '/marketing/'
+      path: '/'
+      fullPath: '/marketing/'
+      preLoaderRoute: typeof MarketingIndexRouteImport
+      parentRoute: typeof MarketingRoute
+    }
+    '/leads/': {
+      id: '/leads/'
+      path: '/'
+      fullPath: '/leads/'
+      preLoaderRoute: typeof LeadsIndexRouteImport
+      parentRoute: typeof LeadsRoute
     }
     '/knowledge/': {
       id: '/knowledge/'
@@ -1100,6 +1198,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/parts/$partId'
       preLoaderRoute: typeof PartsPartIdRouteImport
       parentRoute: typeof PartsRoute
+    }
+    '/leads/new': {
+      id: '/leads/new'
+      path: '/new'
+      fullPath: '/leads/new'
+      preLoaderRoute: typeof LeadsNewRouteImport
+      parentRoute: typeof LeadsRoute
+    }
+    '/leads/$leadId': {
+      id: '/leads/$leadId'
+      path: '/$leadId'
+      fullPath: '/leads/$leadId'
+      preLoaderRoute: typeof LeadsLeadIdRouteImport
+      parentRoute: typeof LeadsRoute
     }
     '/knowledge/new': {
       id: '/knowledge/new'
@@ -1498,6 +1610,32 @@ const KnowledgeRouteWithChildren = KnowledgeRoute._addFileChildren(
   KnowledgeRouteChildren,
 )
 
+interface LeadsRouteChildren {
+  LeadsLeadIdRoute: typeof LeadsLeadIdRoute
+  LeadsNewRoute: typeof LeadsNewRoute
+  LeadsIndexRoute: typeof LeadsIndexRoute
+}
+
+const LeadsRouteChildren: LeadsRouteChildren = {
+  LeadsLeadIdRoute: LeadsLeadIdRoute,
+  LeadsNewRoute: LeadsNewRoute,
+  LeadsIndexRoute: LeadsIndexRoute,
+}
+
+const LeadsRouteWithChildren = LeadsRoute._addFileChildren(LeadsRouteChildren)
+
+interface MarketingRouteChildren {
+  MarketingIndexRoute: typeof MarketingIndexRoute
+}
+
+const MarketingRouteChildren: MarketingRouteChildren = {
+  MarketingIndexRoute: MarketingIndexRoute,
+}
+
+const MarketingRouteWithChildren = MarketingRoute._addFileChildren(
+  MarketingRouteChildren,
+)
+
 interface PartsPartIdRouteChildren {
   PartsPartIdEditRoute: typeof PartsPartIdEditRoute
   PartsPartIdIndexRoute: typeof PartsPartIdIndexRoute
@@ -1627,6 +1765,8 @@ const rootRouteChildren: RootRouteChildren = {
   InvoicesRoute: InvoicesRouteWithChildren,
   JobsRoute: JobsRouteWithChildren,
   KnowledgeRoute: KnowledgeRouteWithChildren,
+  LeadsRoute: LeadsRouteWithChildren,
+  MarketingRoute: MarketingRouteWithChildren,
   PartsRoute: PartsRouteWithChildren,
   QuotesRoute: QuotesRouteWithChildren,
   RequestsRoute: RequestsRouteWithChildren,
