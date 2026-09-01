@@ -7,6 +7,7 @@
 // may rest on. It duplicates no record: a Fact holds a sentence plus the
 // ids it came from, never a copy of the underlying entity.
 
+import { formatCents } from "@/core/money";
 import { newId } from "@/core/ids";
 import { formatCents } from "@/core/money";
 import {
@@ -335,7 +336,7 @@ export async function resolveContext(opts: {
         );
         c.add(
           fact(
-            `${cost.laborHours} labor hour(s) logged, amounting to ${cost.laborAmount.toFixed(2)}`,
+            `${cost.laborHours} labor hour(s) logged, amounting to ${formatCents(cost.laborAmountCents)}`,
             "verified_fact",
             [ref("jobs", "job", cost.jobId)],
             { value: cost.laborHours, unit: "hours" },

@@ -10,6 +10,7 @@
 //  4. A missing repository is a RepositoryUnavailableError, which becomes
 //     declared uncertainty. A tool NEVER fabricates a record.
 
+import { laborTotalCents } from "@/core/money";
 import { getRepository, hasRepository } from "@/core/data/registry";
 import {
   CRM_CUSTOMER_REPOSITORY,
