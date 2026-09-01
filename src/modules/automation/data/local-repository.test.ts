@@ -43,7 +43,7 @@ import { createLocalAutomationRepository } from "./local-repository";
 import { AUTOMATION_REPOSITORY, type AutomationRepository } from "./repository";
 import { AUTOMATION_EVENTS } from "../activity";
 import { decideActionPolicy } from "./policy";
-import { evaluateConditions, manualTrigger, triggerMatches } from "../engine/triggers";
+import { evaluateConditions } from "../engine/triggers";
 import { executeAction, idempotencyKey, runAutomationRule } from "../engine/executor";
 import * as emitter from "@/core/activity/emitter";
 import { clearRepository, registerRepository } from "@/core/data/registry";
