@@ -163,11 +163,10 @@ export function runOptimizationRules(
       expectedImpactCents: pendingValue,
       impactBasis:
         "Sum of the totals of the aging quotes. This is the value at stake, not a forecast of revenue.",
-      evidenceless: undefined,
       confidence: 0.8,
       relatedIds: staleQuotes.map((a) => a.source).slice(0, 50),
       dedupeKey: `quote_aging:${key}`,
-    } as OpportunityCreateInput);
+    });
     draft.recommendations.push({
       recommendationType: "review_quote_aging",
       title: "Review aging quotes",
