@@ -993,9 +993,30 @@ class LocalAutomationRepository implements AutomationRepository {
  * Jarvis tool layer, per Phase 12.2).
  */
 export function createLocalAutomationRepository(): AutomationRepository {
+  const instance = new LocalAutomationRepository();
+  // `withCapabilityEnforcement` walks OWN enumerable properties, so the
+  // class instance is first flattened into a plain object holding exactly
+  // the public interface, bound to the instance. Nothing private leaks out.
+  const PUBLIC_METHODS = [
+    "listAgents", "getAgent", "createAgent", "updateAgent", "setAgentEnabled",
+    "listRules", "getRule", "createRule", "updateRule", "setRuleEnabled",
+    "listRuns", "getRun", "startRun", "completeRun",
+    "listActions", "getAction", "findActionByIdempotencyKey", "requestAction",
+    "listApprovals", "getApproval", "approveAction", "rejectAction",
+    "markActionExecuted", "markActionFailed",
+    "getOverview", "subscribe",
+  ] as const;
+  const impl = Object.fromEntries(
+    PUBLIC_METHODS.map((name) => [
+      name,
+      (instance[name] as (...args: never[]) => unknown).bind(instance),
+    ]),
+  ) as unknown as AutomationRepository;
+
   return withCapabilityEnforcement<AutomationRepository>(
-    new LocalAutomationRepository(),
+    impl,
     {
+
       createAgent: AGENTS_WRITE,
       updateAgent: AGENTS_WRITE,
       setAgentEnabled: AGENTS_WRITE,
