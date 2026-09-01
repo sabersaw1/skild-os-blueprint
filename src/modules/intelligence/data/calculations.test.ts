@@ -34,7 +34,7 @@ const lead = (o: Record<string, unknown>): any => ({
   createdAt: NOW - DAY,
   status: "new",
   channel: "website_form",
-  attribution: { source: "website" },
+  attribution: { firstTouch: { source: "website" } },
   serviceRequested: "Brakes",
   ...o,
 });
@@ -60,7 +60,7 @@ const invoice = (o: Record<string, unknown>): any => ({
   createdAt: NOW - DAY,
   issuedAt: NOW - DAY,
   status: "issued",
-  totalCents: 200_00,
+  total: 200_00,
   balance: 0,
   number: "INV-1",
   ...o,
@@ -77,10 +77,10 @@ describe("dataset emptiness", () => {
 });
 
 describe("metrics", () => {
-  it("marks every metric unavailable when there are no records at all", () => {
+  it("returns zero — never a fabricated figure — when there are no records", () => {
     const metrics = calculateMetrics(ds());
     expect(metrics.length).toBeGreaterThan(0);
-    expect(metrics.every((m) => m.completeness !== "complete")).toBe(true);
+    expect(metrics.every((m) => m.value === 0)).toBe(true);
   });
 
   it("never returns NaN or Infinity for a ratio metric with a zero denominator", () => {
@@ -117,9 +117,9 @@ describe("profitability", () => {
   it("computes gross margin from invoiced revenue minus recorded parts cost", () => {
     const report = calculateProfitability(
       ds({
-        invoices: [invoice({ totalCents: 500_00 })],
+        invoices: [invoice({ total: 500_00 })],
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        partsUsage: [{ id: "u1", jobId: "j1", partId: "p1", quantity: 1, unitCostCents: 100_00, usedAt: NOW - DAY } as any],
+        partsUsage: [{ id: "u1", jobId: "j1", partId: "p1", quantity: 1, totalCost: 100_00, usedAt: NOW - DAY } as any],
       }),
     );
     expect(report.revenueCents).toBe(500_00);
@@ -161,9 +161,9 @@ describe("performance breakdowns", () => {
     const rows = calculateSourcePerformance(
       ds({
         leads: [
-          lead({ id: "a", attribution: { source: "google" } }),
-          lead({ id: "b", attribution: { source: "google" } }),
-          lead({ id: "c", attribution: { source: "referral" } }),
+          lead({ id: "a", attribution: { firstTouch: { source: "google" } } }),
+          lead({ id: "b", attribution: { firstTouch: { source: "google" } } }),
+          lead({ id: "c", attribution: { firstTouch: { source: "referral" } } }),
         ],
       }),
     );
