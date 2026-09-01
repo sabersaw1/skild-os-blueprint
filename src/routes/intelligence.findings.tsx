@@ -37,7 +37,7 @@ function FindingsPage() {
   const repo = useIntelligenceRepository();
   const period = usePeriod(30);
   const canRead = useHasCapability("intelligence.read");
-  const canOptimize = useHasCapability("intelligence.optimize");
+  const canOptimize = useHasCapability("intelligence.recommend");
   const canRecommend = useHasCapability("intelligence.recommend");
 
   const { data: observations, refresh: refreshObs } = useObservations();
