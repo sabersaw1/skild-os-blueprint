@@ -69,29 +69,29 @@ describe("QuotesRepository — CRUD", () => {
           description: "Front pads",
           category: "part",
           quantity: 2,
-          unitPrice: 55,
+          unitPriceCents: 5500,
         },
         {
           description: "Labor",
           category: "labor",
           quantity: 1.5,
-          unitPrice: 120,
+          unitPriceCents: 12000,
           laborHours: 1.5,
         },
       ],
-      tax: 20,
-      discount: 10,
+      taxCents: 2000,
+      discountCents: 1000,
     });
     expect(q.status).toBe("draft");
     expect(q.currentVersion).toBe(1);
     expect(q.lineItems).toHaveLength(2);
-    expect(q.subtotal).toBe(2 * 55 + 1.5 * 120);
-    expect(q.total).toBe(q.subtotal - 10 + 20);
+    expect(q.subtotalCents).toBe(2 * 5500 + Math.round(1.5 * 12000));
+    expect(q.totalCents).toBe(q.subtotalCents - 1000 + 2000);
 
     const versions = await repo.listVersions(q.id);
     expect(versions).toHaveLength(1);
     expect(versions[0].versionNumber).toBe(1);
-    expect(versions[0].snapshot.total).toBe(q.total);
+    expect(versions[0].snapshot.totalCents).toBe(q.totalCents);
 
     const types = spy.mock.calls.map(
       (c: unknown[]) => (c[0] as { type: string }).type,
@@ -125,7 +125,7 @@ describe("QuotesRepository — CRUD", () => {
             description: "",
             category: "labor",
             quantity: 1,
-            unitPrice: 10,
+            unitPriceCents: 1000,
           },
         ],
       }),
@@ -138,7 +138,7 @@ describe("QuotesRepository — CRUD", () => {
             description: "x",
             category: "labor",
             quantity: -1,
-            unitPrice: 10,
+            unitPriceCents: 1000,
           },
         ],
       }),
@@ -153,26 +153,36 @@ describe("QuotesRepository — versioning", () => {
     const q = await repo.createQuote({
       ...baseInput,
       lineItems: [
-        { description: "Pads", category: "part", quantity: 1, unitPrice: 40 },
+        {
+          description: "Pads",
+          category: "part",
+          quantity: 1,
+          unitPriceCents: 4000,
+        },
       ],
     });
     spy.mockClear();
     const updated = await repo.updateQuote(q.id, {
       title: "Front brake overhaul",
       lineItems: [
-        { description: "Pads", category: "part", quantity: 2, unitPrice: 45 },
+        {
+          description: "Pads",
+          category: "part",
+          quantity: 2,
+          unitPriceCents: 4500,
+        },
         {
           description: "Rotor",
           category: "part",
           quantity: 2,
-          unitPrice: 80,
+          unitPriceCents: 8000,
         },
       ],
       changeReason: "Customer added rotors",
     });
     expect(updated.currentVersion).toBe(2);
     expect(updated.title).toBe("Front brake overhaul");
-    expect(updated.total).toBe(2 * 45 + 2 * 80);
+    expect(updated.totalCents).toBe(2 * 4500 + 2 * 8000);
 
     const versions = await repo.listVersions(q.id);
     expect(versions).toHaveLength(2);
@@ -248,7 +258,7 @@ describe("QuotesRepository — status transitions", () => {
 });
 
 describe("QuotesRepository — totals", () => {
-  it("computes subtotal / discount / tax / total and rounds to 2dp", async () => {
+  it("computes subtotal / discount / tax / total in integer cents", async () => {
     const repo = fresh();
     const q = await repo.createQuote({
       ...baseInput,
@@ -257,23 +267,23 @@ describe("QuotesRepository — totals", () => {
           description: "A",
           category: "part",
           quantity: 3,
-          unitPrice: 9.999,
+          unitPriceCents: 1000,
         },
         {
           description: "B",
           category: "fee",
           quantity: 1,
-          unitPrice: 0.011,
+          unitPriceCents: 1,
         },
       ],
-      discount: 0.005,
-      tax: 1,
+      discountCents: 1,
+      taxCents: 100,
     });
-    // 3 * 9.999 rounds to 30 per line, 1 * 0.011 rounds to 0.01 per line.
-    expect(q.subtotal).toBe(30.01);
-    expect(q.discount).toBe(0.01);
-    expect(q.tax).toBe(1);
-    expect(q.total).toBe(30.01 - 0.01 + 1);
+    // 3 * 1000c = 3000c, plus 1 * 1c = 3001c subtotal. No float drift.
+    expect(q.subtotalCents).toBe(3001);
+    expect(q.discountCents).toBe(1);
+    expect(q.taxCents).toBe(100);
+    expect(q.totalCents).toBe(3001 - 1 + 100);
   });
 });
 
@@ -346,13 +356,13 @@ describe("Quotes — full CRM → Vehicle → Inspection → Quote flow", () => 
           description: "Front pads",
           category: "part",
           quantity: 2,
-          unitPrice: 45,
+          unitPriceCents: 4500,
         },
       ],
-      tax: 10,
+      taxCents: 1000,
     });
     expect(quote.inspectionId).toBe(inspectionId);
-    expect(quote.total).toBe(100);
+    expect(quote.totalCents).toBe(10000);
 
     await repo.updateQuote(quote.id, {
       lineItems: [
@@ -360,11 +370,16 @@ describe("Quotes — full CRM → Vehicle → Inspection → Quote flow", () => 
           description: "Front pads",
           category: "part",
           quantity: 2,
-          unitPrice: 45,
+          unitPriceCents: 4500,
         },
-        { description: "Rotor", category: "part", quantity: 2, unitPrice: 80 },
+        {
+          description: "Rotor",
+          category: "part",
+          quantity: 2,
+          unitPriceCents: 8000,
+        },
       ],
-      tax: 10,
+      taxCents: 1000,
       changeReason: "Added rotors",
     });
     const sent = await repo.sendQuote(quote.id, { reason: "emailed PDF" });
