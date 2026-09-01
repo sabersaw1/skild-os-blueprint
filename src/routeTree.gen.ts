@@ -68,6 +68,7 @@ import { Route as JarvisAttentionRouteImport } from './routes/jarvis.attention'
 import { Route as InvoicesNewRouteImport } from './routes/invoices.new'
 import { Route as InvoicesInvoiceIdRouteImport } from './routes/invoices.$invoiceId'
 import { Route as IntelligencePerformanceRouteImport } from './routes/intelligence.performance'
+import { Route as IntelligenceFindingsRouteImport } from './routes/intelligence.findings'
 import { Route as InspectionsNewRouteImport } from './routes/inspections.new'
 import { Route as InspectionsInspectionIdRouteImport } from './routes/inspections.$inspectionId'
 import { Route as CustomersNewRouteImport } from './routes/customers.new'
@@ -393,6 +394,11 @@ const IntelligencePerformanceRoute = IntelligencePerformanceRouteImport.update({
   path: '/performance',
   getParentRoute: () => IntelligenceRoute,
 } as any)
+const IntelligenceFindingsRoute = IntelligenceFindingsRouteImport.update({
+  id: '/findings',
+  path: '/findings',
+  getParentRoute: () => IntelligenceRoute,
+} as any)
 const InspectionsNewRoute = InspectionsNewRouteImport.update({
   id: '/new',
   path: '/new',
@@ -574,6 +580,7 @@ export interface FileRoutesByFullPath {
   '/customers/new': typeof CustomersNewRoute
   '/inspections/$inspectionId': typeof InspectionsInspectionIdRouteWithChildren
   '/inspections/new': typeof InspectionsNewRoute
+  '/intelligence/findings': typeof IntelligenceFindingsRoute
   '/intelligence/performance': typeof IntelligencePerformanceRoute
   '/invoices/$invoiceId': typeof InvoicesInvoiceIdRouteWithChildren
   '/invoices/new': typeof InvoicesNewRoute
@@ -646,6 +653,7 @@ export interface FileRoutesByTo {
   '/conversations/new': typeof ConversationsNewRoute
   '/customers/new': typeof CustomersNewRoute
   '/inspections/new': typeof InspectionsNewRoute
+  '/intelligence/findings': typeof IntelligenceFindingsRoute
   '/intelligence/performance': typeof IntelligencePerformanceRoute
   '/invoices/new': typeof InvoicesNewRoute
   '/jarvis/attention': typeof JarvisAttentionRoute
@@ -731,6 +739,7 @@ export interface FileRoutesById {
   '/customers/new': typeof CustomersNewRoute
   '/inspections/$inspectionId': typeof InspectionsInspectionIdRouteWithChildren
   '/inspections/new': typeof InspectionsNewRoute
+  '/intelligence/findings': typeof IntelligenceFindingsRoute
   '/intelligence/performance': typeof IntelligencePerformanceRoute
   '/invoices/$invoiceId': typeof InvoicesInvoiceIdRouteWithChildren
   '/invoices/new': typeof InvoicesNewRoute
@@ -823,6 +832,7 @@ export interface FileRouteTypes {
     | '/customers/new'
     | '/inspections/$inspectionId'
     | '/inspections/new'
+    | '/intelligence/findings'
     | '/intelligence/performance'
     | '/invoices/$invoiceId'
     | '/invoices/new'
@@ -895,6 +905,7 @@ export interface FileRouteTypes {
     | '/conversations/new'
     | '/customers/new'
     | '/inspections/new'
+    | '/intelligence/findings'
     | '/intelligence/performance'
     | '/invoices/new'
     | '/jarvis/attention'
@@ -979,6 +990,7 @@ export interface FileRouteTypes {
     | '/customers/new'
     | '/inspections/$inspectionId'
     | '/inspections/new'
+    | '/intelligence/findings'
     | '/intelligence/performance'
     | '/invoices/$invoiceId'
     | '/invoices/new'
@@ -1485,6 +1497,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IntelligencePerformanceRouteImport
       parentRoute: typeof IntelligenceRoute
     }
+    '/intelligence/findings': {
+      id: '/intelligence/findings'
+      path: '/findings'
+      fullPath: '/intelligence/findings'
+      preLoaderRoute: typeof IntelligenceFindingsRouteImport
+      parentRoute: typeof IntelligenceRoute
+    }
     '/inspections/new': {
       id: '/inspections/new'
       path: '/new'
@@ -1785,11 +1804,13 @@ const InspectionsRouteWithChildren = InspectionsRoute._addFileChildren(
 )
 
 interface IntelligenceRouteChildren {
+  IntelligenceFindingsRoute: typeof IntelligenceFindingsRoute
   IntelligencePerformanceRoute: typeof IntelligencePerformanceRoute
   IntelligenceIndexRoute: typeof IntelligenceIndexRoute
 }
 
 const IntelligenceRouteChildren: IntelligenceRouteChildren = {
+  IntelligenceFindingsRoute: IntelligenceFindingsRoute,
   IntelligencePerformanceRoute: IntelligencePerformanceRoute,
   IntelligenceIndexRoute: IntelligenceIndexRoute,
 }
