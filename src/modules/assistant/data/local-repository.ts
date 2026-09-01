@@ -122,8 +122,8 @@ export class LocalAssistantRepository implements AssistantRepository {
       throw new Error("Assistant: a proposal requires at least one target record reference.");
     }
     for (const t of input.targets) {
-      if (!t.moduleId || !t.entity || !t.id) {
-        throw new Error("Assistant: every proposal target needs moduleId, entity, and id.");
+      if (!t.module || !t.entity || !t.id) {
+        throw new Error("Assistant: every proposal target needs module, entity, and id.");
       }
     }
 
