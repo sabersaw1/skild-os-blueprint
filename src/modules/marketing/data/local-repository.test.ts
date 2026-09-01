@@ -97,7 +97,7 @@ describe("marketing repository — leads", () => {
     const spy = vi.spyOn(emitter, "emit");
     await repo.createLead(leadInput());
     expect(spy).toHaveBeenCalledWith(
-      expect.objectContaining({ type: MARKETING_EVENTS.LEAD_CREATED }),
+      expect.objectContaining({ type: MARKETING_EVENTS.leadCreated }),
     );
   });
 
@@ -393,7 +393,7 @@ describe("marketing repository — opportunities and actions", () => {
     await repo.approveOpportunity(o.id);
     expect(spy).toHaveBeenCalledWith(
       expect.objectContaining({
-        type: MARKETING_EVENTS.OPPORTUNITY_APPROVED,
+        type: MARKETING_EVENTS.opportunityApproved,
       }),
     );
     spy.mockRestore();
