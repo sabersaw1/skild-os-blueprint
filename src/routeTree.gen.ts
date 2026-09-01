@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as VehiclesRouteImport } from './routes/vehicles'
 import { Route as SettingsRouteImport } from './routes/settings'
+import { Route as RequestsRouteImport } from './routes/requests'
 import { Route as QuotesRouteImport } from './routes/quotes'
 import { Route as PartsRouteImport } from './routes/parts'
 import { Route as KnowledgeRouteImport } from './routes/knowledge'
@@ -23,6 +24,7 @@ import { Route as ActivityRouteImport } from './routes/activity'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as VehiclesIndexRouteImport } from './routes/vehicles.index'
 import { Route as SettingsIndexRouteImport } from './routes/settings.index'
+import { Route as RequestsIndexRouteImport } from './routes/requests.index'
 import { Route as QuotesIndexRouteImport } from './routes/quotes.index'
 import { Route as PartsIndexRouteImport } from './routes/parts.index'
 import { Route as KnowledgeIndexRouteImport } from './routes/knowledge.index'
@@ -38,6 +40,7 @@ import { Route as SettingsProfileRouteImport } from './routes/settings.profile'
 import { Route as SettingsModulesRouteImport } from './routes/settings.modules'
 import { Route as SettingsIntegrationsRouteImport } from './routes/settings.integrations'
 import { Route as SettingsAppearanceRouteImport } from './routes/settings.appearance'
+import { Route as RequestsNewRouteImport } from './routes/requests.new'
 import { Route as QuotesNewRouteImport } from './routes/quotes.new'
 import { Route as QuotesQuoteIdRouteImport } from './routes/quotes.$quoteId'
 import { Route as PartsNewRouteImport } from './routes/parts.new'
@@ -53,6 +56,7 @@ import { Route as InspectionsInspectionIdRouteImport } from './routes/inspection
 import { Route as CustomersNewRouteImport } from './routes/customers.new'
 import { Route as CustomersCustomerIdRouteImport } from './routes/customers.$customerId'
 import { Route as ConversationsNewRouteImport } from './routes/conversations.new'
+import { Route as ConversationsConversationIdRouteImport } from './routes/conversations.$conversationId'
 import { Route as VehiclesVehicleIdIndexRouteImport } from './routes/vehicles.$vehicleId.index'
 import { Route as TemplatesInspectionsIndexRouteImport } from './routes/templates.inspections.index'
 import { Route as QuotesQuoteIdIndexRouteImport } from './routes/quotes.$quoteId.index'
@@ -83,6 +87,11 @@ const VehiclesRoute = VehiclesRouteImport.update({
 const SettingsRoute = SettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RequestsRoute = RequestsRouteImport.update({
+  id: '/requests',
+  path: '/requests',
   getParentRoute: () => rootRouteImport,
 } as any)
 const QuotesRoute = QuotesRouteImport.update({
@@ -144,6 +153,11 @@ const SettingsIndexRoute = SettingsIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => SettingsRoute,
+} as any)
+const RequestsIndexRoute = RequestsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => RequestsRoute,
 } as any)
 const QuotesIndexRoute = QuotesIndexRouteImport.update({
   id: '/',
@@ -220,6 +234,11 @@ const SettingsAppearanceRoute = SettingsAppearanceRouteImport.update({
   path: '/appearance',
   getParentRoute: () => SettingsRoute,
 } as any)
+const RequestsNewRoute = RequestsNewRouteImport.update({
+  id: '/new',
+  path: '/new',
+  getParentRoute: () => RequestsRoute,
+} as any)
 const QuotesNewRoute = QuotesNewRouteImport.update({
   id: '/new',
   path: '/new',
@@ -295,6 +314,12 @@ const ConversationsNewRoute = ConversationsNewRouteImport.update({
   path: '/new',
   getParentRoute: () => ConversationsRoute,
 } as any)
+const ConversationsConversationIdRoute =
+  ConversationsConversationIdRouteImport.update({
+    id: '/$conversationId',
+    path: '/$conversationId',
+    getParentRoute: () => ConversationsRoute,
+  } as any)
 const VehiclesVehicleIdIndexRoute = VehiclesVehicleIdIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -419,8 +444,10 @@ export interface FileRoutesByFullPath {
   '/knowledge': typeof KnowledgeRouteWithChildren
   '/parts': typeof PartsRouteWithChildren
   '/quotes': typeof QuotesRouteWithChildren
+  '/requests': typeof RequestsRouteWithChildren
   '/settings': typeof SettingsRouteWithChildren
   '/vehicles': typeof VehiclesRouteWithChildren
+  '/conversations/$conversationId': typeof ConversationsConversationIdRoute
   '/conversations/new': typeof ConversationsNewRoute
   '/customers/$customerId': typeof CustomersCustomerIdRouteWithChildren
   '/customers/new': typeof CustomersNewRoute
@@ -436,6 +463,7 @@ export interface FileRoutesByFullPath {
   '/parts/new': typeof PartsNewRoute
   '/quotes/$quoteId': typeof QuotesQuoteIdRouteWithChildren
   '/quotes/new': typeof QuotesNewRoute
+  '/requests/new': typeof RequestsNewRoute
   '/settings/appearance': typeof SettingsAppearanceRoute
   '/settings/integrations': typeof SettingsIntegrationsRoute
   '/settings/modules': typeof SettingsModulesRoute
@@ -451,6 +479,7 @@ export interface FileRoutesByFullPath {
   '/knowledge/': typeof KnowledgeIndexRoute
   '/parts/': typeof PartsIndexRoute
   '/quotes/': typeof QuotesIndexRoute
+  '/requests/': typeof RequestsIndexRoute
   '/settings/': typeof SettingsIndexRoute
   '/vehicles/': typeof VehiclesIndexRoute
   '/customers/$customerId/edit': typeof CustomersCustomerIdEditRoute
@@ -478,6 +507,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/activity': typeof ActivityRoute
+  '/conversations/$conversationId': typeof ConversationsConversationIdRoute
   '/conversations/new': typeof ConversationsNewRoute
   '/customers/new': typeof CustomersNewRoute
   '/inspections/new': typeof InspectionsNewRoute
@@ -486,6 +516,7 @@ export interface FileRoutesByTo {
   '/knowledge/new': typeof KnowledgeNewRoute
   '/parts/new': typeof PartsNewRoute
   '/quotes/new': typeof QuotesNewRoute
+  '/requests/new': typeof RequestsNewRoute
   '/settings/appearance': typeof SettingsAppearanceRoute
   '/settings/integrations': typeof SettingsIntegrationsRoute
   '/settings/modules': typeof SettingsModulesRoute
@@ -500,6 +531,7 @@ export interface FileRoutesByTo {
   '/knowledge': typeof KnowledgeIndexRoute
   '/parts': typeof PartsIndexRoute
   '/quotes': typeof QuotesIndexRoute
+  '/requests': typeof RequestsIndexRoute
   '/settings': typeof SettingsIndexRoute
   '/vehicles': typeof VehiclesIndexRoute
   '/customers/$customerId/edit': typeof CustomersCustomerIdEditRoute
@@ -536,8 +568,10 @@ export interface FileRoutesById {
   '/knowledge': typeof KnowledgeRouteWithChildren
   '/parts': typeof PartsRouteWithChildren
   '/quotes': typeof QuotesRouteWithChildren
+  '/requests': typeof RequestsRouteWithChildren
   '/settings': typeof SettingsRouteWithChildren
   '/vehicles': typeof VehiclesRouteWithChildren
+  '/conversations/$conversationId': typeof ConversationsConversationIdRoute
   '/conversations/new': typeof ConversationsNewRoute
   '/customers/$customerId': typeof CustomersCustomerIdRouteWithChildren
   '/customers/new': typeof CustomersNewRoute
@@ -553,6 +587,7 @@ export interface FileRoutesById {
   '/parts/new': typeof PartsNewRoute
   '/quotes/$quoteId': typeof QuotesQuoteIdRouteWithChildren
   '/quotes/new': typeof QuotesNewRoute
+  '/requests/new': typeof RequestsNewRoute
   '/settings/appearance': typeof SettingsAppearanceRoute
   '/settings/integrations': typeof SettingsIntegrationsRoute
   '/settings/modules': typeof SettingsModulesRoute
@@ -568,6 +603,7 @@ export interface FileRoutesById {
   '/knowledge/': typeof KnowledgeIndexRoute
   '/parts/': typeof PartsIndexRoute
   '/quotes/': typeof QuotesIndexRoute
+  '/requests/': typeof RequestsIndexRoute
   '/settings/': typeof SettingsIndexRoute
   '/vehicles/': typeof VehiclesIndexRoute
   '/customers/$customerId/edit': typeof CustomersCustomerIdEditRoute
@@ -605,8 +641,10 @@ export interface FileRouteTypes {
     | '/knowledge'
     | '/parts'
     | '/quotes'
+    | '/requests'
     | '/settings'
     | '/vehicles'
+    | '/conversations/$conversationId'
     | '/conversations/new'
     | '/customers/$customerId'
     | '/customers/new'
@@ -622,6 +660,7 @@ export interface FileRouteTypes {
     | '/parts/new'
     | '/quotes/$quoteId'
     | '/quotes/new'
+    | '/requests/new'
     | '/settings/appearance'
     | '/settings/integrations'
     | '/settings/modules'
@@ -637,6 +676,7 @@ export interface FileRouteTypes {
     | '/knowledge/'
     | '/parts/'
     | '/quotes/'
+    | '/requests/'
     | '/settings/'
     | '/vehicles/'
     | '/customers/$customerId/edit'
@@ -664,6 +704,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/activity'
+    | '/conversations/$conversationId'
     | '/conversations/new'
     | '/customers/new'
     | '/inspections/new'
@@ -672,6 +713,7 @@ export interface FileRouteTypes {
     | '/knowledge/new'
     | '/parts/new'
     | '/quotes/new'
+    | '/requests/new'
     | '/settings/appearance'
     | '/settings/integrations'
     | '/settings/modules'
@@ -686,6 +728,7 @@ export interface FileRouteTypes {
     | '/knowledge'
     | '/parts'
     | '/quotes'
+    | '/requests'
     | '/settings'
     | '/vehicles'
     | '/customers/$customerId/edit'
@@ -721,8 +764,10 @@ export interface FileRouteTypes {
     | '/knowledge'
     | '/parts'
     | '/quotes'
+    | '/requests'
     | '/settings'
     | '/vehicles'
+    | '/conversations/$conversationId'
     | '/conversations/new'
     | '/customers/$customerId'
     | '/customers/new'
@@ -738,6 +783,7 @@ export interface FileRouteTypes {
     | '/parts/new'
     | '/quotes/$quoteId'
     | '/quotes/new'
+    | '/requests/new'
     | '/settings/appearance'
     | '/settings/integrations'
     | '/settings/modules'
@@ -753,6 +799,7 @@ export interface FileRouteTypes {
     | '/knowledge/'
     | '/parts/'
     | '/quotes/'
+    | '/requests/'
     | '/settings/'
     | '/vehicles/'
     | '/customers/$customerId/edit'
@@ -789,6 +836,7 @@ export interface RootRouteChildren {
   KnowledgeRoute: typeof KnowledgeRouteWithChildren
   PartsRoute: typeof PartsRouteWithChildren
   QuotesRoute: typeof QuotesRouteWithChildren
+  RequestsRoute: typeof RequestsRouteWithChildren
   SettingsRoute: typeof SettingsRouteWithChildren
   VehiclesRoute: typeof VehiclesRouteWithChildren
   SuppliersPartsRoute: typeof SuppliersPartsRoute
@@ -813,6 +861,13 @@ declare module '@tanstack/react-router' {
       path: '/settings'
       fullPath: '/settings'
       preLoaderRoute: typeof SettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/requests': {
+      id: '/requests'
+      path: '/requests'
+      fullPath: '/requests'
+      preLoaderRoute: typeof RequestsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/quotes': {
@@ -898,6 +953,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/settings/'
       preLoaderRoute: typeof SettingsIndexRouteImport
       parentRoute: typeof SettingsRoute
+    }
+    '/requests/': {
+      id: '/requests/'
+      path: '/'
+      fullPath: '/requests/'
+      preLoaderRoute: typeof RequestsIndexRouteImport
+      parentRoute: typeof RequestsRoute
     }
     '/quotes/': {
       id: '/quotes/'
@@ -1004,6 +1066,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SettingsAppearanceRouteImport
       parentRoute: typeof SettingsRoute
     }
+    '/requests/new': {
+      id: '/requests/new'
+      path: '/new'
+      fullPath: '/requests/new'
+      preLoaderRoute: typeof RequestsNewRouteImport
+      parentRoute: typeof RequestsRoute
+    }
     '/quotes/new': {
       id: '/quotes/new'
       path: '/new'
@@ -1107,6 +1176,13 @@ declare module '@tanstack/react-router' {
       path: '/new'
       fullPath: '/conversations/new'
       preLoaderRoute: typeof ConversationsNewRouteImport
+      parentRoute: typeof ConversationsRoute
+    }
+    '/conversations/$conversationId': {
+      id: '/conversations/$conversationId'
+      path: '/$conversationId'
+      fullPath: '/conversations/$conversationId'
+      preLoaderRoute: typeof ConversationsConversationIdRouteImport
       parentRoute: typeof ConversationsRoute
     }
     '/vehicles/$vehicleId/': {
@@ -1260,11 +1336,13 @@ declare module '@tanstack/react-router' {
 }
 
 interface ConversationsRouteChildren {
+  ConversationsConversationIdRoute: typeof ConversationsConversationIdRoute
   ConversationsNewRoute: typeof ConversationsNewRoute
   ConversationsIndexRoute: typeof ConversationsIndexRoute
 }
 
 const ConversationsRouteChildren: ConversationsRouteChildren = {
+  ConversationsConversationIdRoute: ConversationsConversationIdRoute,
   ConversationsNewRoute: ConversationsNewRoute,
   ConversationsIndexRoute: ConversationsIndexRoute,
 }
@@ -1477,6 +1555,20 @@ const QuotesRouteChildren: QuotesRouteChildren = {
 const QuotesRouteWithChildren =
   QuotesRoute._addFileChildren(QuotesRouteChildren)
 
+interface RequestsRouteChildren {
+  RequestsNewRoute: typeof RequestsNewRoute
+  RequestsIndexRoute: typeof RequestsIndexRoute
+}
+
+const RequestsRouteChildren: RequestsRouteChildren = {
+  RequestsNewRoute: RequestsNewRoute,
+  RequestsIndexRoute: RequestsIndexRoute,
+}
+
+const RequestsRouteWithChildren = RequestsRoute._addFileChildren(
+  RequestsRouteChildren,
+)
+
 interface SettingsRouteChildren {
   SettingsAppearanceRoute: typeof SettingsAppearanceRoute
   SettingsIntegrationsRoute: typeof SettingsIntegrationsRoute
@@ -1537,6 +1629,7 @@ const rootRouteChildren: RootRouteChildren = {
   KnowledgeRoute: KnowledgeRouteWithChildren,
   PartsRoute: PartsRouteWithChildren,
   QuotesRoute: QuotesRouteWithChildren,
+  RequestsRoute: RequestsRouteWithChildren,
   SettingsRoute: SettingsRouteWithChildren,
   VehiclesRoute: VehiclesRouteWithChildren,
   SuppliersPartsRoute: SuppliersPartsRoute,
