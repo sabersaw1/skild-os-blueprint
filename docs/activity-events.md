@@ -136,7 +136,7 @@ never customer contact details or message content.
 | `assistant.proposal.executed` | `{ proposalId, actionType }` (recorded human action only) |
 | `assistant.attention.acknowledged` | `{ attentionId, status }` |
 | `assistant.attention.dismissed` | `{ attentionId, status }` |
-| `assistant.brief.generated` | `{ sectionCount, attentionCount, omittedCount }` |
+| `assistant.brief.generated` | `{ sectionCount, attentionCount, omittedCount }` — reserved for an explicitly requested brief; passive rendering emits nothing |
 
 Assistant payloads carry intents, ids, enums, and counts ONLY — never the
 question text, answer text, customer details, or model credentials.

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -49,11 +49,6 @@ function AskJarvisPage() {
   const { data: brief, loading: briefLoading } = useDailyBrief();
   const { ask, answer, asking, error } = useAskJarvis();
   const [question, setQuestion] = useState("");
-  // TEMP-DEBUG
-  (globalThis as any).__r = ((globalThis as any).__r ?? 0) + 1;
-  useEffect(() => {
-    (globalThis as any).__m = ((globalThis as any).__m ?? 0) + 1;
-  }, []);
 
   if (!canRead) {
     return (
