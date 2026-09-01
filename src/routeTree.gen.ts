@@ -49,6 +49,7 @@ import { Route as QuotesNewRouteImport } from './routes/quotes.new'
 import { Route as QuotesQuoteIdRouteImport } from './routes/quotes.$quoteId'
 import { Route as PartsNewRouteImport } from './routes/parts.new'
 import { Route as PartsPartIdRouteImport } from './routes/parts.$partId'
+import { Route as MarketingActionsRouteImport } from './routes/marketing.actions'
 import { Route as LeadsNewRouteImport } from './routes/leads.new'
 import { Route as LeadsLeadIdRouteImport } from './routes/leads.$leadId'
 import { Route as KnowledgeNewRouteImport } from './routes/knowledge.new'
@@ -285,6 +286,11 @@ const PartsPartIdRoute = PartsPartIdRouteImport.update({
   path: '/$partId',
   getParentRoute: () => PartsRoute,
 } as any)
+const MarketingActionsRoute = MarketingActionsRouteImport.update({
+  id: '/actions',
+  path: '/actions',
+  getParentRoute: () => MarketingRoute,
+} as any)
 const LeadsNewRoute = LeadsNewRouteImport.update({
   id: '/new',
   path: '/new',
@@ -499,6 +505,7 @@ export interface FileRoutesByFullPath {
   '/knowledge/new': typeof KnowledgeNewRoute
   '/leads/$leadId': typeof LeadsLeadIdRoute
   '/leads/new': typeof LeadsNewRoute
+  '/marketing/actions': typeof MarketingActionsRoute
   '/parts/$partId': typeof PartsPartIdRouteWithChildren
   '/parts/new': typeof PartsNewRoute
   '/quotes/$quoteId': typeof QuotesQuoteIdRouteWithChildren
@@ -558,6 +565,7 @@ export interface FileRoutesByTo {
   '/knowledge/new': typeof KnowledgeNewRoute
   '/leads/$leadId': typeof LeadsLeadIdRoute
   '/leads/new': typeof LeadsNewRoute
+  '/marketing/actions': typeof MarketingActionsRoute
   '/parts/new': typeof PartsNewRoute
   '/quotes/new': typeof QuotesNewRoute
   '/requests/new': typeof RequestsNewRoute
@@ -633,6 +641,7 @@ export interface FileRoutesById {
   '/knowledge/new': typeof KnowledgeNewRoute
   '/leads/$leadId': typeof LeadsLeadIdRoute
   '/leads/new': typeof LeadsNewRoute
+  '/marketing/actions': typeof MarketingActionsRoute
   '/parts/$partId': typeof PartsPartIdRouteWithChildren
   '/parts/new': typeof PartsNewRoute
   '/quotes/$quoteId': typeof QuotesQuoteIdRouteWithChildren
@@ -712,6 +721,7 @@ export interface FileRouteTypes {
     | '/knowledge/new'
     | '/leads/$leadId'
     | '/leads/new'
+    | '/marketing/actions'
     | '/parts/$partId'
     | '/parts/new'
     | '/quotes/$quoteId'
@@ -771,6 +781,7 @@ export interface FileRouteTypes {
     | '/knowledge/new'
     | '/leads/$leadId'
     | '/leads/new'
+    | '/marketing/actions'
     | '/parts/new'
     | '/quotes/new'
     | '/requests/new'
@@ -845,6 +856,7 @@ export interface FileRouteTypes {
     | '/knowledge/new'
     | '/leads/$leadId'
     | '/leads/new'
+    | '/marketing/actions'
     | '/parts/$partId'
     | '/parts/new'
     | '/quotes/$quoteId'
@@ -1198,6 +1210,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/parts/$partId'
       preLoaderRoute: typeof PartsPartIdRouteImport
       parentRoute: typeof PartsRoute
+    }
+    '/marketing/actions': {
+      id: '/marketing/actions'
+      path: '/actions'
+      fullPath: '/marketing/actions'
+      preLoaderRoute: typeof MarketingActionsRouteImport
+      parentRoute: typeof MarketingRoute
     }
     '/leads/new': {
       id: '/leads/new'
@@ -1625,10 +1644,12 @@ const LeadsRouteChildren: LeadsRouteChildren = {
 const LeadsRouteWithChildren = LeadsRoute._addFileChildren(LeadsRouteChildren)
 
 interface MarketingRouteChildren {
+  MarketingActionsRoute: typeof MarketingActionsRoute
   MarketingIndexRoute: typeof MarketingIndexRoute
 }
 
 const MarketingRouteChildren: MarketingRouteChildren = {
+  MarketingActionsRoute: MarketingActionsRoute,
   MarketingIndexRoute: MarketingIndexRoute,
 }
 
