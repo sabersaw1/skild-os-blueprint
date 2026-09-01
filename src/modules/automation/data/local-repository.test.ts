@@ -225,16 +225,20 @@ describe("Automation — the execution boundary", () => {
     await expect(runAutomationRule(rule.id)).rejects.toThrow(/disabled|not active|switched off/i);
   });
 
-  it("never creates a rule proposing a blocked action", async () => {
+  it("cannot arm a rule that proposes a blocked action", async () => {
     const agent = await repo.createAgent({ name: "A", purpose: "p" });
-    await expect(
-      repo.createRule({
-        agentId: agent.id,
-        name: "Send things",
-        trigger: { kind: "manual" },
-        proposedActionType: "communication.send",
-      }),
-    ).rejects.toThrow();
+    // Such a rule may be described, but it is stored inert: disabled, and
+    // pinned to the strictest policy so it can never run by accident.
+    const rule = await repo.createRule({
+      agentId: agent.id,
+      name: "Send things",
+      trigger: { kind: "manual" },
+      proposedActionType: "communication.send",
+      enabled: true,
+    });
+    expect(rule.enabled).toBe(false);
+    expect(rule.approvalPolicy).toBe("blocked");
+    await expect(runAutomationRule(rule.id)).rejects.toThrow();
   });
 
   it("records a blocked action as blocked and refuses to execute it", async () => {
