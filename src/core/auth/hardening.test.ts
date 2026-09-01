@@ -143,7 +143,7 @@ describe("repository authorization boundary", () => {
     ).rejects.toBeInstanceOf(CapabilityDeniedError);
     await expect(
       marketing.createLead({
-        channel: "website",
+        channel: "website_form",
         attribution: { source: "website" },
       }),
     ).rejects.toBeInstanceOf(CapabilityDeniedError);
