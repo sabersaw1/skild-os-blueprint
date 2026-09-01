@@ -16,6 +16,7 @@ import type {
   Tag,
 } from "./repository";
 import { assertPersisted } from "@/core/storage/persistence";
+import { withCapabilityEnforcement } from "@/core/auth/authorize";
 
 const K_CUSTOMERS = "skildos.crm.customers.v1";
 const K_CONTACTS = "skildos.crm.contacts.v1";
@@ -258,5 +259,16 @@ export function createLocalCustomerRepository(): CustomerRepository {
     },
   };
 
-  return repo;
+  // Phase 15: authorization at the mutation boundary, not only in the UI.
+  // `adjustVehiclesCount` is deliberately ungated: it is a derived counter
+  // maintained by the Vehicles module on behalf of CRM, and gating it on
+  // crm.write would couple vehicle authorship to customer authorship.
+  return withCapabilityEnforcement(repo, {
+    create: "crm.write",
+    update: "crm.write",
+    archive: "crm.archive",
+    addContact: "crm.write",
+    addNote: "crm.notes.write",
+    upsertTag: "crm.write",
+  });
 }

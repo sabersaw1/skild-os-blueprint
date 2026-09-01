@@ -1,5 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import { getStorageDriver } from "@/core/storage/driver";
+
 import {
   Card,
   CardContent,
@@ -39,22 +41,20 @@ function AppearanceSettings() {
   const [theme, setTheme] = useState<Theme>("system");
 
   useEffect(() => {
-    try {
-      const saved = (localStorage.getItem(KEY) as Theme | null) ?? "system";
-      setTheme(saved);
-      applyTheme(saved);
-    } catch {
-      /* ignore */
-    }
+    // Phase 15: theme preference goes through the StorageDriver seam, not
+    // raw localStorage, so no UI surface bypasses the persistence layer.
+    const driver = getStorageDriver();
+    const saved = (driver.available() ? driver.read(KEY) : null) as Theme | null;
+    const next = saved ?? "system";
+    setTheme(next);
+    applyTheme(next);
   }, []);
 
   const onChange = (next: Theme) => {
     setTheme(next);
-    try {
-      localStorage.setItem(KEY, next);
-    } catch {
-      /* ignore */
-    }
+    const driver = getStorageDriver();
+    if (driver.available()) driver.write(KEY, next);
+
     applyTheme(next);
     emit({
       type: "settings.change",
