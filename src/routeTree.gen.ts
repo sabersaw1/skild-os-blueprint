@@ -72,6 +72,7 @@ import { Route as CustomersCustomerIdRouteImport } from './routes/customers.$cus
 import { Route as ConversationsNewRouteImport } from './routes/conversations.new'
 import { Route as ConversationsConversationIdRouteImport } from './routes/conversations.$conversationId'
 import { Route as AutomationRunsRouteImport } from './routes/automation.runs'
+import { Route as AutomationApprovalsRouteImport } from './routes/automation.approvals'
 import { Route as VehiclesVehicleIdIndexRouteImport } from './routes/vehicles.$vehicleId.index'
 import { Route as TemplatesInspectionsIndexRouteImport } from './routes/templates.inspections.index'
 import { Route as QuotesQuoteIdIndexRouteImport } from './routes/quotes.$quoteId.index'
@@ -410,6 +411,11 @@ const AutomationRunsRoute = AutomationRunsRouteImport.update({
   path: '/runs',
   getParentRoute: () => AutomationRoute,
 } as any)
+const AutomationApprovalsRoute = AutomationApprovalsRouteImport.update({
+  id: '/approvals',
+  path: '/approvals',
+  getParentRoute: () => AutomationRoute,
+} as any)
 const VehiclesVehicleIdIndexRoute = VehiclesVehicleIdIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -541,6 +547,7 @@ export interface FileRoutesByFullPath {
   '/requests': typeof RequestsRouteWithChildren
   '/settings': typeof SettingsRouteWithChildren
   '/vehicles': typeof VehiclesRouteWithChildren
+  '/automation/approvals': typeof AutomationApprovalsRoute
   '/automation/runs': typeof AutomationRunsRoute
   '/conversations/$conversationId': typeof ConversationsConversationIdRoute
   '/conversations/new': typeof ConversationsNewRoute
@@ -612,6 +619,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/activity': typeof ActivityRoute
+  '/automation/approvals': typeof AutomationApprovalsRoute
   '/automation/runs': typeof AutomationRunsRoute
   '/conversations/$conversationId': typeof ConversationsConversationIdRoute
   '/conversations/new': typeof ConversationsNewRoute
@@ -691,6 +699,7 @@ export interface FileRoutesById {
   '/requests': typeof RequestsRouteWithChildren
   '/settings': typeof SettingsRouteWithChildren
   '/vehicles': typeof VehiclesRouteWithChildren
+  '/automation/approvals': typeof AutomationApprovalsRoute
   '/automation/runs': typeof AutomationRunsRoute
   '/conversations/$conversationId': typeof ConversationsConversationIdRoute
   '/conversations/new': typeof ConversationsNewRoute
@@ -779,6 +788,7 @@ export interface FileRouteTypes {
     | '/requests'
     | '/settings'
     | '/vehicles'
+    | '/automation/approvals'
     | '/automation/runs'
     | '/conversations/$conversationId'
     | '/conversations/new'
@@ -850,6 +860,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/activity'
+    | '/automation/approvals'
     | '/automation/runs'
     | '/conversations/$conversationId'
     | '/conversations/new'
@@ -928,6 +939,7 @@ export interface FileRouteTypes {
     | '/requests'
     | '/settings'
     | '/vehicles'
+    | '/automation/approvals'
     | '/automation/runs'
     | '/conversations/$conversationId'
     | '/conversations/new'
@@ -1466,6 +1478,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AutomationRunsRouteImport
       parentRoute: typeof AutomationRoute
     }
+    '/automation/approvals': {
+      id: '/automation/approvals'
+      path: '/approvals'
+      fullPath: '/automation/approvals'
+      preLoaderRoute: typeof AutomationApprovalsRouteImport
+      parentRoute: typeof AutomationRoute
+    }
     '/vehicles/$vehicleId/': {
       id: '/vehicles/$vehicleId/'
       path: '/'
@@ -1617,11 +1636,13 @@ declare module '@tanstack/react-router' {
 }
 
 interface AutomationRouteChildren {
+  AutomationApprovalsRoute: typeof AutomationApprovalsRoute
   AutomationRunsRoute: typeof AutomationRunsRoute
   AutomationIndexRoute: typeof AutomationIndexRoute
 }
 
 const AutomationRouteChildren: AutomationRouteChildren = {
+  AutomationApprovalsRoute: AutomationApprovalsRoute,
   AutomationRunsRoute: AutomationRunsRoute,
   AutomationIndexRoute: AutomationIndexRoute,
 }
