@@ -1,12 +1,8 @@
+import { formatCents as money } from "@/core/money";
 import { Link } from "@tanstack/react-router";
 import { useQuotes } from "../hooks";
 
-const money = (n: number) =>
-  n.toLocaleString(undefined, {
-    style: "currency",
-    currency: "USD",
-    minimumFractionDigits: 2,
-  });
+
 
 export function RecentQuotesWidget() {
   const { data, loading } = useQuotes({ limit: 5 });

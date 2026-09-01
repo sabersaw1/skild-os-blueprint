@@ -1,3 +1,4 @@
+import { formatCents as money } from "@/core/money";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { Pencil } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -14,12 +15,7 @@ export const Route = createModuleRoute("/quotes/$quoteId/")({
   component: QuoteDetail,
 });
 
-const money = (n: number) =>
-  n.toLocaleString(undefined, {
-    style: "currency",
-    currency: "USD",
-    minimumFractionDigits: 2,
-  });
+
 
 function QuoteDetail() {
   const { quoteId } = Route.useParams();

@@ -1,11 +1,7 @@
+import { formatCents as money } from "@/core/money";
 import type { QuoteVersion } from "../data/schemas";
 
-const money = (n: number) =>
-  n.toLocaleString(undefined, {
-    style: "currency",
-    currency: "USD",
-    minimumFractionDigits: 2,
-  });
+
 
 export function VersionHistory({ versions }: { versions: QuoteVersion[] }) {
   if (versions.length === 0) {

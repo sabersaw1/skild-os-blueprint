@@ -1,3 +1,4 @@
+import { formatCents as money } from "@/core/money";
 import { Link } from "@tanstack/react-router";
 import { FileText } from "lucide-react";
 import type { Quote } from "../data/schemas";
@@ -10,12 +11,7 @@ const STATUS_LABEL: Record<Quote["status"], string> = {
   expired: "Expired",
 };
 
-const money = (n: number) =>
-  n.toLocaleString(undefined, {
-    style: "currency",
-    currency: "USD",
-    minimumFractionDigits: 2,
-  });
+
 
 export function QuoteListItem({
   quote,
