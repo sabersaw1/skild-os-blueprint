@@ -47,15 +47,15 @@ const storage = new MemoryStorage();
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 (globalThis as any).localStorage = storage;
 
-import { CapabilityDeniedError } from "./authorize";
+import { CapabilityDeniedError } from "@/core/auth/authorize";
 import {
   createLocalIdentityProvider,
   setIdentityProvider,
   type Identity,
-} from "./provider";
-import { OWNER_ROLE_ID, registerRole } from "../roles/roles";
-import { PersistenceError } from "../storage/persistence";
-import * as emitter from "../activity/emitter";
+} from "@/core/auth/provider";
+import { OWNER_ROLE_ID, registerRole } from "@/core/roles/roles";
+import { PersistenceError } from "@/core/storage/persistence";
+import * as emitter from "@/core/activity/emitter";
 
 import { createLocalFinanceRepository } from "@/modules/finance/data/local-repository";
 import { createLocalCommunicationRepository } from "@/modules/communication/data/local-repository";
