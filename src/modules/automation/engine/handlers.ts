@@ -50,8 +50,14 @@ async function recordProposal(
   title: string,
 ): Promise<string> {
   const repo = assistant();
+  const entities = ctx.action.targets.map((t) => t.entity);
+  const proposalType = entities.includes("quote")
+    ? "follow_up_quote"
+    : entities.includes("conversation") || entities.includes("lead")
+      ? "follow_up_lead"
+      : "follow_up_lead";
   const proposal = await repo.createProposal({
-    actionType: "follow_up",
+    actionType: proposalType,
     title,
     reason: ctx.action.rationale,
     targets: ctx.action.targets.map((t) => ({
