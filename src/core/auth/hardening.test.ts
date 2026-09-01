@@ -396,7 +396,7 @@ describe("CRM + Vehicles authorization boundary", () => {
     actAs(READER_ROLE_ID);
 
     await expect(
-      repo.create({ displayName: "Unauthorized Customer" }),
+      repo.create({ kind: "individual", firstName: "Unauthorized", lastName: "Customer" }),
     ).rejects.toBeInstanceOf(CapabilityDeniedError);
 
     expect(spy).not.toHaveBeenCalled();

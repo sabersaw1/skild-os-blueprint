@@ -15,6 +15,7 @@
 
 import { createStore } from "../store";
 import { OWNER_ROLE_ID } from "../roles/roles";
+import { getStorageDriver } from "../storage/driver";
 
 export type Identity = {
   id: string;
