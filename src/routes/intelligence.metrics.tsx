@@ -43,7 +43,7 @@ function MetricsPage() {
     setBusy(true);
     setCaptureError(undefined);
     try {
-      await repo.captureSnapshots(period);
+      await repo.calculateAndStoreSnapshots(period);
       refresh();
     } catch (e) {
       setCaptureError(e instanceof Error ? e.message : String(e));
@@ -102,7 +102,7 @@ function MetricsPage() {
               {snapshots.map((s) => (
                 <tr key={s.id} className="border-t">
                   <td className="py-1 text-xs text-muted-foreground">
-                    {new Date(s.capturedAt).toLocaleString()}
+                    {new Date(s.generatedAt).toLocaleString()}
                   </td>
                   <td className="py-1">{s.metricId}</td>
                   <td className="py-1 text-right tabular-nums">
@@ -110,7 +110,7 @@ function MetricsPage() {
                   </td>
                   <td className="py-1 text-xs text-muted-foreground">
                     {s.completeness}
-                    {s.limitation ? ` — ${s.limitation}` : ""}
+                    {s.evidence[0] ? ` — ${s.evidence[0].statement}` : ""}
                   </td>
                 </tr>
               ))}
