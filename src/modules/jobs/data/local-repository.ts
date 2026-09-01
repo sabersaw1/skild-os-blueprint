@@ -41,7 +41,8 @@ import { withCapabilityEnforcement } from "@/core/auth/authorize";
 
 const K_JOBS = "skildos.jobs.jobs.v1";
 const K_STATUS = "skildos.jobs.status-history.v1";
-const K_LABOR = "skildos.jobs.labor.v1";
+// v2 (Phase 13.5): hourly rate moved from float dollars to integer cents.
+const K_LABOR = "skildos.jobs.labor.v2";
 const K_NOTES = "skildos.jobs.notes.v1";
 
 // Register versioned keys + migration hooks BEFORE any read/write.
@@ -59,8 +60,18 @@ registerVersionedKey<JobStatusHistory>({
 });
 registerVersionedKey<LaborEntry>({
   key: K_LABOR,
-  currentVersion: 1,
-  migrations: { 0: (records) => records as LaborEntry[] },
+  currentVersion: 2,
+  migrations: {
+    0: (records) => records as LaborEntry[],
+    1: (records) =>
+      (records as Array<Record<string, unknown>>).map((r) => {
+        const { rate, ...rest } = r;
+        return {
+          ...(rest as unknown as LaborEntry),
+          rateCents: toCents(typeof rate === "number" ? rate : 0),
+        };
+      }),
+  },
 });
 registerVersionedKey<JobNote>({
   key: K_NOTES,
