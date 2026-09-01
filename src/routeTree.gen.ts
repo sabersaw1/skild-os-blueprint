@@ -29,6 +29,7 @@ import { Route as SettingsIndexRouteImport } from './routes/settings.index'
 import { Route as RequestsIndexRouteImport } from './routes/requests.index'
 import { Route as QuotesIndexRouteImport } from './routes/quotes.index'
 import { Route as PartsIndexRouteImport } from './routes/parts.index'
+import { Route as MarketingIndexRouteImport } from './routes/marketing.index'
 import { Route as LeadsIndexRouteImport } from './routes/leads.index'
 import { Route as KnowledgeIndexRouteImport } from './routes/knowledge.index'
 import { Route as JobsIndexRouteImport } from './routes/jobs.index'
@@ -183,6 +184,11 @@ const PartsIndexRoute = PartsIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => PartsRoute,
+} as any)
+const MarketingIndexRoute = MarketingIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => MarketingRoute,
 } as any)
 const LeadsIndexRoute = LeadsIndexRouteImport.update({
   id: '/',
@@ -473,7 +479,7 @@ export interface FileRoutesByFullPath {
   '/jobs': typeof JobsRouteWithChildren
   '/knowledge': typeof KnowledgeRouteWithChildren
   '/leads': typeof LeadsRouteWithChildren
-  '/marketing': typeof MarketingRoute
+  '/marketing': typeof MarketingRouteWithChildren
   '/parts': typeof PartsRouteWithChildren
   '/quotes': typeof QuotesRouteWithChildren
   '/requests': typeof RequestsRouteWithChildren
@@ -512,6 +518,7 @@ export interface FileRoutesByFullPath {
   '/jobs/': typeof JobsIndexRoute
   '/knowledge/': typeof KnowledgeIndexRoute
   '/leads/': typeof LeadsIndexRoute
+  '/marketing/': typeof MarketingIndexRoute
   '/parts/': typeof PartsIndexRoute
   '/quotes/': typeof QuotesIndexRoute
   '/requests/': typeof RequestsIndexRoute
@@ -542,7 +549,6 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/activity': typeof ActivityRoute
-  '/marketing': typeof MarketingRoute
   '/conversations/$conversationId': typeof ConversationsConversationIdRoute
   '/conversations/new': typeof ConversationsNewRoute
   '/customers/new': typeof CustomersNewRoute
@@ -568,6 +574,7 @@ export interface FileRoutesByTo {
   '/jobs': typeof JobsIndexRoute
   '/knowledge': typeof KnowledgeIndexRoute
   '/leads': typeof LeadsIndexRoute
+  '/marketing': typeof MarketingIndexRoute
   '/parts': typeof PartsIndexRoute
   '/quotes': typeof QuotesIndexRoute
   '/requests': typeof RequestsIndexRoute
@@ -606,7 +613,7 @@ export interface FileRoutesById {
   '/jobs': typeof JobsRouteWithChildren
   '/knowledge': typeof KnowledgeRouteWithChildren
   '/leads': typeof LeadsRouteWithChildren
-  '/marketing': typeof MarketingRoute
+  '/marketing': typeof MarketingRouteWithChildren
   '/parts': typeof PartsRouteWithChildren
   '/quotes': typeof QuotesRouteWithChildren
   '/requests': typeof RequestsRouteWithChildren
@@ -645,6 +652,7 @@ export interface FileRoutesById {
   '/jobs/': typeof JobsIndexRoute
   '/knowledge/': typeof KnowledgeIndexRoute
   '/leads/': typeof LeadsIndexRoute
+  '/marketing/': typeof MarketingIndexRoute
   '/parts/': typeof PartsIndexRoute
   '/quotes/': typeof QuotesIndexRoute
   '/requests/': typeof RequestsIndexRoute
@@ -723,6 +731,7 @@ export interface FileRouteTypes {
     | '/jobs/'
     | '/knowledge/'
     | '/leads/'
+    | '/marketing/'
     | '/parts/'
     | '/quotes/'
     | '/requests/'
@@ -753,7 +762,6 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/activity'
-    | '/marketing'
     | '/conversations/$conversationId'
     | '/conversations/new'
     | '/customers/new'
@@ -779,6 +787,7 @@ export interface FileRouteTypes {
     | '/jobs'
     | '/knowledge'
     | '/leads'
+    | '/marketing'
     | '/parts'
     | '/quotes'
     | '/requests'
@@ -855,6 +864,7 @@ export interface FileRouteTypes {
     | '/jobs/'
     | '/knowledge/'
     | '/leads/'
+    | '/marketing/'
     | '/parts/'
     | '/quotes/'
     | '/requests/'
@@ -893,7 +903,7 @@ export interface RootRouteChildren {
   JobsRoute: typeof JobsRouteWithChildren
   KnowledgeRoute: typeof KnowledgeRouteWithChildren
   LeadsRoute: typeof LeadsRouteWithChildren
-  MarketingRoute: typeof MarketingRoute
+  MarketingRoute: typeof MarketingRouteWithChildren
   PartsRoute: typeof PartsRouteWithChildren
   QuotesRoute: typeof QuotesRouteWithChildren
   RequestsRoute: typeof RequestsRouteWithChildren
@@ -1048,6 +1058,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/parts/'
       preLoaderRoute: typeof PartsIndexRouteImport
       parentRoute: typeof PartsRoute
+    }
+    '/marketing/': {
+      id: '/marketing/'
+      path: '/'
+      fullPath: '/marketing/'
+      preLoaderRoute: typeof MarketingIndexRouteImport
+      parentRoute: typeof MarketingRoute
     }
     '/leads/': {
       id: '/leads/'
@@ -1607,6 +1624,18 @@ const LeadsRouteChildren: LeadsRouteChildren = {
 
 const LeadsRouteWithChildren = LeadsRoute._addFileChildren(LeadsRouteChildren)
 
+interface MarketingRouteChildren {
+  MarketingIndexRoute: typeof MarketingIndexRoute
+}
+
+const MarketingRouteChildren: MarketingRouteChildren = {
+  MarketingIndexRoute: MarketingIndexRoute,
+}
+
+const MarketingRouteWithChildren = MarketingRoute._addFileChildren(
+  MarketingRouteChildren,
+)
+
 interface PartsPartIdRouteChildren {
   PartsPartIdEditRoute: typeof PartsPartIdEditRoute
   PartsPartIdIndexRoute: typeof PartsPartIdIndexRoute
@@ -1737,7 +1766,7 @@ const rootRouteChildren: RootRouteChildren = {
   JobsRoute: JobsRouteWithChildren,
   KnowledgeRoute: KnowledgeRouteWithChildren,
   LeadsRoute: LeadsRouteWithChildren,
-  MarketingRoute: MarketingRoute,
+  MarketingRoute: MarketingRouteWithChildren,
   PartsRoute: PartsRouteWithChildren,
   QuotesRoute: QuotesRouteWithChildren,
   RequestsRoute: RequestsRouteWithChildren,
