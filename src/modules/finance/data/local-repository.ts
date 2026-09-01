@@ -351,6 +351,9 @@ export function createLocalFinanceRepository(): FinanceRepository {
         dueAt: input?.dueAt ?? existing.dueAt ?? now + FOURTEEN_DAYS,
         updatedAt: now,
       };
+      // Captured BEFORE the mutation so the rollback below restores the
+      // pre-issue state, not the already-updated one.
+      const invoicesBeforeIssue = invoices;
       replace(next);
 
       const snapshot: InvoiceSnapshot = {
@@ -361,14 +364,15 @@ export function createLocalFinanceRepository(): FinanceRepository {
         issuedBy: getIdentity().id,
         invoice: deepFreezeInvoice(next),
       };
-      const invoicesBeforeSnapshot = invoices;
       try {
         persistSnapshots([snapshot, ...snapshots]);
       } catch (err) {
         // The immutable snapshot IS the financial record — if it cannot be
-        // stored, the invoice must not stay "issued".
-        invoices = invoicesBeforeSnapshot;
-        writeEnvelope(K_INVOICES, invoicesBeforeSnapshot);
+        // stored, the invoice must not stay "issued". Roll the invoice back
+        // in memory and best-effort in storage, then rethrow so no
+        // "invoice issued" event is ever emitted.
+        invoices = invoicesBeforeIssue;
+        writeEnvelope(K_INVOICES, invoicesBeforeIssue);
         throw err;
       }
 
