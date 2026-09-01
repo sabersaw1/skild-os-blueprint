@@ -289,7 +289,10 @@ class LocalAutomationRepository implements AutomationRepository {
       agentId: input.agentId,
       name,
       description: input.description?.trim() ?? "",
-      enabled: input.enabled === true,
+      // A rule proposing an action the catalogue forbids can be described,
+      // but never armed — otherwise it would sit enabled, look live, and
+      // fail only at execution time.
+      enabled: input.enabled === true && verdict.decision !== "blocked",
       trigger: { ...input.trigger },
       conditions: input.conditions ? [...input.conditions] : [],
       proposedActionType: input.proposedActionType,
