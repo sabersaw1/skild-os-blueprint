@@ -44,6 +44,15 @@ import type {
   SourcePerformance,
 } from "@/modules/marketing/data/schemas";
 import { KNOWLEDGE_REPOSITORY, type KnowledgeRepository } from "@/modules/knowledge/data/repository";
+import {
+  AUTOMATION_REPOSITORY,
+  type AutomationRepository,
+} from "@/modules/automation/data/repository";
+import type {
+  AgentAction,
+  AgentRun,
+  AutomationOverview,
+} from "@/modules/automation/data/schemas";
 import type { KnowledgeDocument } from "@/modules/knowledge/data/schemas";
 import type { SourceRef } from "../data/schemas";
 
@@ -99,6 +108,9 @@ export const JARVIS_TOOL_CATALOGUE: JarvisToolMeta[] = [
   { name: "getMarketingPerformance", description: "Measured source and service performance.", requiredCapabilityId: "marketing.read", repositoryKey: MARKETING_REPOSITORY },
   { name: "getMarketingOpportunities", description: "Recorded marketing opportunities awaiting review.", requiredCapabilityId: "marketing.read", repositoryKey: MARKETING_REPOSITORY },
   { name: "getRetentionOpportunities", description: "Previous customers with no recent completed work.", requiredCapabilityId: "marketing.read", repositoryKey: MARKETING_REPOSITORY },
+  { name: "getAutomationOverview", description: "Counts of active agents, pending approvals, blocked actions and failed runs.", requiredCapabilityId: "agents.read", repositoryKey: AUTOMATION_REPOSITORY },
+  { name: "getRecentAgentRuns", description: "Recent agent runs and their outcomes, including failures.", requiredCapabilityId: "agents.read", repositoryKey: AUTOMATION_REPOSITORY },
+  { name: "getActionsAwaitingApproval", description: "Agent actions waiting on a human decision.", requiredCapabilityId: "agents.read", repositoryKey: AUTOMATION_REPOSITORY },
 ];
 
 function startOfDay(now: number): number {
@@ -157,6 +169,12 @@ export interface JarvisTools {
   getMarketingPerformance(): Promise<{ sources: SourcePerformance[]; services: ServicePerformance[] }>;
   getMarketingOpportunities(): Promise<MarketingOpportunity[]>;
   getRetentionOpportunities(now?: number): Promise<RetentionOpportunity[]>;
+  // Automation (Phase 13) — READ ONLY, like every other tool here. Jarvis
+  // can report what the agents did and what is waiting on a human; it can
+  // neither start a run nor approve an action.
+  getAutomationOverview(now?: number): Promise<AutomationOverview>;
+  getRecentAgentRuns(limit?: number): Promise<AgentRun[]>;
+  getActionsAwaitingApproval(): Promise<AgentAction[]>;
 }
 
 export function createJarvisTools(can: CapabilityCheck): JarvisTools {
@@ -176,6 +194,8 @@ export function createJarvisTools(can: CapabilityCheck): JarvisTools {
   const knowledge = () => need<KnowledgeRepository>("knowledge.read", KNOWLEDGE_REPOSITORY);
   const customers = () => need<CustomerRepository>("customers.read", CRM_CUSTOMER_REPOSITORY);
   const vehicles = () => need<VehicleRepository>("vehicles.read", VEHICLES_REPOSITORY);
+  const automation = () =>
+    need<AutomationRepository>("agents.read", AUTOMATION_REPOSITORY);
 
   return {
     async getTodaySchedule(now = Date.now()) {
@@ -440,6 +460,18 @@ export function createJarvisTools(can: CapabilityCheck): JarvisTools {
 
     async getRetentionOpportunities(now = Date.now()) {
       return marketing().listRetentionOpportunities({ now });
+    },
+
+    async getAutomationOverview(now = Date.now()) {
+      return automation().getOverview(now);
+    },
+
+    async getRecentAgentRuns(limit = 10) {
+      return automation().listRuns({ limit });
+    },
+
+    async getActionsAwaitingApproval() {
+      return automation().listActions({ approvalState: "pending" });
     },
   };
 }

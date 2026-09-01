@@ -469,6 +469,70 @@ export async function resolveContext(opts: {
     }
   }
 
+  if (wanted.has("automation.status")) {
+    const overview = await c.run("Automation overview", () =>
+      tools.getAutomationOverview(),
+    );
+    if (overview) {
+      c.add(
+        fact(
+          `${overview.activeAgents} active agent(s) and ${overview.activeAutomations} active automation rule(s)`,
+          "system_derived",
+          [],
+          { value: overview.activeAgents, unit: "count" },
+        ),
+      );
+      c.add(
+        fact(
+          `${overview.pendingApprovals} agent action(s) awaiting a human decision`,
+          "system_derived",
+          [],
+          { value: overview.pendingApprovals, unit: "count" },
+        ),
+      );
+      if (overview.failedRuns > 0) {
+        c.add(
+          fact(
+            `${overview.failedRuns} agent run(s) failed and are still recorded as failed`,
+            "system_derived",
+            [],
+            { value: overview.failedRuns, unit: "count" },
+          ),
+        );
+      }
+      if (overview.blockedActions > 0) {
+        c.add(
+          fact(
+            `${overview.blockedActions} action(s) were refused by policy and will never execute automatically`,
+            "system_derived",
+            [],
+            { value: overview.blockedActions, unit: "count" },
+          ),
+        );
+      }
+    }
+
+    const runs = await c.run("Recent agent runs", () =>
+      tools.getRecentAgentRuns(5),
+    );
+    if (runs) {
+      for (const r of runs) {
+        c.add(
+          fact(
+            `Run via ${r.trigger.source} finished as "${r.status}"${r.outcome ? `: ${r.outcome}` : ""}`,
+            "system_derived",
+            [],
+          ),
+        );
+      }
+      if (runs.length === 0) {
+        c.uncertainty.push(
+          "No agent has run yet, so there is no automation history to report.",
+        );
+      }
+    }
+  }
+
   if (wanted.has("knowledge.lookup") || intent.type === "knowledge.lookup") {
     const docs = await c.run("Business knowledge", () => tools.searchKnowledge(question));
     if (docs) {

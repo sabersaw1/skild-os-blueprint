@@ -23,6 +23,7 @@ import { Route as InvoicesRouteImport } from './routes/invoices'
 import { Route as InspectionsRouteImport } from './routes/inspections'
 import { Route as CustomersRouteImport } from './routes/customers'
 import { Route as ConversationsRouteImport } from './routes/conversations'
+import { Route as AutomationRouteImport } from './routes/automation'
 import { Route as ActivityRouteImport } from './routes/activity'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as VehiclesIndexRouteImport } from './routes/vehicles.index'
@@ -39,6 +40,7 @@ import { Route as InvoicesIndexRouteImport } from './routes/invoices.index'
 import { Route as InspectionsIndexRouteImport } from './routes/inspections.index'
 import { Route as CustomersIndexRouteImport } from './routes/customers.index'
 import { Route as ConversationsIndexRouteImport } from './routes/conversations.index'
+import { Route as AutomationIndexRouteImport } from './routes/automation.index'
 import { Route as VehiclesNewRouteImport } from './routes/vehicles.new'
 import { Route as VehiclesVehicleIdRouteImport } from './routes/vehicles.$vehicleId'
 import { Route as SuppliersPartsRouteImport } from './routes/suppliers.parts'
@@ -69,6 +71,8 @@ import { Route as CustomersNewRouteImport } from './routes/customers.new'
 import { Route as CustomersCustomerIdRouteImport } from './routes/customers.$customerId'
 import { Route as ConversationsNewRouteImport } from './routes/conversations.new'
 import { Route as ConversationsConversationIdRouteImport } from './routes/conversations.$conversationId'
+import { Route as AutomationRunsRouteImport } from './routes/automation.runs'
+import { Route as AutomationApprovalsRouteImport } from './routes/automation.approvals'
 import { Route as VehiclesVehicleIdIndexRouteImport } from './routes/vehicles.$vehicleId.index'
 import { Route as TemplatesInspectionsIndexRouteImport } from './routes/templates.inspections.index'
 import { Route as QuotesQuoteIdIndexRouteImport } from './routes/quotes.$quoteId.index'
@@ -161,6 +165,11 @@ const ConversationsRoute = ConversationsRouteImport.update({
   path: '/conversations',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AutomationRoute = AutomationRouteImport.update({
+  id: '/automation',
+  path: '/automation',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ActivityRoute = ActivityRouteImport.update({
   id: '/activity',
   path: '/activity',
@@ -240,6 +249,11 @@ const ConversationsIndexRoute = ConversationsIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => ConversationsRoute,
+} as any)
+const AutomationIndexRoute = AutomationIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AutomationRoute,
 } as any)
 const VehiclesNewRoute = VehiclesNewRouteImport.update({
   id: '/new',
@@ -392,6 +406,16 @@ const ConversationsConversationIdRoute =
     path: '/$conversationId',
     getParentRoute: () => ConversationsRoute,
   } as any)
+const AutomationRunsRoute = AutomationRunsRouteImport.update({
+  id: '/runs',
+  path: '/runs',
+  getParentRoute: () => AutomationRoute,
+} as any)
+const AutomationApprovalsRoute = AutomationApprovalsRouteImport.update({
+  id: '/approvals',
+  path: '/approvals',
+  getParentRoute: () => AutomationRoute,
+} as any)
 const VehiclesVehicleIdIndexRoute = VehiclesVehicleIdIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -508,6 +532,7 @@ const CustomersCustomerIdEditRoute = CustomersCustomerIdEditRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/activity': typeof ActivityRoute
+  '/automation': typeof AutomationRouteWithChildren
   '/conversations': typeof ConversationsRouteWithChildren
   '/customers': typeof CustomersRouteWithChildren
   '/inspections': typeof InspectionsRouteWithChildren
@@ -522,6 +547,8 @@ export interface FileRoutesByFullPath {
   '/requests': typeof RequestsRouteWithChildren
   '/settings': typeof SettingsRouteWithChildren
   '/vehicles': typeof VehiclesRouteWithChildren
+  '/automation/approvals': typeof AutomationApprovalsRoute
+  '/automation/runs': typeof AutomationRunsRoute
   '/conversations/$conversationId': typeof ConversationsConversationIdRoute
   '/conversations/new': typeof ConversationsNewRoute
   '/customers/$customerId': typeof CustomersCustomerIdRouteWithChildren
@@ -552,6 +579,7 @@ export interface FileRoutesByFullPath {
   '/suppliers/parts': typeof SuppliersPartsRoute
   '/vehicles/$vehicleId': typeof VehiclesVehicleIdRouteWithChildren
   '/vehicles/new': typeof VehiclesNewRoute
+  '/automation/': typeof AutomationIndexRoute
   '/conversations/': typeof ConversationsIndexRoute
   '/customers/': typeof CustomersIndexRoute
   '/inspections/': typeof InspectionsIndexRoute
@@ -591,6 +619,8 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/activity': typeof ActivityRoute
+  '/automation/approvals': typeof AutomationApprovalsRoute
+  '/automation/runs': typeof AutomationRunsRoute
   '/conversations/$conversationId': typeof ConversationsConversationIdRoute
   '/conversations/new': typeof ConversationsNewRoute
   '/customers/new': typeof CustomersNewRoute
@@ -613,6 +643,7 @@ export interface FileRoutesByTo {
   '/settings/profile': typeof SettingsProfileRoute
   '/suppliers/parts': typeof SuppliersPartsRoute
   '/vehicles/new': typeof VehiclesNewRoute
+  '/automation': typeof AutomationIndexRoute
   '/conversations': typeof ConversationsIndexRoute
   '/customers': typeof CustomersIndexRoute
   '/inspections': typeof InspectionsIndexRoute
@@ -653,6 +684,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/activity': typeof ActivityRoute
+  '/automation': typeof AutomationRouteWithChildren
   '/conversations': typeof ConversationsRouteWithChildren
   '/customers': typeof CustomersRouteWithChildren
   '/inspections': typeof InspectionsRouteWithChildren
@@ -667,6 +699,8 @@ export interface FileRoutesById {
   '/requests': typeof RequestsRouteWithChildren
   '/settings': typeof SettingsRouteWithChildren
   '/vehicles': typeof VehiclesRouteWithChildren
+  '/automation/approvals': typeof AutomationApprovalsRoute
+  '/automation/runs': typeof AutomationRunsRoute
   '/conversations/$conversationId': typeof ConversationsConversationIdRoute
   '/conversations/new': typeof ConversationsNewRoute
   '/customers/$customerId': typeof CustomersCustomerIdRouteWithChildren
@@ -697,6 +731,7 @@ export interface FileRoutesById {
   '/suppliers/parts': typeof SuppliersPartsRoute
   '/vehicles/$vehicleId': typeof VehiclesVehicleIdRouteWithChildren
   '/vehicles/new': typeof VehiclesNewRoute
+  '/automation/': typeof AutomationIndexRoute
   '/conversations/': typeof ConversationsIndexRoute
   '/customers/': typeof CustomersIndexRoute
   '/inspections/': typeof InspectionsIndexRoute
@@ -738,6 +773,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/activity'
+    | '/automation'
     | '/conversations'
     | '/customers'
     | '/inspections'
@@ -752,6 +788,8 @@ export interface FileRouteTypes {
     | '/requests'
     | '/settings'
     | '/vehicles'
+    | '/automation/approvals'
+    | '/automation/runs'
     | '/conversations/$conversationId'
     | '/conversations/new'
     | '/customers/$customerId'
@@ -782,6 +820,7 @@ export interface FileRouteTypes {
     | '/suppliers/parts'
     | '/vehicles/$vehicleId'
     | '/vehicles/new'
+    | '/automation/'
     | '/conversations/'
     | '/customers/'
     | '/inspections/'
@@ -821,6 +860,8 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/activity'
+    | '/automation/approvals'
+    | '/automation/runs'
     | '/conversations/$conversationId'
     | '/conversations/new'
     | '/customers/new'
@@ -843,6 +884,7 @@ export interface FileRouteTypes {
     | '/settings/profile'
     | '/suppliers/parts'
     | '/vehicles/new'
+    | '/automation'
     | '/conversations'
     | '/customers'
     | '/inspections'
@@ -882,6 +924,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/activity'
+    | '/automation'
     | '/conversations'
     | '/customers'
     | '/inspections'
@@ -896,6 +939,8 @@ export interface FileRouteTypes {
     | '/requests'
     | '/settings'
     | '/vehicles'
+    | '/automation/approvals'
+    | '/automation/runs'
     | '/conversations/$conversationId'
     | '/conversations/new'
     | '/customers/$customerId'
@@ -926,6 +971,7 @@ export interface FileRouteTypes {
     | '/suppliers/parts'
     | '/vehicles/$vehicleId'
     | '/vehicles/new'
+    | '/automation/'
     | '/conversations/'
     | '/customers/'
     | '/inspections/'
@@ -966,6 +1012,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ActivityRoute: typeof ActivityRoute
+  AutomationRoute: typeof AutomationRouteWithChildren
   ConversationsRoute: typeof ConversationsRouteWithChildren
   CustomersRoute: typeof CustomersRouteWithChildren
   InspectionsRoute: typeof InspectionsRouteWithChildren
@@ -1088,6 +1135,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ConversationsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/automation': {
+      id: '/automation'
+      path: '/automation'
+      fullPath: '/automation'
+      preLoaderRoute: typeof AutomationRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/activity': {
       id: '/activity'
       path: '/activity'
@@ -1199,6 +1253,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/conversations/'
       preLoaderRoute: typeof ConversationsIndexRouteImport
       parentRoute: typeof ConversationsRoute
+    }
+    '/automation/': {
+      id: '/automation/'
+      path: '/'
+      fullPath: '/automation/'
+      preLoaderRoute: typeof AutomationIndexRouteImport
+      parentRoute: typeof AutomationRoute
     }
     '/vehicles/new': {
       id: '/vehicles/new'
@@ -1410,6 +1471,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ConversationsConversationIdRouteImport
       parentRoute: typeof ConversationsRoute
     }
+    '/automation/runs': {
+      id: '/automation/runs'
+      path: '/runs'
+      fullPath: '/automation/runs'
+      preLoaderRoute: typeof AutomationRunsRouteImport
+      parentRoute: typeof AutomationRoute
+    }
+    '/automation/approvals': {
+      id: '/automation/approvals'
+      path: '/approvals'
+      fullPath: '/automation/approvals'
+      preLoaderRoute: typeof AutomationApprovalsRouteImport
+      parentRoute: typeof AutomationRoute
+    }
     '/vehicles/$vehicleId/': {
       id: '/vehicles/$vehicleId/'
       path: '/'
@@ -1559,6 +1634,22 @@ declare module '@tanstack/react-router' {
     }
   }
 }
+
+interface AutomationRouteChildren {
+  AutomationApprovalsRoute: typeof AutomationApprovalsRoute
+  AutomationRunsRoute: typeof AutomationRunsRoute
+  AutomationIndexRoute: typeof AutomationIndexRoute
+}
+
+const AutomationRouteChildren: AutomationRouteChildren = {
+  AutomationApprovalsRoute: AutomationApprovalsRoute,
+  AutomationRunsRoute: AutomationRunsRoute,
+  AutomationIndexRoute: AutomationIndexRoute,
+}
+
+const AutomationRouteWithChildren = AutomationRoute._addFileChildren(
+  AutomationRouteChildren,
+)
 
 interface ConversationsRouteChildren {
   ConversationsConversationIdRoute: typeof ConversationsConversationIdRoute
@@ -1891,6 +1982,7 @@ const VehiclesRouteWithChildren = VehiclesRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ActivityRoute: ActivityRoute,
+  AutomationRoute: AutomationRouteWithChildren,
   ConversationsRoute: ConversationsRouteWithChildren,
   CustomersRoute: CustomersRouteWithChildren,
   InspectionsRoute: InspectionsRouteWithChildren,
