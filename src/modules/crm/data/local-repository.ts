@@ -15,6 +15,7 @@ import type {
   Note,
   Tag,
 } from "./repository";
+import { assertPersisted } from "@/core/storage/persistence";
 
 const K_CUSTOMERS = "skildos.crm.customers.v1";
 const K_CONTACTS = "skildos.crm.contacts.v1";
@@ -48,10 +49,10 @@ export function createLocalCustomerRepository(): CustomerRepository {
   const listeners = new Set<() => void>();
   const notify = () => listeners.forEach((l) => l());
 
-  const persistCustomers = () => writeJson(K_CUSTOMERS, customers);
-  const persistContacts = () => writeJson(K_CONTACTS, contacts);
-  const persistNotes = () => writeJson(K_NOTES, notes);
-  const persistTags = () => writeJson(K_TAGS, tags);
+  const persistCustomers = () => assertPersisted(K_CUSTOMERS, writeJson(K_CUSTOMERS, customers));
+  const persistContacts = () => assertPersisted(K_CONTACTS, writeJson(K_CONTACTS, contacts));
+  const persistNotes = () => assertPersisted(K_NOTES, writeJson(K_NOTES, notes));
+  const persistTags = () => assertPersisted(K_TAGS, writeJson(K_TAGS, tags));
 
   const findCustomer = (id: string) => customers.find((c) => c.id === id);
 

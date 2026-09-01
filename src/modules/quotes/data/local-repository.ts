@@ -35,6 +35,8 @@ import {
   registerVersionedKey,
   writeEnvelope,
 } from "./storage";
+import { assertPersisted } from "@/core/storage/persistence";
+import { withCapabilityEnforcement } from "@/core/auth/authorize";
 
 const K_QUOTES = "skildos.quotes.quotes.v1";
 const K_VERSIONS = "skildos.quotes.versions.v1";
@@ -157,8 +159,8 @@ export function createLocalQuotesRepository(): QuotesRepository {
 
   const listeners = new Set<() => void>();
   const notify = () => listeners.forEach((l) => l());
-  const persistQuotes = () => writeEnvelope(K_QUOTES, quotes);
-  const persistVersions = () => writeEnvelope(K_VERSIONS, versions);
+  const persistQuotes = () => assertPersisted(K_QUOTES, writeEnvelope(K_QUOTES, quotes));
+  const persistVersions = () => assertPersisted(K_VERSIONS, writeEnvelope(K_VERSIONS, versions));
   const find = (id: string) => quotes.find((q) => q.id === id);
 
   function recordVersion(next: Quote, reason: string): QuoteVersion {
@@ -391,5 +393,14 @@ export function createLocalQuotesRepository(): QuotesRepository {
     },
   };
 
-  return repo;
+    // Authorization boundary — see src/core/auth/authorize.ts. Enforced at the
+  // repository so a non-UI caller (agent, adapter, command) cannot bypass it.
+  return withCapabilityEnforcement(repo, {
+    createQuote: "quotes.write",
+    updateQuote: "quotes.write",
+    sendQuote: "quotes.write",
+    approveQuote: "quotes.approve",
+    declineQuote: "quotes.write",
+    expireQuote: "quotes.write",
+  });
 }

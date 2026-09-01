@@ -36,6 +36,8 @@ import {
   registerVersionedKey,
   writeEnvelope,
 } from "./storage";
+import { assertPersisted } from "@/core/storage/persistence";
+import { withCapabilityEnforcement } from "@/core/auth/authorize";
 
 const K_JOBS = "skildos.jobs.jobs.v1";
 const K_STATUS = "skildos.jobs.status-history.v1";
@@ -152,10 +154,10 @@ export function createLocalJobsRepository(): JobsRepository {
 
   const listeners = new Set<() => void>();
   const notify = () => listeners.forEach((l) => l());
-  const persistJobs = () => writeEnvelope(K_JOBS, jobs);
-  const persistHistory = () => writeEnvelope(K_STATUS, history);
-  const persistLabor = () => writeEnvelope(K_LABOR, labor);
-  const persistNotes = () => writeEnvelope(K_NOTES, noteRows);
+  const persistJobs = () => assertPersisted(K_JOBS, writeEnvelope(K_JOBS, jobs));
+  const persistHistory = () => assertPersisted(K_STATUS, writeEnvelope(K_STATUS, history));
+  const persistLabor = () => assertPersisted(K_LABOR, writeEnvelope(K_LABOR, labor));
+  const persistNotes = () => assertPersisted(K_NOTES, writeEnvelope(K_NOTES, noteRows));
   const find = (id: string) => jobs.find((j) => j.id === id);
 
   function requireJob(id: string): Job {
@@ -448,5 +450,14 @@ export function createLocalJobsRepository(): JobsRepository {
     },
   };
 
-  return repo;
+    // Authorization boundary — see src/core/auth/authorize.ts. Enforced at the
+  // repository so a non-UI caller (agent, adapter, command) cannot bypass it.
+  return withCapabilityEnforcement(repo, {
+    create: "jobs.write",
+    update: "jobs.write",
+    changeStatus: "jobs.status",
+    addLabor: "jobs.labor.write",
+    addNote: "jobs.notes.write",
+    assign: "jobs.assign",
+  });
 }

@@ -100,13 +100,18 @@ export function readEnvelope<T>(key: string): T[] {
   return records as T[];
 }
 
-export function writeEnvelope<T>(key: string, records: T[]): void {
+/**
+ * Write `records` under `key` inside the current versioned envelope.
+ * Returns TRUE only when the write was durable — see
+ * `@/core/storage/persistence` for the repository-facing contract.
+ */
+export function writeEnvelope<T>(key: string, records: T[]): boolean {
   const cfg = requireConfig(key);
   const envelope: Envelope<T> = {
     schemaVersion: cfg.currentVersion,
     records,
   };
-  writeJson(key, envelope);
+  return writeJson(key, envelope);
 }
 
 /** Test-only: reset the internal registry. */

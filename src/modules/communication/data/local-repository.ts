@@ -54,7 +54,9 @@ import {
   type ServiceRequestUpdateInput,
 } from "./schemas";
 import type { CommunicationRepository } from "./repository";
-import { readEnvelope, registerVersionedKey, writeEnvelope } from "./storage";
+import { readEnvelope, registerVersionedKey } from "./storage";
+import { commitRecords } from "@/core/storage/persistence";
+import { withCapabilityEnforcement } from "@/core/auth/authorize";
 
 const K_CONVERSATIONS = "skildos.communication.conversations.v1";
 const K_MESSAGES = "skildos.communication.messages.v1";
@@ -215,13 +217,20 @@ export function createLocalCommunicationRepository(): CommunicationRepository {
   const listeners = new Set<() => void>();
   const notify = () => listeners.forEach((l) => l());
 
-  const persistConversations = () =>
-    writeEnvelope(K_CONVERSATIONS, conversations);
-  const persistMessages = () => writeEnvelope(K_MESSAGES, messages);
-  const persistServiceRequests = () =>
-    writeEnvelope(K_SERVICE_REQUESTS, serviceRequests);
-  const persistReviewRequests = () =>
-    writeEnvelope(K_REVIEW_REQUESTS, reviewRequests);
+  // Persistence commit: in-memory state advances ONLY on a durable write.
+  // A failure throws PersistenceError before any emit() runs.
+  const persistConversations = (next: Conversation[]) => {
+    conversations = commitRecords(K_CONVERSATIONS, next);
+  };
+  const persistMessages = (next: Message[]) => {
+    messages = commitRecords(K_MESSAGES, next);
+  };
+  const persistServiceRequests = (next: ServiceRequest[]) => {
+    serviceRequests = commitRecords(K_SERVICE_REQUESTS, next);
+  };
+  const persistReviewRequests = (next: ReviewRequest[]) => {
+    reviewRequests = commitRecords(K_REVIEW_REQUESTS, next);
+  };
 
   const requireConversation = (id: string): Conversation => {
     const found = conversations.find((c) => c.id === id);
@@ -236,13 +245,13 @@ export function createLocalCommunicationRepository(): CommunicationRepository {
   };
 
   const replaceConversation = (next: Conversation) => {
-    conversations = conversations.map((c) => (c.id === next.id ? next : c));
-    persistConversations();
+    persistConversations(
+      conversations.map((c) => (c.id === next.id ? next : c)),
+    );
   };
 
   const replaceMessage = (next: Message) => {
-    messages = messages.map((m) => (m.id === next.id ? next : m));
-    persistMessages();
+    persistMessages(messages.map((m) => (m.id === next.id ? next : m)));
   };
 
   /** Roll thread activity forward after a message lands. */
@@ -260,7 +269,7 @@ export function createLocalCommunicationRepository(): CommunicationRepository {
     });
   };
 
-  return {
+  const impl: CommunicationRepository = {
     // ---- Conversations --------------------------------------------------
     async listConversations(query?: ConversationListQuery) {
       const q = query ?? {};
@@ -354,8 +363,7 @@ export function createLocalCommunicationRepository(): CommunicationRepository {
         createdBy: getIdentity().id,
       };
 
-      conversations = [conversation, ...conversations];
-      persistConversations();
+      persistConversations([conversation, ...conversations]);
       emit({
         type: COMMUNICATION_EVENTS.conversationCreated,
         moduleId: "communication",
@@ -571,8 +579,7 @@ export function createLocalCommunicationRepository(): CommunicationRepository {
         createdBy: getIdentity().id,
       };
 
-      messages = [...messages, message];
-      persistMessages();
+      persistMessages([...messages, message]);
       // An inbound message means the ball is in Skild's court.
       touchConversation(conversation.id, at, {
         status: CLOSED_CONVERSATION_STATUSES.includes(conversation.status)
@@ -620,8 +627,7 @@ export function createLocalCommunicationRepository(): CommunicationRepository {
         createdBy: getIdentity().id,
       };
 
-      messages = [...messages, message];
-      persistMessages();
+      persistMessages([...messages, message]);
       // Internal notes never change who we're waiting on.
       replaceConversation({ ...conversation, updatedAt: at });
       emit({
@@ -682,8 +688,7 @@ export function createLocalCommunicationRepository(): CommunicationRepository {
         createdBy: getIdentity().id,
       };
 
-      messages = [...messages, message];
-      persistMessages();
+      persistMessages([...messages, message]);
       replaceConversation({ ...conversation, updatedAt: at });
       emit({
         type: COMMUNICATION_EVENTS.messagePrepared,
@@ -742,7 +747,15 @@ export function createLocalCommunicationRepository(): CommunicationRepository {
       if (existing.direction !== "outbound") {
         throw new Error("Only outbound messages can be queued.");
       }
-      if (existing.requiresApproval && existing.status !== "approved") {
+      // AUTHORITATIVE APPROVAL GATE (Phase 12.2).
+      // The requirement is re-derived from the message TYPE, not read from
+      // the stored `requiresApproval` flag — a caller that persisted the
+      // record with the flag cleared (or a legacy/migrated row) must still
+      // be stopped here. The UI check is advisory; this one is the boundary.
+      const mustBeApproved =
+        existing.requiresApproval ||
+        requiresApprovalFor(existing.type as MessageType);
+      if (mustBeApproved && existing.status !== "approved") {
         throw new Error(
           "This message requires human approval before it can be queued.",
         );
@@ -925,8 +938,7 @@ export function createLocalCommunicationRepository(): CommunicationRepository {
         createdBy: getIdentity().id,
       };
 
-      serviceRequests = [request, ...serviceRequests];
-      persistServiceRequests();
+      persistServiceRequests([request, ...serviceRequests]);
       emit({
         type: COMMUNICATION_EVENTS.serviceRequestCreated,
         moduleId: "communication",
@@ -1020,8 +1032,9 @@ export function createLocalCommunicationRepository(): CommunicationRepository {
         updatedAt: Date.now(),
       };
 
-      serviceRequests = serviceRequests.map((r) => (r.id === id ? next : r));
-      persistServiceRequests();
+      persistServiceRequests(
+        serviceRequests.map((r) => (r.id === id ? next : r)),
+      );
 
       const statusChanged =
         patch.qualificationStatus !== undefined &&
@@ -1082,8 +1095,7 @@ export function createLocalCommunicationRepository(): CommunicationRepository {
         createdAt: now,
         updatedAt: now,
       };
-      reviewRequests = [request, ...reviewRequests];
-      persistReviewRequests();
+      persistReviewRequests([request, ...reviewRequests]);
       emit({
         type: COMMUNICATION_EVENTS.reviewRequestCreated,
         moduleId: "communication",
@@ -1111,8 +1123,9 @@ export function createLocalCommunicationRepository(): CommunicationRepository {
         sentAt: status === "sent" ? now : existing.sentAt,
         updatedAt: now,
       };
-      reviewRequests = reviewRequests.map((r) => (r.id === id ? next : r));
-      persistReviewRequests();
+      persistReviewRequests(
+        reviewRequests.map((r) => (r.id === id ? next : r)),
+      );
       emit({
         type: COMMUNICATION_EVENTS.reviewRequestUpdated,
         moduleId: "communication",
@@ -1170,4 +1183,27 @@ export function createLocalCommunicationRepository(): CommunicationRepository {
       return () => listeners.delete(listener);
     },
   };
+
+  // Authorization boundary — see src/core/auth/authorize.ts. Preparing,
+  // approving, and releasing outbound communication are separate
+  // capabilities on purpose: a future agent can be granted preparation
+  // rights while remaining structurally unable to approve or release.
+  return withCapabilityEnforcement(impl, {
+    createConversation: "communication.write",
+    updateConversation: "communication.write",
+    setConversationStatus: "communication.write",
+    linkEntity: "communication.write",
+    unlinkEntity: "communication.write",
+    recordInboundMessage: "communication.write",
+    addInternalNote: "communication.write",
+    prepareOutboundMessage: "communication.write",
+    approveMessage: "communication.approve",
+    queueMessage: "communication.send",
+    recordSendResult: "communication.send",
+    cancelMessage: "communication.write",
+    createServiceRequest: "communication.write",
+    updateServiceRequest: "communication.write",
+    createReviewRequest: "communication.write",
+    setReviewRequestStatus: "communication.write",
+  });
 }

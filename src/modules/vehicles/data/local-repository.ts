@@ -19,6 +19,7 @@ import type {
   VehicleListResult,
   VehicleRepository,
 } from "./repository";
+import { assertPersisted } from "@/core/storage/persistence";
 
 const K_VEHICLES = "skildos.vehicles.vehicles.v1";
 const K_OWNERSHIP = "skildos.vehicles.ownership.v1";
@@ -42,8 +43,8 @@ export function createLocalVehicleRepository(): VehicleRepository {
 
   const listeners = new Set<() => void>();
   const notify = () => listeners.forEach((l) => l());
-  const persistVehicles = () => writeJson(K_VEHICLES, vehicles);
-  const persistOwnership = () => writeJson(K_OWNERSHIP, ownership);
+  const persistVehicles = () => assertPersisted(K_VEHICLES, writeJson(K_VEHICLES, vehicles));
+  const persistOwnership = () => assertPersisted(K_OWNERSHIP, writeJson(K_OWNERSHIP, ownership));
   const findVehicle = (id: string) => vehicles.find((v) => v.id === id);
 
   const repo: VehicleRepository = {

@@ -150,3 +150,15 @@ Shell/system events (`shell.navigation.*`, `settings.value.updated`,
 - Consumers subscribe via `activityEmitter.subscribe(listener)`.
 - Payloads MUST NOT contain PII beyond identifiers and names already visible
   in-app; secrets and free-text notes stay out of payloads.
+
+## Emission guarantee (Phase 12.2)
+
+A business event is emitted ONLY after the change was durably persisted.
+Storage writes return a boolean; repositories commit through
+`commitRecords()` / `assertPersisted()` and throw `PersistenceError` on
+failure, before `emit()`. A dropped write therefore produces
+`system.storage.quotaExceeded` and no successful business event.
+
+Likewise, a call denied by the repository authorization boundary throws
+`CapabilityDeniedError` before emission — an unauthorized caller can never
+write to the activity trail.

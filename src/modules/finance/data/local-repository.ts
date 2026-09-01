@@ -35,6 +35,8 @@ import {
 import type { FinanceRepository } from "./repository";
 import { computeInvoiceTotals, materializeLines, nextInvoiceNumber } from "./totals";
 import { readEnvelope, registerVersionedKey, writeEnvelope } from "./storage";
+import { commitRecords } from "@/core/storage/persistence";
+import { withCapabilityEnforcement } from "@/core/auth/authorize";
 
 const K_INVOICES = "skildos.finance.invoices.v1";
 const K_SNAPSHOTS = "skildos.finance.snapshots.v1";
@@ -155,9 +157,17 @@ export function createLocalFinanceRepository(): FinanceRepository {
   const listeners = new Set<() => void>();
   const notify = () => listeners.forEach((l) => l());
 
-  const persistInvoices = () => writeEnvelope(K_INVOICES, invoices);
-  const persistSnapshots = () => writeEnvelope(K_SNAPSHOTS, snapshots);
-  const persistPayments = () => writeEnvelope(K_PAYMENTS, payments);
+  // Persistence commit: in-memory state advances ONLY on a durable write.
+  // A failure throws PersistenceError before any emit() runs.
+  const persistInvoices = (next: Invoice[]) => {
+    invoices = commitRecords(K_INVOICES, next);
+  };
+  const persistSnapshots = (next: InvoiceSnapshot[]) => {
+    snapshots = commitRecords(K_SNAPSHOTS, next);
+  };
+  const persistPayments = (next: Payment[]) => {
+    payments = commitRecords(K_PAYMENTS, next);
+  };
 
   const require = (id: string): Invoice => {
     const found = invoices.find((i) => i.id === id);
@@ -166,11 +176,10 @@ export function createLocalFinanceRepository(): FinanceRepository {
   };
 
   const replace = (next: Invoice) => {
-    invoices = invoices.map((i) => (i.id === next.id ? next : i));
-    persistInvoices();
+    persistInvoices(invoices.map((i) => (i.id === next.id ? next : i)));
   };
 
-  return {
+  const impl: FinanceRepository = {
     // ---- Invoices -------------------------------------------------------
     async listInvoices(query?: InvoiceListQuery): Promise<Invoice[]> {
       const q = query ?? {};
@@ -244,8 +253,7 @@ export function createLocalFinanceRepository(): FinanceRepository {
         createdBy: getIdentity().id,
       };
 
-      invoices = [invoice, ...invoices];
-      persistInvoices();
+      persistInvoices([invoice, ...invoices]);
       emit({
         type: FINANCE_EVENTS.invoiceCreated,
         moduleId: "finance",
@@ -343,6 +351,9 @@ export function createLocalFinanceRepository(): FinanceRepository {
         dueAt: input?.dueAt ?? existing.dueAt ?? now + FOURTEEN_DAYS,
         updatedAt: now,
       };
+      // Captured BEFORE the mutation so the rollback below restores the
+      // pre-issue state, not the already-updated one.
+      const invoicesBeforeIssue = invoices;
       replace(next);
 
       const snapshot: InvoiceSnapshot = {
@@ -353,8 +364,17 @@ export function createLocalFinanceRepository(): FinanceRepository {
         issuedBy: getIdentity().id,
         invoice: deepFreezeInvoice(next),
       };
-      snapshots = [snapshot, ...snapshots];
-      persistSnapshots();
+      try {
+        persistSnapshots([snapshot, ...snapshots]);
+      } catch (err) {
+        // The immutable snapshot IS the financial record — if it cannot be
+        // stored, the invoice must not stay "issued". Roll the invoice back
+        // in memory and best-effort in storage, then rethrow so no
+        // "invoice issued" event is ever emitted.
+        invoices = invoicesBeforeIssue;
+        writeEnvelope(K_INVOICES, invoicesBeforeIssue);
+        throw err;
+      }
 
       emit({
         type: FINANCE_EVENTS.invoiceIssued,
@@ -455,8 +475,8 @@ export function createLocalFinanceRepository(): FinanceRepository {
         createdAt: now,
         createdBy: getIdentity().id,
       };
-      payments = [payment, ...payments];
-      persistPayments();
+      const paymentsBeforeWrite = payments;
+      persistPayments([payment, ...payments]);
 
       const amountPaid = invoice.amountPaid + payment.amount;
       const balance = Math.max(0, invoice.total - amountPaid);
@@ -469,7 +489,15 @@ export function createLocalFinanceRepository(): FinanceRepository {
         paidAt: settled ? now : invoice.paidAt,
         updatedAt: now,
       };
-      replace(next);
+      try {
+        replace(next);
+      } catch (err) {
+        // Roll the payment back so a failed invoice write cannot leave an
+        // orphaned payment behind.
+        payments = paymentsBeforeWrite;
+        writeEnvelope(K_PAYMENTS, paymentsBeforeWrite);
+        throw err;
+      }
 
       emit({
         type: FINANCE_EVENTS.paymentRecorded,
@@ -504,7 +532,21 @@ export function createLocalFinanceRepository(): FinanceRepository {
 
     subscribe(listener) {
       listeners.add(listener);
-      return () => listeners.delete(listener);
+      return () => {
+        listeners.delete(listener);
+      };
     },
   };
+
+  // Authorization boundary — see src/core/auth/authorize.ts. Every
+  // consequential mutation verifies the CURRENT actor's capability before
+  // any validation, persistence, or activity emission, so a non-UI caller
+  // (agent, adapter, command) cannot bypass the gate the UI applies.
+  return withCapabilityEnforcement(impl, {
+    createInvoice: "finance.invoice.write",
+    updateInvoice: "finance.invoice.write",
+    issueInvoice: "finance.invoice.issue",
+    voidInvoice: "finance.invoice.void",
+    recordPayment: "finance.payment.write",
+  });
 }

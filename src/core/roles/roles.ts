@@ -46,6 +46,20 @@ export function useCapabilities(): Capability[] {
   );
 }
 
+/**
+ * Register (or replace) a role. Phase 12.2: exists so a NON-OWNER actor can
+ * be modelled — a restricted operator today, an automation agent with a
+ * narrow capability set in Phase 13. Capability ids only; no role name ever
+ * appears in a repository (ADR-003).
+ */
+export function registerRole(role: Role) {
+  roleStore.set((prev) => ({ ...prev, [role.id]: role }));
+}
+
+export function listRoles(): Role[] {
+  return Object.values(roleStore.get());
+}
+
 export function getRole(roleId: string): Role | undefined {
   return roleStore.get()[roleId];
 }

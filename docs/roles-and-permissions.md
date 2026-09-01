@@ -32,3 +32,12 @@ if (hasCapability(id.roleId, "customers.write")) {
 - Every user-facing surface declares `requiredCapabilityIds` in its manifest.
 - Introducing a new capability is a two-line change (register + reference in the surface).
 - When real auth arrives, only `core/auth/identity.ts` changes.
+
+## Where capabilities are enforced (Phase 12.2)
+
+Capability checks are no longer UI-only. Consequential repository mutations
+are wrapped with `withCapabilityEnforcement()` so a non-UI caller (agent,
+adapter, scheduled command) is denied before any validation, mutation,
+persistence, or activity emission. UI checks remain, but they are advisory.
+
+See [architecture/repository-authorization.md](./architecture/repository-authorization.md).

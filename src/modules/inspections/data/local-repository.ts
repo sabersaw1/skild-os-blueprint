@@ -38,6 +38,8 @@ import {
   registerVersionedKey,
   writeEnvelope,
 } from "./storage";
+import { assertPersisted } from "@/core/storage/persistence";
+import { withCapabilityEnforcement } from "@/core/auth/authorize";
 
 const K_TEMPLATES = "skildos.inspections.templates.v1";
 const K_INSPECTIONS = "skildos.inspections.inspections.v1";
@@ -125,10 +127,10 @@ export function createLocalInspectionsRepository(): InspectionsRepository {
   const listeners = new Set<() => void>();
   const notify = () => listeners.forEach((l) => l());
 
-  const persistTemplates = () => writeEnvelope(K_TEMPLATES, templates);
-  const persistInspections = () => writeEnvelope(K_INSPECTIONS, inspections);
-  const persistFindings = () => writeEnvelope(K_FINDINGS, findings);
-  const persistPhotos = () => writeEnvelope(K_PHOTOS, photos);
+  const persistTemplates = () => assertPersisted(K_TEMPLATES, writeEnvelope(K_TEMPLATES, templates));
+  const persistInspections = () => assertPersisted(K_INSPECTIONS, writeEnvelope(K_INSPECTIONS, inspections));
+  const persistFindings = () => assertPersisted(K_FINDINGS, writeEnvelope(K_FINDINGS, findings));
+  const persistPhotos = () => assertPersisted(K_PHOTOS, writeEnvelope(K_PHOTOS, photos));
 
   const findInspection = (id: string) => inspections.find((i) => i.id === id);
 
@@ -437,5 +439,15 @@ export function createLocalInspectionsRepository(): InspectionsRepository {
     },
   };
 
-  return repo;
+    // Authorization boundary — see src/core/auth/authorize.ts. Enforced at the
+  // repository so a non-UI caller (agent, adapter, command) cannot bypass it.
+  return withCapabilityEnforcement(repo, {
+    createTemplate: "inspections.templates.write",
+    updateTemplate: "inspections.templates.write",
+    createInspection: "inspections.write",
+    updateInspection: "inspections.write",
+    createFinding: "inspections.write",
+    updateFinding: "inspections.write",
+    queuePhoto: "inspections.photos.write",
+  });
 }
