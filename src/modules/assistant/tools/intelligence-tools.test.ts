@@ -4,7 +4,7 @@
 // able to capture a snapshot, record a finding, or act on a recommendation,
 // and it must state uncertainty rather than answer from nothing.
 
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 
 class MemoryStorage {
   private store = new Map<string, string>();
@@ -141,13 +141,14 @@ describe("grounded answers", () => {
 
   it("records a declared limitation rather than an answer when access is denied", async () => {
     withRepo();
-    const spy = vi.fn();
     const context = await resolveContext({
       intent: classifyIntent("how is the business performing?"),
       tools: createJarvisTools(deny),
       question: "how is the business performing?",
     });
-    expect(context.facts.every((f) => f.evidenceKind !== "ai_suggestion")).toBe(true);
-    expect(spy).not.toHaveBeenCalled();
+    // No capability, so no measured facts are asserted — and nothing is
+    // guessed to fill the gap.
+    expect(context.facts.every((f) => f.kind !== "ai_suggestion")).toBe(true);
+    expect(context.limitations.length + context.uncertainty.length).toBeGreaterThan(0);
   });
 });
