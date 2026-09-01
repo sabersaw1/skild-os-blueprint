@@ -28,7 +28,7 @@ export const Route = createModuleRoute("/marketing/actions")({
       },
     ],
   }),
-  component: MarketingActions;
+  component: MarketingActions,
 });
 
 function MarketingActions() {
