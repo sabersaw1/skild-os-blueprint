@@ -18,6 +18,7 @@ import { Route as MarketingRouteImport } from './routes/marketing'
 import { Route as LeadsRouteImport } from './routes/leads'
 import { Route as KnowledgeRouteImport } from './routes/knowledge'
 import { Route as JobsRouteImport } from './routes/jobs'
+import { Route as JarvisRouteImport } from './routes/jarvis'
 import { Route as InvoicesRouteImport } from './routes/invoices'
 import { Route as InspectionsRouteImport } from './routes/inspections'
 import { Route as CustomersRouteImport } from './routes/customers'
@@ -130,6 +131,11 @@ const KnowledgeRoute = KnowledgeRouteImport.update({
 const JobsRoute = JobsRouteImport.update({
   id: '/jobs',
   path: '/jobs',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const JarvisRoute = JarvisRouteImport.update({
+  id: '/jarvis',
+  path: '/jarvis',
   getParentRoute: () => rootRouteImport,
 } as any)
 const InvoicesRoute = InvoicesRouteImport.update({
@@ -488,6 +494,7 @@ export interface FileRoutesByFullPath {
   '/customers': typeof CustomersRouteWithChildren
   '/inspections': typeof InspectionsRouteWithChildren
   '/invoices': typeof InvoicesRouteWithChildren
+  '/jarvis': typeof JarvisRoute
   '/jobs': typeof JobsRouteWithChildren
   '/knowledge': typeof KnowledgeRouteWithChildren
   '/leads': typeof LeadsRouteWithChildren
@@ -563,6 +570,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/activity': typeof ActivityRoute
+  '/jarvis': typeof JarvisRoute
   '/conversations/$conversationId': typeof ConversationsConversationIdRoute
   '/conversations/new': typeof ConversationsNewRoute
   '/customers/new': typeof CustomersNewRoute
@@ -626,6 +634,7 @@ export interface FileRoutesById {
   '/customers': typeof CustomersRouteWithChildren
   '/inspections': typeof InspectionsRouteWithChildren
   '/invoices': typeof InvoicesRouteWithChildren
+  '/jarvis': typeof JarvisRoute
   '/jobs': typeof JobsRouteWithChildren
   '/knowledge': typeof KnowledgeRouteWithChildren
   '/leads': typeof LeadsRouteWithChildren
@@ -707,6 +716,7 @@ export interface FileRouteTypes {
     | '/customers'
     | '/inspections'
     | '/invoices'
+    | '/jarvis'
     | '/jobs'
     | '/knowledge'
     | '/leads'
@@ -782,6 +792,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/activity'
+    | '/jarvis'
     | '/conversations/$conversationId'
     | '/conversations/new'
     | '/customers/new'
@@ -844,6 +855,7 @@ export interface FileRouteTypes {
     | '/customers'
     | '/inspections'
     | '/invoices'
+    | '/jarvis'
     | '/jobs'
     | '/knowledge'
     | '/leads'
@@ -924,6 +936,7 @@ export interface RootRouteChildren {
   CustomersRoute: typeof CustomersRouteWithChildren
   InspectionsRoute: typeof InspectionsRouteWithChildren
   InvoicesRoute: typeof InvoicesRouteWithChildren
+  JarvisRoute: typeof JarvisRoute
   JobsRoute: typeof JobsRouteWithChildren
   KnowledgeRoute: typeof KnowledgeRouteWithChildren
   LeadsRoute: typeof LeadsRouteWithChildren
@@ -1004,6 +1017,13 @@ declare module '@tanstack/react-router' {
       path: '/jobs'
       fullPath: '/jobs'
       preLoaderRoute: typeof JobsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/jarvis': {
+      id: '/jarvis'
+      path: '/jarvis'
+      fullPath: '/jarvis'
+      preLoaderRoute: typeof JarvisRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/invoices': {
@@ -1805,6 +1825,7 @@ const rootRouteChildren: RootRouteChildren = {
   CustomersRoute: CustomersRouteWithChildren,
   InspectionsRoute: InspectionsRouteWithChildren,
   InvoicesRoute: InvoicesRouteWithChildren,
+  JarvisRoute: JarvisRoute,
   JobsRoute: JobsRouteWithChildren,
   KnowledgeRoute: KnowledgeRouteWithChildren,
   LeadsRoute: LeadsRouteWithChildren,
