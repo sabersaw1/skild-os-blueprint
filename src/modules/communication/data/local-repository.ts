@@ -747,7 +747,15 @@ export function createLocalCommunicationRepository(): CommunicationRepository {
       if (existing.direction !== "outbound") {
         throw new Error("Only outbound messages can be queued.");
       }
-      if (existing.requiresApproval && existing.status !== "approved") {
+      // AUTHORITATIVE APPROVAL GATE (Phase 12.2).
+      // The requirement is re-derived from the message TYPE, not read from
+      // the stored `requiresApproval` flag — a caller that persisted the
+      // record with the flag cleared (or a legacy/migrated row) must still
+      // be stopped here. The UI check is advisory; this one is the boundary.
+      const mustBeApproved =
+        existing.requiresApproval ||
+        requiresApprovalFor(existing.type as MessageType);
+      if (mustBeApproved && existing.status !== "approved") {
         throw new Error(
           "This message requires human approval before it can be queued.",
         );
@@ -1175,4 +1183,27 @@ export function createLocalCommunicationRepository(): CommunicationRepository {
       return () => listeners.delete(listener);
     },
   };
+
+  // Authorization boundary — see src/core/auth/authorize.ts. Preparing,
+  // approving, and releasing outbound communication are separate
+  // capabilities on purpose: a future agent can be granted preparation
+  // rights while remaining structurally unable to approve or release.
+  return withCapabilityEnforcement(impl, {
+    createConversation: "communication.write",
+    updateConversation: "communication.write",
+    setConversationStatus: "communication.write",
+    linkEntity: "communication.write",
+    unlinkEntity: "communication.write",
+    recordInboundMessage: "communication.write",
+    addInternalNote: "communication.write",
+    prepareOutboundMessage: "communication.write",
+    approveMessage: "communication.approve",
+    queueMessage: "communication.send",
+    recordSendResult: "communication.send",
+    cancelMessage: "communication.write",
+    createServiceRequest: "communication.write",
+    updateServiceRequest: "communication.write",
+    createReviewRequest: "communication.write",
+    setReviewRequestStatus: "communication.write",
+  });
 }
