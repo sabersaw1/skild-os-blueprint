@@ -54,6 +54,19 @@ import type {
   AgentRun,
   AutomationOverview,
 } from "@/modules/automation/data/schemas";
+import {
+  INTELLIGENCE_REPOSITORY,
+  type IntelligenceRepository,
+} from "@/modules/intelligence/data/repository";
+import type {
+  FunnelReport,
+  IntelligenceOpportunity,
+  IntelligenceOverview,
+  Observation,
+  Period,
+  ProfitabilityReport,
+  Recommendation,
+} from "@/modules/intelligence/data/schemas";
 import type { KnowledgeDocument } from "@/modules/knowledge/data/schemas";
 import type { SourceRef } from "../data/schemas";
 
@@ -112,7 +125,16 @@ export const JARVIS_TOOL_CATALOGUE: JarvisToolMeta[] = [
   { name: "getAutomationOverview", description: "Counts of active agents, pending approvals, blocked actions and failed runs.", requiredCapabilityId: "agents.read", repositoryKey: AUTOMATION_REPOSITORY },
   { name: "getRecentAgentRuns", description: "Recent agent runs and their outcomes, including failures.", requiredCapabilityId: "agents.read", repositoryKey: AUTOMATION_REPOSITORY },
   { name: "getActionsAwaitingApproval", description: "Agent actions waiting on a human decision.", requiredCapabilityId: "agents.read", repositoryKey: AUTOMATION_REPOSITORY },
+  { name: "getBusinessOverview", description: "Measured metrics, funnel, profitability and attention items for a period.", requiredCapabilityId: "intelligence.read", repositoryKey: INTELLIGENCE_REPOSITORY },
+  { name: "getFunnelReport", description: "Lead-to-revenue funnel conversion for a period, with declared limitations.", requiredCapabilityId: "intelligence.read", repositoryKey: INTELLIGENCE_REPOSITORY },
+  { name: "getProfitabilityReport", description: "Invoiced revenue, parts cost and gross margin for a period. Labor cost is not recorded by the OS.", requiredCapabilityId: "intelligence.read", repositoryKey: INTELLIGENCE_REPOSITORY },
+  { name: "getIntelligenceFindings", description: "Recorded observations, opportunities and recommendations awaiting human review.", requiredCapabilityId: "intelligence.read", repositoryKey: INTELLIGENCE_REPOSITORY },
 ];
+
+/** Period covering the last `days` days, ending now. */
+export function periodOfLastDays(days: number, now = Date.now()): Period {
+  return { start: now - days * DAY_MS, end: now };
+}
 
 function startOfDay(now: number): number {
   const d = new Date(now);
@@ -177,6 +199,17 @@ export interface JarvisTools {
   getAutomationOverview(now?: number): Promise<AutomationOverview>;
   getRecentAgentRuns(limit?: number): Promise<AgentRun[]>;
   getActionsAwaitingApproval(): Promise<AgentAction[]>;
+  // Business Intelligence (Phase 14) — READ ONLY. Jarvis reports measured
+  // figures and recorded findings; it never captures a snapshot, records a
+  // finding, or acts on a recommendation.
+  getBusinessOverview(period?: Period, now?: number): Promise<IntelligenceOverview>;
+  getFunnelReport(period?: Period): Promise<FunnelReport>;
+  getProfitabilityReport(period?: Period): Promise<ProfitabilityReport>;
+  getIntelligenceFindings(): Promise<{
+    observations: Observation[];
+    opportunities: IntelligenceOpportunity[];
+    recommendations: Recommendation[];
+  }>;
 }
 
 export function createJarvisTools(can: CapabilityCheck): JarvisTools {
@@ -198,6 +231,8 @@ export function createJarvisTools(can: CapabilityCheck): JarvisTools {
   const vehicles = () => need<VehicleRepository>("vehicles.read", VEHICLES_REPOSITORY);
   const automation = () =>
     need<AutomationRepository>("agents.read", AUTOMATION_REPOSITORY);
+  const intelligence = () =>
+    need<IntelligenceRepository>("intelligence.read", INTELLIGENCE_REPOSITORY);
 
   return {
     async getTodaySchedule(now = Date.now()) {
@@ -477,6 +512,28 @@ export function createJarvisTools(can: CapabilityCheck): JarvisTools {
 
     async getActionsAwaitingApproval() {
       return automation().listActions({ approvalState: "pending" });
+    },
+
+    async getBusinessOverview(period = periodOfLastDays(30), now = Date.now()) {
+      return intelligence().getOverview(period, now);
+    },
+
+    async getFunnelReport(period = periodOfLastDays(30)) {
+      return intelligence().getFunnel(period);
+    },
+
+    async getProfitabilityReport(period = periodOfLastDays(30)) {
+      return intelligence().getProfitability(period);
+    },
+
+    async getIntelligenceFindings() {
+      const repo = intelligence();
+      const [observations, opportunities, recommendations] = await Promise.all([
+        repo.listObservations({ status: "open" }),
+        repo.listOpportunities({ status: "open" }),
+        repo.listRecommendations({ status: "proposed" }),
+      ]);
+      return { observations, opportunities, recommendations };
     },
   };
 }
