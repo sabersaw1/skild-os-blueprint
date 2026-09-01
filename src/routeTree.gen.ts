@@ -48,6 +48,7 @@ import { Route as QuotesQuoteIdRouteImport } from './routes/quotes.$quoteId'
 import { Route as PartsNewRouteImport } from './routes/parts.new'
 import { Route as PartsPartIdRouteImport } from './routes/parts.$partId'
 import { Route as LeadsNewRouteImport } from './routes/leads.new'
+import { Route as LeadsLeadIdRouteImport } from './routes/leads.$leadId'
 import { Route as KnowledgeNewRouteImport } from './routes/knowledge.new'
 import { Route as KnowledgeKnowledgeIdRouteImport } from './routes/knowledge.$knowledgeId'
 import { Route as JobsNewRouteImport } from './routes/jobs.new'
@@ -277,6 +278,11 @@ const LeadsNewRoute = LeadsNewRouteImport.update({
   path: '/new',
   getParentRoute: () => LeadsRoute,
 } as any)
+const LeadsLeadIdRoute = LeadsLeadIdRouteImport.update({
+  id: '/$leadId',
+  path: '/$leadId',
+  getParentRoute: () => LeadsRoute,
+} as any)
 const KnowledgeNewRoute = KnowledgeNewRouteImport.update({
   id: '/new',
   path: '/new',
@@ -478,6 +484,7 @@ export interface FileRoutesByFullPath {
   '/jobs/new': typeof JobsNewRoute
   '/knowledge/$knowledgeId': typeof KnowledgeKnowledgeIdRouteWithChildren
   '/knowledge/new': typeof KnowledgeNewRoute
+  '/leads/$leadId': typeof LeadsLeadIdRoute
   '/leads/new': typeof LeadsNewRoute
   '/parts/$partId': typeof PartsPartIdRouteWithChildren
   '/parts/new': typeof PartsNewRoute
@@ -535,6 +542,7 @@ export interface FileRoutesByTo {
   '/invoices/new': typeof InvoicesNewRoute
   '/jobs/new': typeof JobsNewRoute
   '/knowledge/new': typeof KnowledgeNewRoute
+  '/leads/$leadId': typeof LeadsLeadIdRoute
   '/leads/new': typeof LeadsNewRoute
   '/parts/new': typeof PartsNewRoute
   '/quotes/new': typeof QuotesNewRoute
@@ -607,6 +615,7 @@ export interface FileRoutesById {
   '/jobs/new': typeof JobsNewRoute
   '/knowledge/$knowledgeId': typeof KnowledgeKnowledgeIdRouteWithChildren
   '/knowledge/new': typeof KnowledgeNewRoute
+  '/leads/$leadId': typeof LeadsLeadIdRoute
   '/leads/new': typeof LeadsNewRoute
   '/parts/$partId': typeof PartsPartIdRouteWithChildren
   '/parts/new': typeof PartsNewRoute
@@ -683,6 +692,7 @@ export interface FileRouteTypes {
     | '/jobs/new'
     | '/knowledge/$knowledgeId'
     | '/knowledge/new'
+    | '/leads/$leadId'
     | '/leads/new'
     | '/parts/$partId'
     | '/parts/new'
@@ -740,6 +750,7 @@ export interface FileRouteTypes {
     | '/invoices/new'
     | '/jobs/new'
     | '/knowledge/new'
+    | '/leads/$leadId'
     | '/leads/new'
     | '/parts/new'
     | '/quotes/new'
@@ -811,6 +822,7 @@ export interface FileRouteTypes {
     | '/jobs/new'
     | '/knowledge/$knowledgeId'
     | '/knowledge/new'
+    | '/leads/$leadId'
     | '/leads/new'
     | '/parts/$partId'
     | '/parts/new'
@@ -1155,6 +1167,13 @@ declare module '@tanstack/react-router' {
       path: '/new'
       fullPath: '/leads/new'
       preLoaderRoute: typeof LeadsNewRouteImport
+      parentRoute: typeof LeadsRoute
+    }
+    '/leads/$leadId': {
+      id: '/leads/$leadId'
+      path: '/$leadId'
+      fullPath: '/leads/$leadId'
+      preLoaderRoute: typeof LeadsLeadIdRouteImport
       parentRoute: typeof LeadsRoute
     }
     '/knowledge/new': {
@@ -1555,11 +1574,13 @@ const KnowledgeRouteWithChildren = KnowledgeRoute._addFileChildren(
 )
 
 interface LeadsRouteChildren {
+  LeadsLeadIdRoute: typeof LeadsLeadIdRoute
   LeadsNewRoute: typeof LeadsNewRoute
   LeadsIndexRoute: typeof LeadsIndexRoute
 }
 
 const LeadsRouteChildren: LeadsRouteChildren = {
+  LeadsLeadIdRoute: LeadsLeadIdRoute,
   LeadsNewRoute: LeadsNewRoute,
   LeadsIndexRoute: LeadsIndexRoute,
 }
