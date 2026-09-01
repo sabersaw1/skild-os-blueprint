@@ -1062,7 +1062,7 @@ export function calculateSourcePerformance(
   for (const lead of leadsIn(ds)) {
     // Attribution is taken verbatim. A lead with no recorded source is
     // "unknown" — never reassigned to a plausible channel.
-    const source = lead.attribution?.firstTouch?.source ?? "unknown";
+    const source: string = lead.attribution?.firstTouch?.source ?? "unknown";
     let r = rows.get(source);
     if (!r) {
       r = {
@@ -1183,7 +1183,7 @@ export function calculateAttention(
   for (const lead of ds.leads) {
     if (lead.status === "won" || lead.status === "lost") continue;
     if (lead.awaitingParty !== "skild") continue;
-    const age = ds.now - (lead.lastContactedAt ?? lead.createdAt);
+    const age = ds.now - (lead.lastContactAt ?? lead.createdAt);
     if (age < opts.staleLeadMs) continue;
     items.push({
       id: `stale_lead:${lead.id}`,
