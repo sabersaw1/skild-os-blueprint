@@ -8,7 +8,7 @@
 // ids it came from, never a copy of the underlying entity.
 
 import { newId } from "@/core/ids";
-import { centsToDisplay } from "@/core/money";
+import { formatCents } from "@/core/money";
 import {
   CapabilityDeniedError,
   RepositoryUnavailableError,
@@ -261,7 +261,7 @@ export async function resolveContext(opts: {
         fact(
           invoices.length === 0
             ? "No issued invoice has an outstanding balance"
-            : `${invoices.length} unpaid invoice${invoices.length === 1 ? "" : "s"} totalling ${centsToDisplay(balance)}`,
+            : `${invoices.length} unpaid invoice${invoices.length === 1 ? "" : "s"} totalling ${formatCents(balance)}`,
           "system_derived",
           invoices.map((i) => ref("finance", "invoice", i.id)),
           { value: balance, unit: "cents" },
@@ -270,7 +270,7 @@ export async function resolveContext(opts: {
       for (const i of invoices) {
         c.add(
           fact(
-            `Invoice ${i.number} has a balance of ${centsToDisplay(i.balance)}`,
+            `Invoice ${i.number} has a balance of ${formatCents(i.balance)}`,
             "verified_fact",
             [ref("finance", "invoice", i.id)],
             { value: i.balance, unit: "cents" },
@@ -285,7 +285,7 @@ export async function resolveContext(opts: {
     if (totals) {
       c.add(
         fact(
-          `${centsToDisplay(totals.collectedCents)} recorded as paid across ${totals.invoiceCount} invoice(s)`,
+          `${formatCents(totals.collectedCents)} recorded as paid across ${totals.invoiceCount} invoice(s)`,
           "system_derived",
           [],
           { value: totals.collectedCents, unit: "cents" },
@@ -293,7 +293,7 @@ export async function resolveContext(opts: {
       );
       c.add(
         fact(
-          `${centsToDisplay(totals.outstandingCents)} still outstanding`,
+          `${formatCents(totals.outstandingCents)} still outstanding`,
           "system_derived",
           [],
           { value: totals.outstandingCents, unit: "cents" },
@@ -324,7 +324,7 @@ export async function resolveContext(opts: {
       } else {
         c.add(
           fact(
-            `Recorded parts cost is ${centsToDisplay(cost.partsCostCents)} across ${cost.usageCount} usage record(s)`,
+            `Recorded parts cost is ${formatCents(cost.partsCostCents)} across ${cost.usageCount} usage record(s)`,
             "verified_fact",
             [ref("jobs", "job", cost.jobId)],
             { value: cost.partsCostCents, unit: "cents" },
@@ -341,7 +341,7 @@ export async function resolveContext(opts: {
         if (cost.invoicedTotalCents !== undefined) {
           c.add(
             fact(
-              `Invoiced total for this job is ${centsToDisplay(cost.invoicedTotalCents)}`,
+              `Invoiced total for this job is ${formatCents(cost.invoicedTotalCents)}`,
               "verified_fact",
               [ref("jobs", "job", cost.jobId)],
               { value: cost.invoicedTotalCents, unit: "cents" },
