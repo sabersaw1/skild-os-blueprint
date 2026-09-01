@@ -323,8 +323,8 @@ export function createLocalMarketingRepository(): MarketingRepository {
 
   /** Recompute the deterministic score after any field change. */
   const rescore = (lead: Lead): Lead => {
-    const { score, scoreReasons } = scoreLead(lead);
-    return { ...lead, score, scoreReasons };
+    const { score, reasons } = scoreLead(lead);
+    return { ...lead, score, scoreReasons: reasons };
   };
 
   const saveLead = (next: Lead): Lead => {
@@ -484,8 +484,8 @@ export function createLocalMarketingRepository(): MarketingRepository {
         tags: input.tags?.map((t) => t.trim()).filter(Boolean),
         metadata: input.metadata,
       };
-      const { score, scoreReasons } = scoreLead(base);
-      const lead: Lead = { ...base, score, scoreReasons };
+      const { score, reasons } = scoreLead(base);
+      const lead: Lead = { ...base, score, scoreReasons: reasons };
 
       // ---- persist
       leads = [lead, ...leads];
